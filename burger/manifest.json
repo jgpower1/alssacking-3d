@@ -1,6 +1,7 @@
 {
-  "name": "bhc 버거 빌드 타이쿤",
-  "short_name": "버거 빌드",
+  "name": "bhc BURGER GAME 버거 빌드 타이쿤",
+  "short_name": "bhc 버거게임",
+  "id": "./",
   "description": "bhc 치킨버거 4종 빌드·랩핑 트레이닝",
   "lang": "ko",
   "dir": "ltr",
@@ -8,7 +9,7 @@
   "scope": "./",
   "display": "standalone",
   "orientation": "any",
-  "background_color": "#221E1B",
+  "background_color": "#FFFFFF",
   "theme_color": "#221E1B",
   "categories": [
     "education",

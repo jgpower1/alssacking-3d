@@ -7,8 +7,9 @@
 <meta name="apple-mobile-web-app-capable" content="yes">
 <meta name="mobile-web-app-capable" content="yes">
 <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
-<meta name="apple-mobile-web-app-title" content="버거 빌드">
-<meta name="application-name" content="버거 빌드">
+<meta name="apple-mobile-web-app-title" content="bhc 버거게임">
+<meta name="application-name" content="bhc 버거게임">
+<script>window.__PWA=true;</script>
 <link rel="manifest" href="manifest.json">
 <link rel="apple-touch-icon" sizes="180x180" href="icons/apple-touch-icon.png">
 <link rel="icon" type="image/png" sizes="32x32" href="icons/favicon-32.png">
@@ -43,6 +44,10 @@ body{
 *{box-sizing:border-box}
 button{font-family:inherit;cursor:pointer;color:inherit;touch-action:manipulation}
 #app{-webkit-user-select:none;user-select:none}
+.btn-ghost.install{border-color:var(--mustard);color:var(--mustard)}
+.install-icon{display:flex;align-items:center;gap:12px;background:var(--paper-2);border-radius:14px;padding:10px 12px;margin:10px 0}
+.install-icon img{width:64px;height:64px;border-radius:14px;box-shadow:0 2px 6px rgba(0,0,0,.2)}
+.install-icon b{font-size:16px}
 .day-note{font-size:12.5px;color:var(--muted);margin:10px 0 0;line-height:1.5}
 .mini4{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:6px;margin-top:8px;text-align:center}
 .mini4>div{display:flex;flex-direction:column;justify-content:flex-end;gap:4px}
@@ -342,6 +347,7 @@ h1.logo .accent{color:var(--mustard);display:inline-block;transform:rotate(-2deg
           <button class="btn btn-primary" id="btn-tycoon">영업 시작 <small id="tycoon-day">DAY 1</small></button>
           <button class="btn btn-ghost" id="btn-practice">연습 모드 <small>가이드 따라 천천히</small></button>
           <button class="btn btn-ghost" id="btn-cards">빌드 카드 보기 <small>4종 단면 · 랩핑 순서</small></button>
+          <button class="btn btn-ghost install" id="btn-install" hidden>홈 화면에 아이콘 추가 <small>핸드폰 바로가기</small></button>
         </div>
         <div class="days" id="day-chips"></div>
         <p class="day-note">DAY 1 · 4종 1개씩 공부(클래식→뿌링클→맛초킹→콰삭) → DAY 2 · 복습 → DAY 3~5 · 랜덤 주문·러시·피크타임</p>
@@ -1202,11 +1208,35 @@ window.addEventListener('keydown',e=>{if((e.code==='Space'||e.key===' ')&&G.disp
 window.addEventListener('keyup',e=>{if(e.code==='Space'||e.key===' ')endHold();});
 $('#modal').addEventListener('keydown',e=>{if(e.key==='Escape'&&$('#sheet').querySelector('[data-act="close"],[data-act="resume"]')){closeModal();}});
 
+/* 홈 화면에 아이콘 추가 (GitHub Pages 버전에서만: window.__PWA) */
+let installEvt=null;
+const isStandalone=()=>matchMedia('(display-mode: standalone)').matches||navigator.standalone===true;
+function renderInstallBtn(){const b=$('#btn-install');if(b)b.hidden=!window.__PWA||isStandalone();}
+window.addEventListener('beforeinstallprompt',e=>{e.preventDefault();installEvt=e;renderInstallBtn();});
+window.addEventListener('appinstalled',()=>{installEvt=null;renderInstallBtn();});
+async function onInstall(){
+  if(installEvt){const ev=installEvt;installEvt=null;try{await ev.prompt();await ev.userChoice;}catch(e){}renderInstallBtn();return;}
+  const ua=navigator.userAgent,ios=/iPhone|iPad|iPod/i.test(ua)||(navigator.platform==='MacIntel'&&navigator.maxTouchPoints>1),kakao=/KAKAOTALK/i.test(ua),inapp=kakao||/NAVER\(|Instagram|FBAN|FBAV|Line\//i.test(ua);
+  let steps;
+  if(inapp)steps=ios?['카카오톡 화면 오른쪽 아래 [⋯] 또는 [공유] 버튼을 눌러요','[Safari로 열기]를 눌러요','Safari 아래쪽 [공유 □↑] → [홈 화면에 추가] → [추가]']
+    :['카카오톡 화면 오른쪽 위 [⋮] 버튼을 눌러요','[다른 브라우저로 열기] → Chrome을 골라요','Chrome에서 이 버튼을 다시 누르면 [설치] 창이 떠요'];
+  else if(ios)steps=['Safari 아래쪽 [공유] 버튼(□↑)을 눌러요','목록에서 [홈 화면에 추가]를 눌러요','오른쪽 위 [추가]를 누르면 홈 화면에 아이콘이 생겨요'];
+  else steps=['Chrome 오른쪽 위 [⋮] 메뉴를 눌러요','[홈 화면에 추가] 또는 [앱 설치]를 눌러요','[설치]·[추가]를 누르면 홈 화면에 아이콘이 생겨요'];
+  openModal(`<div class="m-eyebrow">홈 화면에 추가</div><h2>아이콘으로 바로 열기</h2>
+  <div class="install-icon"><img src="icons/apple-touch-icon.png" alt="bhc 버거게임 아이콘" width="64" height="64"><b>bhc 버거게임</b></div>
+  ${inapp?'<p><b>카카오톡 같은 앱 안의 브라우저에서는 홈 화면에 추가할 수 없어요.</b> 먼저 핸드폰 기본 브라우저로 열어 주세요.</p>':''}
+  <ol class="mlist" style="padding-left:20px">${steps.map(s=>`<li>${s}</li>`).join('')}</ol>
+  <p class="legend">한 번만 추가하면 다음부터는 홈 화면의 아이콘을 눌러 바로 시작해요.</p>
+  <div class="m-btns">${kakao?'<button class="btn btn-primary" data-act="open-external" data-focus>기본 브라우저로 열기</button><button class="btn btn-ghost" data-act="close">닫기</button>':'<button class="btn btn-primary" data-act="close" data-focus>확인</button>'}</div>`);}
+ACT['open-external']=()=>{location.href='kakaotalk://web/openExternal?url='+encodeURIComponent(location.href);};
+$('#btn-install').addEventListener('click',onInstall);
+
 /* boot */
-initStation();buildTools();resetBuns();renderTitle();showScreen('title');requestAnimationFrame(loop);bgmLoad();
+initStation();buildTools();resetBuns();renderTitle();renderInstallBtn();showScreen('title');requestAnimationFrame(loop);bgmLoad();
 window.__G=G;window.__BGM=BGM;
 })();
 </script>
 
+<script>if('serviceWorker' in navigator){addEventListener('load',()=>{navigator.serviceWorker.register('sw.js').catch(()=>{});});}</script>
 </body>
 </html>
