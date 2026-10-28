@@ -113,8 +113,8 @@ h1.logo .accent{color:var(--mustard);display:inline-block;transform:rotate(-2deg
 
 /* stack svg */
 .stack{display:block;width:100%;height:auto;max-width:100%}
-.st-l{font-family:var(--f-body);font-size:12.5px;font-weight:600;fill:#2A2522}
-.st-s{fill:#A81D2E;font-weight:800}
+.st-l{font-family:var(--f-body);font-size:13px;font-weight:600;fill:#2A2522}
+.st-s{fill:#A81D2E;font-weight:800;font-size:16px;font-family:var(--f-mono)}
 .st-pt{fill:#D49400}
 .g-p{fill:#23864A;font-weight:800}.g-g{fill:#B97A0C;font-weight:800}.g-o{fill:#C9302C;font-weight:800}
 .stack.anim .ly{animation:lyDrop .5s cubic-bezier(.2,.9,.3,1.2) backwards;animation-delay:calc(var(--i) * 110ms + 150ms)}
@@ -147,7 +147,7 @@ h1.logo .accent{color:var(--mustard);display:inline-block;transform:rotate(-2deg
 
 .game-grid{display:flex;flex-direction:column;gap:10px}
 .col{display:contents}
-#rail{order:1}#msg{order:2}#station-wrap{order:3}#gauge{order:4}#panel-tools,#panel-wrap{order:5}#actions{order:6}#checklist{order:7}
+#rail{order:1}#msg{order:2}#station-wrap{order:3}#gauge{order:4}#panel-tools,#panel-wrap,#panel-bowl{order:5}#actions{order:6}#checklist{order:7}
 @media (min-width:900px){
   .game-grid{display:grid;grid-template-columns:minmax(0,1.3fr) minmax(0,1fr);gap:14px;align-items:start}
   .col{display:flex;flex-direction:column;gap:10px;min-width:0}
@@ -205,7 +205,7 @@ h1.logo .accent{color:var(--mustard);display:inline-block;transform:rotate(-2deg
 .g-info{display:flex;flex-wrap:wrap;justify-content:space-between;align-items:baseline;gap:2px 8px;min-width:0}
 .g-name{font-weight:800;font-size:14px;word-break:keep-all}
 .g-val{font-family:var(--f-mono);font-size:13px;color:var(--muted);white-space:nowrap;font-variant-numeric:tabular-nums}
-.g-val b{font-size:22px;color:var(--paper)}
+.g-val b{font-size:30px;color:var(--paper)}
 .gauge.inzone .g-val b{color:#6BE39A}
 .gauge.over .g-val b{color:#FF8A7A}
 .g-bar{grid-column:1;position:relative;height:20px;border-radius:10px;background:#3A332E;overflow:hidden}
@@ -226,7 +226,22 @@ h1.logo .accent{color:var(--mustard);display:inline-block;transform:rotate(-2deg
 .tools{display:grid;grid-template-columns:repeat(5,minmax(0,1fr));gap:6px}
 .tool{background:var(--panel-2);border:2px solid var(--line);border-radius:10px;padding:6px 2px;display:flex;flex-direction:column;align-items:center;gap:3px;font-size:clamp(10px,2.75vw,11.5px);font-weight:700;line-height:1.2;min-height:78px;text-align:center;overflow-wrap:anywhere;min-width:0}
 .tool svg{width:34px;height:34px;flex:none}
-.tool .spec{font-family:var(--f-mono);font-size:10.5px;color:var(--mustard);font-weight:700}
+.tool .spec{font-family:var(--f-mono);font-size:13.5px;line-height:1.1;color:#FFD15C;font-weight:800;background:rgba(0,0,0,.4);border-radius:6px;padding:2px 5px;letter-spacing:-.02em}
+.gram{font-family:var(--f-mono);font-weight:800;font-size:1.22em;color:#A81D2E;letter-spacing:-.01em}
+.panel .gram,.check .gram{color:#FFD15C}
+.g-goal{font-family:var(--f-mono);font-size:16px;font-weight:800;color:var(--mustard);margin-left:4px}
+.bowl-steps{list-style:none;margin:0 0 10px;padding:0;display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:6px}
+.bowl-steps li{background:var(--panel-2);border:2px solid var(--line);border-radius:10px;padding:8px 10px;display:flex;justify-content:space-between;align-items:baseline;gap:6px;font-weight:700;font-size:13px}
+.bowl-steps li.done{opacity:.5}
+.bowl-steps li.next{border-color:var(--mustard);background:#3B301C}
+.bowl-btns{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:8px}
+.gt{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:8px;margin-top:10px}
+.gt-col{background:#fff;border-radius:10px;padding:8px 10px;min-width:0}
+.gt-col h5{margin:0 0 4px;font-size:12.5px;color:#7A7068;letter-spacing:.04em}
+.gt-row{display:flex;justify-content:space-between;align-items:center;gap:6px;border-top:1px dashed #E2D9C8;padding:6px 0}
+.gt-row span{font-size:13px;font-weight:700;color:#2A2522;line-height:1.25;min-width:0}
+.gt-row small{display:block;font-size:11px;font-weight:600;color:#8A8076}
+.gt-row b{font-family:var(--f-mono);font-size:21px;font-weight:800;color:#A81D2E;white-space:nowrap}
 .tool.sel{border-color:var(--mustard);background:#3B301C}
 .tool.guide{animation:tglow 1.1s ease-in-out infinite}
 @keyframes tglow{50%{box-shadow:0 0 0 4px rgba(242,182,50,.55)}}
@@ -294,6 +309,9 @@ h1.logo .accent{color:var(--mustard);display:inline-block;transform:rotate(-2deg
   <radialGradient id="gTop" cx="40%" cy="35%" r="72%"><stop offset="0" stop-color="#F3BA62"/><stop offset=".6" stop-color="#D98B34"/><stop offset="1" stop-color="#A8601E"/></radialGradient>
   <radialGradient id="gPatty" cx="45%" cy="40%" r="65%"><stop offset="0" stop-color="#F7C65E"/><stop offset=".62" stop-color="#E29835"/><stop offset="1" stop-color="#B8691C"/></radialGradient>
   <radialGradient id="gKpatty" cx="45%" cy="40%" r="65%"><stop offset="0" stop-color="#F8A85A"/><stop offset=".6" stop-color="#E07131"/><stop offset="1" stop-color="#A8411A"/></radialGradient>
+  <pattern id="pSeason" width="9" height="9" patternUnits="userSpaceOnUse" patternTransform="rotate(20)"><rect width="9" height="9" fill="#EDC257" opacity=".45"/><circle cx="2" cy="2" r="1.5" fill="#F6D777"/><circle cx="6.5" cy="5" r="1.2" fill="#D49A2A"/><circle cx="3.5" cy="7.5" r="1" fill="#FBE7A8"/><circle cx="7.6" cy="1.2" r=".8" fill="#E6B040"/></pattern>
+  <radialGradient id="gBowl"cx="40%" cy="35%" r="70%"><stop offset="0" stop-color="#F7F8FA"/><stop offset=".6" stop-color="#C7CDD2"/><stop offset="1" stop-color="#8E979F"/></radialGradient>
+  <radialGradient id="gBowlIn" cx="55%" cy="60%" r="65%"><stop offset="0" stop-color="#E7EAED"/><stop offset=".7" stop-color="#BCC3C9"/><stop offset="1" stop-color="#A3ABB2"/></radialGradient>
   <radialGradient id="gHeelB" cx="45%" cy="42%" r="62%"><stop offset="0" stop-color="#EFC985"/><stop offset=".65" stop-color="#D89F4E"/><stop offset="1" stop-color="#B47233"/></radialGradient>
   <radialGradient id="gLeaf" cx="38%" cy="50%" r="68%"><stop offset="0" stop-color="#F0F9D4"/><stop offset=".45" stop-color="#C6E68E"/><stop offset=".8" stop-color="#97CD5A"/><stop offset="1" stop-color="#74B63E"/></radialGradient>
   <linearGradient id="gSteel" x1="0" y1="0" x2="1" y2="1"><stop offset="0" stop-color="#E6E9EC"/><stop offset=".42" stop-color="#C5CACF"/><stop offset=".55" stop-color="#D7DBDF"/><stop offset="1" stop-color="#ADB3B9"/></linearGradient>
@@ -384,6 +402,11 @@ h1.logo .accent{color:var(--mustard);display:inline-block;transform:rotate(-2deg
           <h3>소스 스테이션</h3><div class="tools" id="tools-sauce"></div>
           <h3>토핑 · 패티</h3><div class="tools" id="tools-top"></div>
         </div>
+        <div class="panel" id="panel-bowl" hidden>
+          <h3>시즈닝 볼 — 뿌링클 패티</h3>
+          <ol class="bowl-steps" id="bowl-steps"></ol>
+          <div class="bowl-btns"><button class="dp" data-b="flip">패티 뒤집기 ⟲</button><button class="dp" data-b="place">버거(힐)에 올리기 →</button></div>
+        </div>
         <div class="panel" id="panel-wrap" hidden>
           <h3>랩핑 — 접을 곳을 순서대로</h3>
           <div class="dpad">
@@ -437,7 +460,8 @@ const ING={
   lettuce:{name:'양상추',short:'양상추',kind:'pile',target:15,rate:8,tolP:1.5,tolG:3,color:'#8CC84B'},
   patty:{name:'치킨패티',short:'치킨패티',kind:'place'},
   kpatty:{name:'콰삭킹 패티',short:'콰삭킹패티',kind:'place'},
-  seasoning:{name:'뿌링클 시즈닝',short:'뿌링클시즈닝',kind:'shake',target:3,rate:2,tolP:0.3,tolG:0.6,color:'#F2C94C'},
+  seasoning:{name:'뿌링클 시즈닝',short:'뿌링클시즈닝',kind:'shake',target:1.5,rate:1.1,tolP:0.2,tolG:0.4,color:'#F2C94C'},
+  spatty:{name:'치킨패티(뿌링클 시즈닝)',short:'시즈닝 패티',kind:'bowl'},
 };
 for(const k in ING) ING[k].id=k;
 const SAUCE_TOOLS=['mayo','white','habanero','bburing','matcho'];
@@ -449,26 +473,34 @@ const BURGERS={
   kwasak:{name:'콰삭 치킨버거',short:'콰삭',crown:['mayo'],heel:['mayo','pickle','kpatty','habanero'],point:['kpatty','habanero'],
     tips:['크라운엔 마요네즈 12.5g만 — 양상추 없음!','힐: 마요네즈 12.5g → 오이피클 4개(25g)','패티는 콰삭킹 패티 1장','스윗하바네로소스 20g 지그재그 → 크라운 덮기'],
     blurb:'양상추 없이 콰삭킹 패티 + 스윗하바네로소스.'},
-  bburinkle:{name:'뿌링클 치킨버거',short:'뿌링클',crown:['mayo','lettuce'],heel:['mayo','pickle','patty','seasoning','bburing'],point:['seasoning','bburing'],
-    tips:['클래식과 같은 빌드업, 다른 점은 2가지','패티 위에 뿌링클 시즈닝 3g을 골고루','소스는 뿌링뿌링소스 20g','크라운: 마요네즈 12.5g + 양상추 15g(큰 잎 3~4장)'],
-    blurb:'패티 위 뿌링클 시즈닝 3g + 뿌링뿌링소스.'},
+  bburinkle:{name:'뿌링클 치킨버거',short:'뿌링클',crown:['mayo','lettuce'],heel:['mayo','pickle','spatty','bburing'],point:['spatty','bburing'],
+    tips:['클래식과 같은 빌드업, 다른 점은 2가지','치킨패티를 볼에 넣고 뿌링클 시즈닝 앞면 1.5g → 뒤집어 뒷면 1.5g','시즈닝한 패티를 힐에 올리고 뿌링뿌링소스 20g','크라운: 마요네즈 12.5g + 양상추 15g(큰 잎 3~4장)'],
+    blurb:'볼에서 패티 앞·뒤로 시즈닝 1.5g씩 + 뿌링뿌링소스 20g.'},
   matcho:{name:'맛초킹 치킨버거',short:'맛초킹',crown:['mayo','lettuce'],heel:['mayo','pickle','patty','matcho'],point:['matcho'],
     tips:['클래식과 같은 빌드업','소스만 맛초킹버거소스 20g 지그재그','패티는 일반 치킨패티 1장','크라운: 마요네즈 12.5g + 양상추 15g(큰 잎 3~4장)'],
     blurb:'클래식 빌드에 맛초킹버거소스 20g.'},
 };
 const BKEYS=['classic','bburinkle','matcho','kwasak'];
+for(const k in BURGERS)BURGERS[k].key=k;
 function stepText(id){
   switch(id){
     case 'mayo':return '마요네즈 12.5g · 가장자리→안쪽 동그랗게';
     case 'pickle':return '오이피클 4개 (25g)';
     case 'patty':return '치킨패티 1장';
     case 'kpatty':return '콰삭킹 패티 1장';
-    case 'seasoning':return '뿌링클 시즈닝 3g · 패티 위 골고루';
+    case 'seasoning':return '뿌링클 시즈닝 앞 1.5g · 뒤 1.5g';
+    case 'spatty':return '치킨패티 → 볼: 시즈닝 앞 1.5g · 뒤 1.5g → 힐에 올리기';
     case 'lettuce':return '양상추 15g (큰 잎 3~4장) · 마요네즈 위에';
     default:return ING[id].name+' 20g · 패티 위 지그재그';
   }
 }
-function specOf(id){const i=ING[id];if(i.kind==='count')return '4개·25g';if(i.kind==='place')return '1장';return i.target+'g';}
+function specOf(id){const i=ING[id];if(id==='seasoning')return '1.5g×2';if(i.kind==='count')return '25g';if(i.kind==='place')return '1장';return i.target+'g';}
+const hiG=t=>t.replace(/(\d+(?:\.\d+)?g(?:×2)?)/g,'<b class="gram">$1</b>');
+function gramRow(id){const i=ING[id];
+  if(id==='spatty')return `<div class="gt-row"><span>치킨패티 + 뿌링클 시즈닝<small>볼에서 앞면 · 뒷면</small></span><b>1.5g×2</b></div>`;
+  const v=i.kind==='count'?'25g':i.kind==='place'?'1장':i.target+'g',sub=id==='pickle'?'4개':id==='lettuce'?'큰 잎 3~4장':id==='mayo'?'가장자리→안쪽 동그랗게':i.kind==='sauce'?'패티 위 지그재그':'';
+  return `<div class="gt-row"><span>${i.name}${sub?`<small>${sub}</small>`:''}</span><b>${v}</b></div>`;}
+function gramTable(key){const B=BURGERS[key];return `<div class="gt"><div class="gt-col"><h5>크라운 (윗번)</h5>${B.crown.map(gramRow).join('')}</div><div class="gt-col"><h5>힐 (아랫번)</h5>${B.heel.map(gramRow).join('')}</div></div>`;}
 const WRAP_STEPS=[
   {id:'turn',label:'버거 뒤집기',desc:'만든 버거를 힐(아랫번)이 위로 보이게 뒤집어요'},
   {id:'insert',label:'버거 넣기',desc:'랩지 뒷면이 위로 · 열린 쪽으로 버거를 넣어요'},
@@ -535,10 +567,10 @@ function renderSoundBtns(){$('#btn-mute').textContent=G.save.muted?'효과음 �
   const h=$('#btn-bgm2');h.classList.toggle('on',!G.save.bgmOff);h.setAttribute('aria-pressed',String(!G.save.bgmOff));h.textContent=G.save.bgmOff?'♪ OFF':'♪';}
 
 /* ================= side-view build card ================= */
-const LH={heel:24,mayo:8,pickle:14,patty:30,kpatty:32,seasoning:8,white:11,habanero:11,bburing:12,matcho:11,lettuce:15,crown:50};
+const LH={heel:24,mayo:8,pickle:14,patty:30,kpatty:32,spatty:32,seasoning:8,white:11,habanero:11,bburing:12,matcho:11,lettuce:15,crown:50};
 function finalLayers(key){const B=BURGERS[key];const L=[{id:'heel'}];B.heel.forEach(id=>L.push({id,side:'heel'}));B.crown.slice().reverse().forEach(id=>L.push({id,side:'crown'}));L.push({id:'crown'});return L;}
-function layerLabel(id){if(id==='heel')return['버거 힐',''];if(id==='crown')return['크라운',''];const i=ING[id];return[i.name,i.kind==='count'?'25g (4개)':i.kind==='place'?'1장':i.target+'g'];}
-function halfW(id,w){return({heel:w/2,crown:w/2,patty:w/2+3,kpatty:w/2+5,pickle:w/2-6,lettuce:w/2,seasoning:w/2-14}[id])??(w/2-6);}
+function layerLabel(id){if(id==='heel')return['버거 힐',''];if(id==='crown')return['크라운',''];if(id==='spatty')return['패티+시즈닝','앞·뒤 1.5g'];const i=ING[id];return[i.name,i.kind==='count'?'25g (4개)':i.kind==='place'?'1장':i.target+'g'];}
+function halfW(id,w){return({heel:w/2,crown:w/2,patty:w/2+3,kpatty:w/2+5,spatty:w/2+3,pickle:w/2-6,lettuce:w/2,seasoning:w/2-14}[id])??(w/2-6);}
 function capsule(cx,t,h,w,fill,stroke){return `<rect x="${f1(cx-w/2)}" y="${f1(t)}" width="${f1(w)}" height="${h}" rx="${h/2}" fill="${fill}" stroke="${stroke}" stroke-width="1"/>`;}
 function drips(cx,b,w,fill,stroke,r,n){let s='';for(let j=0;j<n;j++){const x=cx-w/2+w*(j+.5)/n+(r()-.5)*12;s+=`<path d="M${f1(x-3)},${f1(b-1.5)} q3,${f1(5+r()*4)} 6,0" fill="${fill}" stroke="${stroke}" stroke-width=".8"/>`;}return s;}
 function zigLine(cx,t,h,w,id){let d='';const n=12;for(let j=0;j<=n;j++){const x=cx-w/2+w*j/n,y=j%2?t+h*.3:t+h*.72;d+=(j?'L':'M')+f1(x)+','+f1(y);}const hl=id==='matcho'?'#9A5530':id==='habanero'?'#FFB38E':'#FFFFFF';return `<path d="${d}" fill="none" stroke="${hl}" stroke-width="1.3" opacity=".9"/>`;}
@@ -552,6 +584,7 @@ function layerShape(id,cx,t,h,w,seed){
     case 'mayo':return capsule(cx,t,h,w-12,'#FBF4DA','#CDB97F')+drips(cx,b,w-30,'#FBF4DA','#CDB97F',r,2);
     case 'white':case 'habanero':case 'bburing':case 'matcho':{const i=ING[id];return capsule(cx,t,h,w-12,i.color,i.edge)+zigLine(cx,t,h,w-26,id)+drips(cx,b,w-26,i.color,i.edge,r,3);}
     case 'pickle':{let s='';[-46,-15,16,47].forEach((dx,k)=>{const yc=t+h/2,rot=k%2?5:-5;s+=`<g transform="rotate(${rot} ${cx+dx} ${yc})"><ellipse cx="${cx+dx}" cy="${yc}" rx="23" ry="${h/2-.5}" fill="#97B446" stroke="#5F7A22" stroke-width="1.2"/><ellipse cx="${cx+dx}" cy="${yc-1}" rx="15" ry="${h/2-3.5}" fill="#BCD06C" opacity=".85"/></g>`;});return s;}
+    case 'spatty':return layerShape('patty',cx,t,h,w,seed)+layerShape('seasoning',cx,t+1,7,w+4,seed+5)+layerShape('seasoning',cx,t+h-8,7,w+4,seed+9);
     case 'patty':case 'kpatty':{const k=id==='kpatty',n=k?22:14,amp=k?6:3.5,xs0=x0-(k?5:3),xs1=x1+(k?5:3);const tp=[],bp=[];
       for(let j=0;j<=n;j++){const x=lerp(xs0+6,xs1-6,j/n);tp.push([x,t+(r()-.3)*amp]);bp.push([x,b-(r()-.3)*amp*.6]);}
       let d=`M${f1(tp[0][0])},${f1(tp[0][1]+h*.25)} `;tp.forEach(p=>d+=`L${f1(p[0])},${f1(p[1])} `);d+=`Q${f1(xs1+2)},${f1(t+h/2)} ${f1(bp[n][0])},${f1(bp[n][1])} `;for(let j=n;j>=0;j--)d+=`L${f1(bp[j][0])},${f1(bp[j][1])} `;d+=`Q${f1(xs0-2)},${f1(t+h/2)} ${f1(tp[0][0])},${f1(tp[0][1]+h*.25)} Z`;
@@ -567,7 +600,7 @@ function layerShape(id,cx,t,h,w,seed){
 function gradeTspan(r){if(!r)return'';const g=r.grams!=null?f1(r.grams)+'g':'';if(r.grade==='P')return ` <tspan class="g-p">✓${g?' '+g:''}</tspan>`;if(r.grade==='G')return ` <tspan class="g-g">△ ${g}</tspan>`;if(r.grade==='O')return ` <tspan class="g-o">✕ 과다 ${g}</tspan>`;return ` <tspan class="g-o">✕ ${g}</tspan>`;}
 function stackSVG(key,opt={}){
   const labels=opt.labels!==false,grades=opt.grades||null,B=BURGERS[key],L=finalLayers(key);
-  const gap=labels?9:5,w=150,cx=labels?96:100,W=labels?(grades?440:370):200,pad=12;
+  const gap=labels?9:5,w=150,cx=labels?96:100,W=labels?(grades?470:390):200,pad=12;
   const total=L.reduce((s,l)=>s+LH[l.id],0)+gap*(L.length-1),H=total+pad*2;
   let y=H-pad;const items=[];
   L.forEach((l,i)=>{const h=LH[l.id],t=y-h;items.push({l,t,h,yc:t+h/2});y=t-gap;});
@@ -577,7 +610,9 @@ function stackSVG(key,opt={}){
   items.forEach((it,k)=>{
     let g=layerShape(it.l.id,cx,it.t,it.h,w,key.length*7+k);
     if(labels){const yy=ly[k]+shift,lx=cx+w/2+34,right=cx+halfW(it.l.id,w),isPt=B.point.includes(it.l.id),[nm,sp]=layerLabel(it.l.id);
-      let gr='';if(grades&&it.l.side){gr=gradeTspan(grades.find(r=>r.id===it.l.id&&r.side===it.l.side));}
+      let gr='';if(grades&&it.l.id==='spatty'){const fr=grades.find(r=>r.side==='bowl'&&r.face==='front'),bk=grades.find(r=>r.side==='bowl'&&r.face==='back');
+        if(fr&&bk){const c=[fr,bk].some(r=>r.grade==='O')?'g-o':[fr,bk].some(r=>r.grade==='G')?'g-g':'g-p';gr=` <tspan class="${c}">${f1(fr.grams)}·${f1(bk.grams)}g</tspan>`;}}
+      else if(grades&&it.l.side){gr=gradeTspan(grades.find(r=>r.id===it.l.id&&r.side===it.l.side));}
       g+=`<path d="M${f1(right+3)},${f1(it.yc)} L${f1(lx-16)},${f1(it.yc)} L${f1(lx-6)},${f1(yy)}" fill="none" stroke="#B4A99C" stroke-width="1"/><text x="${lx}" y="${f1(yy+4.5)}" class="st-l">${isPt?'<tspan class="st-pt">● </tspan>':''}${nm}${sp?` <tspan class="st-s">${sp}</tspan>`:''}${gr}</text>`;}
     out+=`<g class="ly" style="--i:${k}">${g}</g>`;
   });
@@ -639,16 +674,22 @@ function wrapMini(idx){
 function wrapStepsHTML(stateFn,doneAll){return WRAP_STEPS.map((st,i)=>`<li class="${stateFn?stateFn(st.id):''}">${wrapMini(i)}<b>${i+1}. ${st.label}</b><span>${st.desc}</span></li>`).join('')+`<li class="${doneAll?'next':''}">${wrapMiniFinal()}<b>완성</b><span>꼬리는 아래, bhc 로고는 위로</span></li>`;}
 
 /* ================= station (top-down) ================= */
-const R=108,PR=100,CENTER={crown:[150,198],heel:[450,198]};
+const R=108,PR=100,CENTER={crown:[150,198],heel:[450,198],bowl:[300,208]};
 const PICKLE_POS=[[-30,-30],[31,-27],[-28,31],[31,30]];
-let svg,gBuild,gWrap,gOv,bunG={},layerG={},ringG={},handEl=null;
+let svg,gBuild,gWrap,gBowlV,gOv,bunG={},layerG={},ringG={},handEl=null;
 function initStation(){
   svg=$('#station');svg.innerHTML='';
   S('rect',{x:0,y:0,width:600,height:380,fill:'url(#gSteel)'},svg);
   S('rect',{x:0,y:0,width:600,height:380,fill:'url(#pBrush)'},svg);
   S('rect',{x:0,y:370,width:600,height:10,fill:'#959BA1'},svg);
-  gBuild=S('g',{},svg);gWrap=S('g',{display:'none'},svg);gOv=S('g',{},svg);
+  gBuild=S('g',{},svg);gWrap=S('g',{display:'none'},svg);gBowlV=S('g',{display:'none'},svg);gOv=S('g',{},svg);
   [['crown','크라운 · 윗번'],['heel','힐 · 아랫번']].forEach(([s,t])=>{const tx=S('text',{x:CENTER[s][0],y:350,'text-anchor':'middle',class:'svg-label'},gBuild);tx.textContent=t;});
+  /* 시즈닝 볼(뿌링클 패티용) — 두 번 사이 위쪽 */
+  const bw=S('g',{transform:'translate(300,62)','data-side':'bowl',class:'bun'},gBuild);
+  S('ellipse',{cx:2,cy:6,rx:46,ry:42,fill:'#2B2F33',opacity:.2},bw);S('circle',{r:44,fill:'url(#gBowl)',stroke:'#7E868D','stroke-width':2},bw);S('circle',{r:33,fill:'url(#gBowlIn)'},bw);
+  const bt=S('text',{y:5,'text-anchor':'middle',class:'svg-label','font-size':13},bw);bt.textContent='볼';
+  ringG.bowl=S('circle',{r:52,class:'ring'},bw);S('circle',{r:54,fill:'transparent','data-side':'bowl'},bw);
+  const bl=S('text',{x:300,y:124,'text-anchor':'middle',class:'svg-label','font-size':12},gBuild);bl.textContent='시즈닝 볼';
   svg.addEventListener('pointerdown',onStationDown);
   svg.addEventListener('contextmenu',e=>e.preventDefault());
 }
@@ -662,11 +703,11 @@ function resetBuns(){
     drawBunBase(g,side==='crown'?11:23);layerG[side]=S('g',{},g);ringG[side]=S('circle',{r:R+9,class:'ring'},g);S('circle',{r:R+14,fill:'transparent','data-side':side},g);bunG[side]=g;});
 }
 function blobPath(rad,seed,amp,n){const r=rng(seed),ph=[r()*6,r()*6];let d='';for(let i=0;i<n;i++){const a=i/n*Math.PI*2;const rr=rad*(1+.05*amp*Math.sin(3*a+ph[0])+.03*amp*Math.sin(7*a+ph[1])+.028*amp*(r()-.5)*2);d+=(i?'L':'M')+f1(Math.cos(a)*rr)+','+f1(Math.sin(a)*rr);}return d+'Z';}
-function drawPatty(side,id){const k=id==='kpatty';const outer=S('g',{},layerG[side]);const g=S('g',{class:'drop'},outer);
-  S('path',{d:blobPath(PR+2,7,1,36),fill:'#000',opacity:.22,transform:'translate(2,7)'},g);
-  S('path',{d:blobPath(PR,k?31:7,k?2.2:1,k?60:40),fill:`url(#${k?'gKpatty':'gPatty'})`,stroke:k?'#9A3A14':'#A85E18','stroke-width':1.6},g);
-  const r=rng(k?5:9);for(let i=0;i<(k?80:46);i++){const a=r()*Math.PI*2,d=Math.sqrt(r())*PR*.86,x=f1(Math.cos(a)*d),y=f1(Math.sin(a)*d);S('ellipse',{cx:x,cy:y,rx:f1(k?2.5+r()*5:2+r()*3.5),ry:f1(k?1.6+r()*3:1.3+r()*2.2),fill:r()<.55?(k?'#FBC07A':'#F8D488'):(k?'#B9481C':'#C67822'),opacity:.75,transform:`rotate(${(r()*180)|0} ${x} ${y})`},g);}
-}
+function drawPattyShape(g,k,rad,seed){S('path',{d:blobPath(rad+2,7,1,36),fill:'#000',opacity:.22,transform:'translate(2,7)'},g);
+  S('path',{d:blobPath(rad,k?31:7,k?2.2:1,k?60:40),fill:`url(#${k?'gKpatty':'gPatty'})`,stroke:k?'#9A3A14':'#A85E18','stroke-width':1.6},g);
+  const r=rng(seed||(k?5:9));for(let i=0;i<(k?80:46);i++){const a=r()*Math.PI*2,d=Math.sqrt(r())*rad*.86,x=f1(Math.cos(a)*d),y=f1(Math.sin(a)*d);S('ellipse',{cx:x,cy:y,rx:f1(k?2.5+r()*5:2+r()*3.5),ry:f1(k?1.6+r()*3:1.3+r()*2.2),fill:r()<.55?(k?'#FBC07A':'#F8D488'):(k?'#B9481C':'#C67822'),opacity:.75,transform:`rotate(${(r()*180)|0} ${x} ${y})`},g);}}
+function drawPatty(side,id,seasoned){const k=id==='kpatty';const outer=S('g',{},layerG[side]);const g=S('g',{class:'drop'},outer);drawPattyShape(g,k,PR);
+  if(seasoned){seasonCoat(g,PR,.85);const r=rng(21);for(let i=0;i<130;i++)seasonDot(g,r);}}
 function drawPickle(side,pos){const outer=S('g',{transform:`translate(${pos[0]},${pos[1]})`},layerG[side]);const g=S('g',{class:'drop'},outer);
   S('circle',{r:25,cy:3,fill:'#000',opacity:.2},g);S('circle',{r:24,fill:'#8DAA3C',stroke:'#5F7A22','stroke-width':2.5},g);S('circle',{r:23,fill:'none',stroke:'#4E6619','stroke-width':2,'stroke-dasharray':'2.5 3'},g);S('circle',{r:15,fill:'#B9CF6A'},g);
   for(let i=0;i<6;i++){const a=i/6*Math.PI*2;S('ellipse',{cx:f1(Math.cos(a)*9),cy:f1(Math.sin(a)*9),rx:2.6,ry:1.5,fill:'#E9EFC0',transform:`rotate(${(a*180/Math.PI)|0} ${f1(Math.cos(a)*9)} ${f1(Math.sin(a)*9)})`},g);}}
@@ -684,7 +725,10 @@ function lettuceLeaf(g,i){const[x,y,rot]=LEAF_POS[i%LEAF_POS.length];const outer
 function lettucePiece(g,r){const a=r()*Math.PI*2,dist=Math.sqrt(r())*R*.76,x=f1(Math.cos(a)*dist),y=f1(Math.sin(a)*dist),len=12+r()*16,w=3.5+r()*5;
   const cols=['#9BD157','#7FBF3F','#B7E07A','#6AAE36','#CBE89A','#A8D86B'];const outer=S('g',{transform:`translate(${x},${y}) rotate(${(r()*180)|0})`},g);
   S('path',{d:`M${f1(-len/2)},0 Q${f1(-len/4)},${f1(-w)} 0,${f1(-w*.6)} Q${f1(len/4)},${f1(-w*1.1)} ${f1(len/2)},0 Q${f1(len/5)},${f1(w*.8)} 0,${f1(w*.5)} Q${f1(-len/4)},${f1(w)} ${f1(-len/2)},0Z`,fill:cols[r()*cols.length|0],stroke:'#4F8E26','stroke-width':.7,class:'pop'},outer);}
-function seasonDot(g,r){const a=r()*Math.PI*2,d=Math.sqrt(r())*PR*.86;S('circle',{cx:f1(Math.cos(a)*d),cy:f1(Math.sin(a)*d),r:f1(1.3+r()*1.7),fill:['#FFF4C8','#FDE9A3','#FFFBE6','#F9DE7E'][r()*4|0],stroke:'#B98A2A','stroke-width':.5,class:'pop'},g);}
+function seasonDot(g,r,rad){const a=r()*Math.PI*2,d=Math.sqrt(r())*(rad||PR)*.9;S('circle',{cx:f1(Math.cos(a)*d),cy:f1(Math.sin(a)*d),r:f1(1.2+r()*2.2),fill:['#F2CB5C','#E8B33A','#F7DC8A','#D9A030','#FBE7A8'][r()*5|0],stroke:'#B98A2A','stroke-width':.4,class:'pop'},g);}
+/* 사진처럼 시즈닝이 패티 전체에 묻은 코팅 + 볼 바닥에 떨어진 가루 */
+function seasonCoat(g,rad,op){return S('path',{d:blobPath(rad*.98,7,1,40),fill:'url(#pSeason)',opacity:op},g);}
+function floorDot(g,r){const a=r()*Math.PI*2,d=102+r()*22;S('circle',{cx:f1(Math.cos(a)*d),cy:f1(Math.sin(a)*d),r:f1(1+r()*1.8),fill:['#F2CB5C','#E8B33A','#F7DC8A'][r()*3|0],opacity:.85,class:'pop'},g);}
 const SPIRAL_N=240;
 function spiralPts(){const pts=[],total=Math.round(SPIRAL_N*1.6);for(let i=0;i<=total;i++){const t=i/SPIRAL_N;const r=t<=1?R*(.84-.6*t):Math.max(R*.05,R*.24-(t-1)*R*.32);const th=-Math.PI/2+t*2.3*Math.PI*2;pts.push([Math.cos(th)*r,Math.sin(th)*r]);}return{pts,N:SPIRAL_N};}
 function zigzagPts(){const rows=8,top=-PR*.62,bot=PR*.62,raw=[];for(let k=0;k<=rows;k++){const y=lerp(top,bot,k/rows);const hw=Math.sqrt(Math.max(0,(PR*.86)**2-y*y));raw.push([(k%2?1:-1)*hw*.9,y]);}
@@ -739,23 +783,25 @@ function buildTools(){
 }
 function guideNext(){if(!G.build)return null;const B=BURGERS[G.build.key];const seq=[['crown',0],['heel',0]];for(let i=1;i<B.heel.length;i++)seq.push(['heel',i]);for(let i=1;i<B.crown.length;i++)seq.push(['crown',i]);
   for(const [side,i] of seq){if(G.build[side].i<=i)return{side,id:B[side][i]};}return null;}
-function renderTools(){const gn=isGuide()&&G.phase==='build'?guideNext():null;
-  $$('.tool').forEach(b=>{const id=b.dataset.tool;b.classList.toggle('sel',G.tool===id);b.setAttribute('aria-pressed',G.tool===id);b.classList.toggle('guide',!!gn&&gn.id===id&&G.tool!==id);b.querySelector('.spec').hidden=!(G.mode==='practice'||(G.mode==='tycoon'&&G.day&&G.day.guide));});}
-function renderTargets(){['crown','heel'].forEach(s=>ringG[s]&&ringG[s].setAttribute('class','ring'));if(G.phase!=='build'||!G.build)return;
-  if(G.disp&&!G.disp.locked){ringG[G.disp.side].setAttribute('class','ring active');return;}
+const toolFor=id=>id==='spatty'?'patty':id;
+function renderTools(){const gn=isGuide()&&G.phase==='build'?guideNext():null;const blind=G.mode==='tycoon'&&G.day&&G.day.blind;
+  $$('.tool').forEach(b=>{const id=b.dataset.tool;b.classList.toggle('sel',G.tool===id);b.setAttribute('aria-pressed',G.tool===id);b.classList.toggle('guide',!!gn&&toolFor(gn.id)===id&&G.tool!==id);b.querySelector('.spec').hidden=!!blind;});}
+function renderTargets(){['crown','heel','bowl'].forEach(s=>ringG[s]&&ringG[s].setAttribute('class','ring'));if(G.phase!=='build'||!G.build)return;
+  if(G.disp&&!G.disp.locked&&ringG[G.disp.side]){ringG[G.disp.side].setAttribute('class','ring active');return;}
   if(!G.tool)return;const B=BURGERS[G.build.key];
-  if(isGuide()){['crown','heel'].forEach(s=>{if(B[s][G.build[s].i]===G.tool)ringG[s].setAttribute('class','ring on');});}
-  else ['crown','heel'].forEach(s=>ringG[s].setAttribute('class','ring neutral'));}
+  if(isGuide()){['crown','heel'].forEach(s=>{if(B[s][G.build[s].i]===G.tool)ringG[s].setAttribute('class','ring on');});
+    if(G.tool==='patty'&&B.heel[G.build.heel.i]==='spatty')ringG.bowl.setAttribute('class','ring on');}
+  else ['crown','heel','bowl'].forEach(s=>ringG[s].setAttribute('class','ring neutral'));}
 function renderGauge(){
   const g=$('#gauge'),d=G.disp,sq=$('#squeeze'),blind=G.mode==='tycoon'&&G.day&&G.day.blind;
   const zones=[$('#g-good'),$('#g-perfect'),$('#g-target')];
-  if(!d||d.locked){g.className='gauge idle';$('#g-name').textContent=G.phase==='wrap'||G.phase==='wrapped'?'랩핑 중':'저울';
-    $('#g-val').textContent=G.phase==='build'?(G.tool?`${ING[G.tool].short} 선택 → 번 터치`:'재료 선택 → 번 터치'):'';
+  if(!d||d.locked){g.className='gauge idle';$('#g-name').textContent=G.phase==='wrap'||G.phase==='wrapped'?'랩핑 중':G.phase==='bowl'?'시즈닝 볼':'저울';
+    $('#g-val').textContent=G.phase==='build'?(G.tool?`${ING[G.tool].short} 선택 → 번 터치`:'재료 선택 → 번 터치'):G.phase==='bowl'?bowlIdleText():'';
     $('#g-fill').style.width='0';zones.forEach(z=>z.style.display='none');sq.disabled=true;sq.innerHTML='꾹 눌러<br>짜기';return;}
   const ing=ING[d.id];g.className='gauge';
   if(ing.kind==='count'){$('#g-name').textContent='오이피클 — 힐을 터치할 때마다 1개';zones.forEach(z=>z.style.display='none');sq.disabled=true;sq.innerHTML='힐 터치<br>×4';updateGaugeValue();return;}
   const max=ing.target*1.6,pc=v=>clamp(v/max,0,1)*100+'%';
-  $('#g-name').textContent=ing.name;
+  $('#g-name').textContent=ing.name+(d.face?` · ${d.face==='front'?'앞면':'뒷면'}`:'');
   if(blind){zones.forEach(z=>z.style.display='none');}
   else{zones.forEach(z=>z.style.display='block');
     $('#g-good').style.left=pc(ing.target-ing.tolG);$('#g-good').style.width=(2*ing.tolG/max*100)+'%';
@@ -764,21 +810,21 @@ function renderGauge(){
   sq.disabled=false;sq.innerHTML=ing.kind==='shake'?'꾹 눌러<br>흔들기':ing.kind==='pile'?'꾹 눌러<br>올리기':'꾹 눌러<br>짜기';
   $('#g-fill').style.background=ing.color;updateGaugeValue();}
 function updateGaugeValue(){const d=G.disp;if(!d)return;const ing=ING[d.id],g=$('#gauge'),blind=G.mode==='tycoon'&&G.day&&G.day.blind;
-  if(ing.kind==='count'){$('#g-val').innerHTML=`<b>${d.count}</b> / 4개 · ${f1(d.grams)}g`;$('#g-fill').style.width=(d.count/4*100)+'%';$('#g-fill').style.background='#8DAA3C';return;}
+  if(ing.kind==='count'){$('#g-val').innerHTML=`<b>${d.count}</b> / 4개 <span class="g-goal">${f1(d.grams)} / 25g</span>`;$('#g-fill').style.width=(d.count/4*100)+'%';$('#g-fill').style.background='#8DAA3C';return;}
   const max=ing.target*1.6;$('#g-fill').style.width=clamp(d.grams/max,0,1)*100+'%';
-  $('#g-val').innerHTML=`<b>${f1(d.grams)}</b> g${blind?'':` <small>/ 목표 ${ing.target}g</small>`}`;
+  $('#g-val').innerHTML=`<b>${f1(d.grams)}</b> g${blind?'':` <span class="g-goal">목표 ${ing.target}g</span>`}`;
   const diff=d.grams-ing.target;g.classList.toggle('inzone',!blind&&Math.abs(diff)<=ing.tolP);g.classList.toggle('over',!blind&&diff>ing.tolG);}
 function renderChecklist(){
   const el=$('#checklist');if(!isGuide()||!G.build){el.hidden=true;return;}el.hidden=false;const B=BURGERS[G.build.key];
   if(G.phase==='wrap'||G.phase==='wrapped'){const exp=wrapExpected();
     el.innerHTML=`<h3>랩핑 순서</h3><ol class="wsteps">${wrapStepsHTML(id=>G.wrap&&G.wrap.done[id]?'done':exp.includes(id)?'next':'',G.phase==='wrapped')}</ol>`;return;}
   const gn=guideNext();
-  const col=(side,title)=>{const st=G.build[side];return `<div class="ck-col"><h4>${title}</h4><ol>${B[side].map((id,i)=>`<li class="${i<st.i?'done':(gn&&gn.side===side&&i===st.i)?'next':''}">${stepText(id)}</li>`).join('')}</ol></div>`;};
+  const col=(side,title)=>{const st=G.build[side];return `<div class="ck-col"><h4>${title}</h4><ol>${B[side].map((id,i)=>`<li class="${i<st.i?'done':(gn&&gn.side===side&&i===st.i)?'next':''}"><span>${hiG(stepText(id))}</span></li>`).join('')}</ol></div>`;};
   const done=isBuildComplete();
   el.innerHTML=`<h3>빌드 순서 · ${B.name}</h3><div class="ck-grid">${col('crown','크라운 (윗번)')}${col('heel','힐 (아랫번)')}</div><p class="ck-end">${done?'<b style="color:#F2B632">▶ 크라운 덮기</b>':'다 쌓으면'} → 랩핑 → 서빙</p>`;}
 function updateActions(){const inBuild=G.phase==='build';$('#btn-close').hidden=!inBuild;$('#btn-close').classList.toggle('guide',inBuild&&isBuildComplete());
   $('#btn-reset').hidden=G.mode!=='practice';$('#btn-card').hidden=false;}
-function showPanel(which){$('#panel-tools').hidden=which!=='tools';$('#panel-wrap').hidden=which!=='wrap';}
+function showPanel(which){$('#panel-tools').hidden=which!=='tools';$('#panel-wrap').hidden=which!=='wrap';$('#panel-bowl').hidden=which!=='bowl';}
 function updateHud(){
   if(G.mode==='practice'){$('#hud-day').textContent='연습 모드';$('#hud-sub').textContent=G.build?BURGERS[G.build.key].name:'';$('#hud-served').hidden=true;$('#hud-score').hidden=true;$('#btn-guide').hidden=false;
     $('#btn-guide').textContent=G.guide?'가이드 ON':'가이드 OFF';$('#btn-guide').classList.toggle('on',G.guide);return;}
@@ -797,22 +843,25 @@ function updateRailBars(){G.queue.forEach(c=>{if(!c.bar)return;const f=clamp(c.p
 /* ================= build logic ================= */
 function newBuild(key){return{key,crown:{i:0,partial:null},heel:{i:0,partial:null},results:[],mistakes:[],hints:0};}
 function isBuildComplete(){if(!G.build)return false;const B=BURGERS[G.build.key];return G.build.crown.i>=B.crown.length&&G.build.heel.i>=B.heel.length;}
-function sideName(s){return s==='crown'?'크라운':'힐';}
+function sideName(s){return s==='crown'?'크라운':s==='bowl'?'볼':'힐';}
 function resetStationForBuild(){
-  gWrap.setAttribute('display','none');gWrap.innerHTML='';gBuild.removeAttribute('display');resetBuns();hideHand();
-  G.tool=null;G.disp=null;G.holding=false;G.wrap=null;G.phase=G.build?'build':'idle';$('#btn-serve').hidden=true;showPanel('tools');
+  gWrap.setAttribute('display','none');gWrap.innerHTML='';gBowlV.setAttribute('display','none');gBowlV.innerHTML='';gBuild.removeAttribute('display');resetBuns();hideHand();
+  G.tool=null;G.disp=null;G.holding=false;G.wrap=null;G.bowl=null;G.phase=G.build?'build':'idle';$('#btn-serve').hidden=true;showPanel('tools');
   renderTools();renderTargets();renderGauge();renderChecklist();updateActions();}
 function selectTool(id){if(G.phase!=='build')return;
   if(G.disp&&!G.disp.locked&&G.disp.id!==id){endHold(true);hideHand();G.disp=null;}
   G.tool=id;SFX.tick();renderTools();renderTargets();renderGauge();
   if(isGuide()){const gn=guideNext();const B=BURGERS[G.build.key];const sides=['crown','heel'].filter(s=>B[s][G.build[s].i]===id);
-    if(sides.length)say(`${ING[id].name} 선택! 노란 테두리의 ${sides.map(sideName).join('·')}을(를) 터치하세요.`);
+    if(id==='patty'&&gn&&gn.id==='spatty')say('치킨패티 선택! 노란 테두리의 시즈닝 볼을 터치해 패티를 볼에 넣어요.');
+    else if(sides.length)say(`${ING[id].name} 선택! 노란 테두리의 ${sides.map(sideName).join('·')}을(를) 터치하세요.`);
     else say(`${josa(ING[id].name,'은','는')} 지금 올릴 차례가 아니에요. 다음: ${gn?sideName(gn.side)+' — '+stepText(gn.id):'크라운 덮기'}`,'warn');}
   else say(`${ING[id].name} 선택 → 올릴 번을 터치하세요.`);}
 function onStationDown(e){
   ac();if(G.modalOpen)return;
   if(G.phase==='wrap'){const h=e.target.closest('[data-w]');if(h){e.preventDefault();wrapAction(h.dataset.w);}return;}
+  if(G.phase==='bowl'){e.preventDefault();if(G.disp&&!G.disp.locked)beginHold();else bowlTapHint();return;}
   if(G.phase!=='build')return;const s=e.target.closest('[data-side]');if(!s)return;e.preventDefault();const side=s.dataset.side;const d=G.disp;
+  if(side==='bowl'){onBowlTap();return;}
   if(d&&!d.locked&&d.side===side&&G.tool===d.id){if(d.kind==='count')addPickle();else beginHold();return;}
   onBunTap(side);}
 function onBunTap(side){
@@ -820,6 +869,7 @@ function onBunTap(side){
   const id=G.tool,B=BURGERS[G.build.key],track=B[side],st=G.build[side];
   if(st.i>=track.length){mistake('order',`${sideName(side)} 빌드는 이미 끝났어요. ${josa(ING[id].name,'은','는')} 여기에 올리지 않아요.`);return;}
   const expected=track[st.i];
+  if(expected==='spatty'&&id==='patty'){mistake('order','뿌링클은 치킨패티를 먼저 시즈닝 볼에 넣고, 앞면 1.5g → 뒤집어 뒷면 1.5g 뿌린 뒤 올려요!');return;}
   if(id!==expected){wrongIngredient(id,side,expected);return;}
   const ing=ING[id];
   if(ing.kind==='place'){drawPatty(side,id);SFX.pop();completeStep(side,id,{grade:'P'});return;}
@@ -838,10 +888,12 @@ function addPickle(){const d=G.disp;if(!d||d.locked)return;drawPickle(d.side,PIC
   if(d.count>=4){d.locked=true;G.build[d.side].partial=null;completeStep(d.side,'pickle',{grams:25,grade:'P'});}
   else say(`오이피클 ${d.count}/4개 (${f1(d.grams)}g) — 힐을 ${4-d.count}번 더 터치!`);}
 function wrongIngredient(id,side,expected){
-  const B=BURGERS[G.build.key],inThis=B.crown.includes(id)||B.heel.includes(id);let text;const nm=ING[id].name;
-  if(!inThis){
+  const B=BURGERS[G.build.key],inThis=B.crown.includes(id)||B.heel.includes(id);let text;const nm=ING[id].name;const seasonBurger=B.heel.includes('spatty');
+  if(seasonBurger&&id==='patty')text=`치킨패티는 시즈닝 볼에서 앞·뒤 1.5g씩 시즈닝한 뒤 힐에 올려요. 힐 순서: ${B.heel.map(i=>ING[i].short).join(' → ')}`;
+  else if(seasonBurger&&id==='seasoning')text='뿌링클 시즈닝은 번이 아니라 볼에 넣은 치킨패티에 앞·뒤 1.5g씩 뿌려요!';
+  else if(!inThis){
     if(id==='lettuce'&&G.build.key==='kwasak')text='콰삭 치킨버거엔 양상추가 없어요! 크라운엔 마요네즈만.';
-    else if(id==='patty'||id==='kpatty'){const p=B.heel.find(x=>x==='patty'||x==='kpatty');text=`${B.name} 패티는 ${josa(ING[p].name,'이에요','예요')}!`;}
+    else if(id==='patty'||id==='kpatty'){const p=B.heel.find(x=>x==='patty'||x==='kpatty'||x==='spatty');text=`${B.name} 패티는 ${josa(ING[p==='spatty'?'patty':p].name,'이에요','예요')}!`;}
     else if(ING[id].kind==='sauce'&&id!=='mayo'){const s=B.heel.find(x=>ING[x].kind==='sauce'&&x!=='mayo');text=`${B.name} 소스는 ${josa(ING[s].name,'이에요','예요')}. ${josa(nm,'은','는')} 다른 버거용!`;}
     else if(id==='seasoning')text='뿌링클 시즈닝은 뿌링클 치킨버거에만 들어가요!';
     else text=`${B.name}에는 ${josa(nm,'이','가')} 들어가지 않아요!`;}
@@ -858,13 +910,16 @@ function updateDispense(d){const ing=ING[d.id],[cx,cy]=CENTER[d.side],f=d.grams/
     const extra=f>1.15?(f-1.15)*10:0;d.top.setAttribute('stroke-width',f1(d.baseW+extra));d.under.setAttribute('stroke-width',f1(d.baseW+3+extra));moveHand(cx+d.pts[i][0],cy+d.pts[i][1]);}
   else if(ing.kind==='pile'){while((d.count||0)<LEAF_AT.length&&d.grams>=LEAF_AT[d.count||0]){lettuceLeaf(d.g,d.count||0);d.count=(d.count||0)+1;if(d.count>1)SFX.pop();}
     const np=LEAF_POS[Math.min(d.count||0,LEAF_POS.length-1)];moveHand(cx+np[0]*.8,cy+np[1]*.8);}
-  else if(ing.kind==='shake'){const want=Math.floor(d.grams*48);while((d.count||0)<want){seasonDot(d.g,d.r);d.count=(d.count||0)+1;}moveHand(cx+Math.sin(d.grams*4)*30,cy-6+Math.cos(d.grams*3)*18);}}
+  else if(ing.kind==='shake'){const want=Math.floor(d.grams*(d.coat?90:48));while((d.count||0)<want){d.count=(d.count||0)+1;if(d.floor&&d.count%7===0)floorDot(d.floor,d.r);else seasonDot(d.g,d.r,d.coat?96:PR);}
+    if(d.coat)d.coat.setAttribute('opacity',f1(Math.min(.95,d.grams/ing.target*.85)));moveHand(cx+Math.sin(d.grams*6)*34,cy-6+Math.cos(d.grams*4.5)*22);}}
 function evaluateDispense(d){const ing=ING[d.id],g=d.grams,diff=g-ing.target,blind=G.mode==='tycoon'&&G.day&&G.day.blind;
   if(diff<-ing.tolG){say(blind?`조금 부족해요! 지금 ${f1(g)}g — 더 짜주세요.`:`부족해요! 지금 ${f1(g)}g — 목표 ${ing.target}g까지 조금 더.`,'warn');SFX.low();return;}
-  const grade=Math.abs(diff)<=ing.tolP?'P':diff<=ing.tolG?'G':'O';d.locked=true;G.build[d.side].partial=null;hideHand();completeStep(d.side,d.id,{grams:g,grade});}
+  const grade=Math.abs(diff)<=ing.tolP?'P':diff<=ing.tolG?'G':'O';d.locked=true;hideHand();
+  if(d.side==='bowl'){bowlSeasonDone(d,grade);return;}
+  G.build[d.side].partial=null;completeStep(d.side,d.id,{grams:g,grade});}
 function completeStep(side,id,res){const b=G.build;b.results.push({side,id,...res});b[side].i++;G.disp=null;
   const[cx,cy]=CENTER[side],ing=ING[id],gtxt=res.grams!=null?` ${f1(res.grams)}g`:'';
-  if(res.grade==='P'){floatText(cx,cy-20,(ing.kind==='place'||ing.kind==='count'?'OK!':'PERFECT')+gtxt,'#7CF0A8');SFX.perfect();}
+  if(res.grade==='P'){floatText(cx,cy-20,(ing.kind==='place'||ing.kind==='count'||ing.kind==='bowl'?'OK!':'PERFECT')+gtxt,'#7CF0A8');SFX.perfect();}
   else if(res.grade==='G'){floatText(cx,cy-20,'GOOD'+gtxt,'#FFD15C');SFX.good();}
   else{floatText(cx,cy-20,'과다!'+gtxt,'#FF8A7A');SFX.bad();}
   renderTools();renderTargets();renderGauge();renderChecklist();updateActions();
@@ -883,6 +938,54 @@ function closeBurger(){if(G.phase!=='build')return;ac();const B=BURGERS[G.build.
     if(!swapped&&e>=.5){swapped=true;[...cg.children].forEach(ch=>{if(ch!==top)ch.setAttribute('display','none');});top.removeAttribute('display');}
     cg.setAttribute('transform',`translate(${f1(x)},${f1(y)}) scale(${f1(Math.max(.02,Math.abs(sx)))},1)`);},
   ()=>{if(G.build!==ref)return;cg.setAttribute('transform',`translate(${x1},${y1})`);SFX.pop();setTimeout(()=>{if(G.build===ref)showCompleteModal();},350);});}
+
+/* ================= 시즈닝 볼 (뿌링클 패티: 앞 1.5g → 뒤집기 → 뒤 1.5g → 힐에 올리기) ================= */
+function onBowlTap(){const id=G.tool,B=BURGERS[G.build.key];
+  if(!id){say('먼저 아래에서 재료를 골라주세요.','warn');SFX.low();return;}
+  if(!B.heel.includes('spatty')){if(id==='patty'||id==='kpatty')mistake('wrong',`${B.name}는 시즈닝 없이 패티를 바로 힐에 올려요!`);else mistake('wrong','시즈닝 볼은 뿌링클 치킨버거 패티에 시즈닝할 때만 써요.');return;}
+  if(id==='seasoning'){mistake('order','먼저 치킨패티를 볼에 넣어야 시즈닝을 뿌릴 수 있어요!');return;}
+  if(id==='kpatty'){mistake('wrong','뿌링클 치킨버거 패티는 치킨패티예요!');return;}
+  if(id!=='patty'){mistake('wrong','시즈닝 볼에는 치킨패티를 넣어요.');return;}
+  const hi=G.build.heel.i,si=B.heel.indexOf('spatty');
+  if(hi>si){mistake('order','패티는 이미 힐에 올렸어요.');return;}
+  if(hi<si){mistake('order',`아직 패티 차례가 아니에요. 힐: ${B.heel.slice(0,si).map(i=>ING[i].short).join(' → ')} 먼저!`);return;}
+  startBowl();}
+function bowlIdleText(){const b=G.bowl;if(!b)return'';if(b.back)return'시즈닝 완료 → [버거에 올리기]';if(b.front&&!b.flipped)return'앞면 완료 → [패티 뒤집기]';return'';}
+function bowlTapHint(){const b=G.bowl;if(!b)return;if(b.back)say('시즈닝 끝! [버거(힐)에 올리기]를 눌러요.');else if(b.front&&!b.flipped)say('앞면 시즈닝 끝! [패티 뒤집기]를 눌러 뒷면이 위로 오게 해요.');}
+function startBowl(){G.phase='bowl';G.tool=null;hideHand();gBuild.setAttribute('display','none');gBowlV.removeAttribute('display');gBowlV.innerHTML='';
+  const blindB=G.mode==='tycoon'&&G.day&&G.day.blind;
+  [['시즈닝 볼 · 뿌링클 패티',28],[blindB?'앞면 → 뒤집기 → 뒷면':'앞면 1.5g → 뒤집기 → 뒷면 1.5g',48]].forEach(([t,y])=>{const tx=S('text',{x:18,y,class:'svg-label'},gBowlV);tx.textContent=t;});
+  const[cx,cy]=CENTER.bowl;const bw=S('g',{transform:`translate(${cx},${cy})`},gBowlV);
+  S('ellipse',{cx:4,cy:12,rx:156,ry:150,fill:'#2B2F33',opacity:.22},bw);S('circle',{r:150,fill:'url(#gBowl)',stroke:'#7E868D','stroke-width':3},bw);S('circle',{r:128,fill:'url(#gBowlIn)'},bw);
+  S('circle',{r:139,fill:'none',stroke:'#fff','stroke-opacity':.5,'stroke-width':3},bw);S('ellipse',{cx:-55,cy:-78,rx:46,ry:16,fill:'#fff',opacity:.28,transform:'rotate(-35 -55 -78)'},bw);
+  const floor=S('g',{},bw);const flipG=S('g',{},bw);const inner=S('g',{class:'drop'},flipG);
+  const front=S('g',{},inner);drawPattyShape(front,false,96,9);const fCoat=seasonCoat(front,96,0);const fDots=S('g',{},front);
+  const back=S('g',{display:'none'},inner);drawPattyShape(back,false,96,33);const bCoat=seasonCoat(back,96,0);const bDots=S('g',{},back);
+  const chip=S('g',{transform:'translate(0,114)'},bw);S('rect',{x:-44,y:-15,width:88,height:28,rx:14,fill:'#1E1E1E',opacity:.85},chip);
+  const ct=S('text',{y:5,'text-anchor':'middle','font-size':15,'font-weight':800,fill:'#FFD15C','font-family':'Gothic A1,sans-serif'},chip);ct.textContent='앞면 ▲';
+  G.bowl={front:false,back:false,flipped:false,busy:false,flipG,frontG:front,backG:back,fDots,bDots,fCoat,bCoat,floor,chipT:ct};
+  SFX.pop();showPanel('bowl');renderTools();renderTargets();updateActions();renderChecklist();bowlStartFace('front');}
+function bowlStartFace(face){const b=G.bowl;const d={id:'seasoning',side:'bowl',kind:'shake',grams:0,count:0,locked:false,face,g:face==='front'?b.fDots:b.bDots,coat:face==='front'?b.fCoat:b.bCoat,floor:b.floor,r:rng(face==='front'?55:77)};
+  G.disp=d;showHand(d);renderGauge();renderBowlPanel();const blind=G.mode==='tycoon'&&G.day&&G.day.blind;
+  say(`${face==='front'?'앞면':'뒷면'}에 뿌링클 시즈닝 ${blind?'(기억한 정량)':'1.5g'}! 볼이나 [꾹 눌러 흔들기]를 누르고 있다가 ${blind?'정량':'1.5g'}에서 손을 떼세요.`);}
+function bowlSeasonDone(d,grade){const b=G.bowl;G.build.results.push({side:'bowl',id:'seasoning',face:d.face,grams:d.grams,grade});G.disp=null;b[d.face]=true;
+  const[cx,cy]=CENTER.bowl,gt=` ${f1(d.grams)}g`;
+  if(grade==='P'){floatText(cx,cy-40,'PERFECT'+gt,'#7CF0A8');SFX.perfect();}else if(grade==='G'){floatText(cx,cy-40,'GOOD'+gt,'#FFD15C');SFX.good();}else{floatText(cx,cy-40,'과다!'+gt,'#FF8A7A');SFX.bad();}
+  renderGauge();renderBowlPanel();const over=grade==='O'?`✕ 시즈닝 과다 ${f1(d.grams)}g (기준 1.5g). `:'';
+  if(d.face==='front')say(over+'앞면 완료! 이제 [패티 뒤집기]로 뒷면이 위로 오게 해요.',grade==='O'?'err':'ok');
+  else say(over+'뒷면까지 완료! [버거(힐)에 올리기]를 눌러 힐 위에 올려요.',grade==='O'?'err':'ok');}
+function bowlAction(k){const b=G.bowl;if(G.phase!=='bowl'||!b||b.busy)return;ac();
+  if(k==='flip'){if(b.flipped)return;if(!b.front){mistake('bowl','먼저 앞면에 뿌링클 시즈닝 1.5g을 뿌려요!');return;}
+    endHold(true);b.busy=true;SFX.fold();
+    tween(200,t=>b.flipG.setAttribute('transform',`scale(${f1(Math.max(.01,1-t))},1)`),()=>{b.frontG.setAttribute('display','none');b.backG.removeAttribute('display');b.chipT.textContent='뒷면 ▲';
+      tween(240,t=>b.flipG.setAttribute('transform',`scale(${f1(Math.max(.01,easeOut(t)))},1)`),()=>{if(G.bowl!==b)return;b.flipG.removeAttribute('transform');b.busy=false;b.flipped=true;SFX.pop();bowlStartFace('back');});});return;}
+  if(k==='place'){if(!b.back){mistake('bowl',!b.front?'앞면에 시즈닝 1.5g부터 뿌려요!':!b.flipped?'패티를 뒤집어 뒷면에도 1.5g 뿌려야 해요!':'뒷면에도 시즈닝 1.5g을 뿌려요!');return;}
+    hideHand();G.disp=null;G.bowl=null;gBowlV.setAttribute('display','none');gBowlV.innerHTML='';gBuild.removeAttribute('display');G.phase='build';showPanel('tools');
+    drawPatty('heel','patty',true);SFX.pop();completeStep('heel','spatty',{grade:'P'});}}
+function renderBowlPanel(){const b=G.bowl;if(!b)return;const gq=G.mode==='tycoon'&&G.day&&G.day.blind?'?g':'1.5g';const steps=[['앞면 시즈닝',gq,b.front],['패티 뒤집기','',b.flipped],['뒷면 시즈닝',gq,b.back],['버거(힐)에 올리기','',false]];
+  const nextI=steps.findIndex(s=>!s[2]);
+  $('#bowl-steps').innerHTML=steps.map((s,i)=>`<li class="${s[2]?'done':i===nextI?'next':''}"><span>${i+1}. ${s[0]}</span>${s[1]?`<b class="gram">${s[1]}</b>`:''}</li>`).join('');
+  const guide=isGuide();$$('.dp[data-b]').forEach(btn=>{const k=btn.dataset.b;btn.classList.toggle('next',guide&&((k==='flip'&&b.front&&!b.flipped)||(k==='place'&&b.back)));btn.disabled=(k==='flip'&&b.flipped);});}
 
 /* ================= wrapping ================= */
 function wrapExpected(){if(!G.wrap)return[];const w=G.wrap.done;if(!w.turn)return['turn'];if(!w.insert)return['insert'];const lr=['left','right'].filter(k=>!w[k]);if(lr.length)return lr;if(!w.tuck)return['tuck'];if(!w.flip)return['flip'];return[];}
@@ -920,7 +1023,7 @@ function renderHandles(){const ref=G.wrap;if(!ref)return;const hg=ref.handles;hg
     return;}
   (ref.done.tuck?['flip']:['left','right','tuck']).forEach(k=>{if(ref.done[k])return;const[ax,ay]=toAbs(ref,HANDLE_POS[k]);const on=guide&&exp.includes(k);const h=S('g',{class:'whandle'+(on?' on':''),'data-w':k,transform:`translate(${f1(ax)},${f1(ay)})`},hg);
     S('circle',{r:k==='flip'?26:21,class:'hc'},h);const t=S('text',{y:7,'text-anchor':'middle',class:'ht'},h);t.textContent=HANDLE_TXT[k];});}
-function renderWrapPanel(){const exp=wrapExpected(),guide=isGuide();$$('.dp').forEach(b=>{const k=b.dataset.w;const done=!!(G.wrap&&G.wrap.done[k]);b.classList.toggle('done',done);b.disabled=done;b.classList.toggle('next',guide&&exp.includes(k));});}
+function renderWrapPanel(){const exp=wrapExpected(),guide=isGuide();$$('.dp[data-w]').forEach(b=>{const k=b.dataset.w;const done=!!(G.wrap&&G.wrap.done[k]);b.classList.toggle('done',done);b.disabled=done;b.classList.toggle('next',guide&&exp.includes(k));});}
 function wrapAction(k){const ref=G.wrap;if(G.phase!=='wrap'||!ref||ref.busy||ref.done[k])return;const exp=wrapExpected();
   if(!exp.includes(k)){let t;if(exp[0]==='turn')t='먼저 버거를 뒤집어 힐(아랫번)이 위로 오게 해요!';else if(exp[0]==='insert')t='힐이 위로 온 버거를 랩지 뒷면의 열린 쪽으로 먼저 넣어야 해요!';else if(k==='flip')t='랩지 뒤집기는 위 끝까지 틈에 꽂아 넣은 다음이에요!';else if(k==='tuck')t='위 끝은 왼쪽·오른쪽을 먼저 접어야 그 사이에 넣을 수 있어요!';else{const st=WRAP_STEPS.find(s=>s.id===exp[0]);t=`지금은 「${st.label}」 — ${st.desc}`;}
     mistake('wrap','랩핑 순서가 달라요! '+t);return;}
@@ -947,7 +1050,7 @@ function scoreBuild(b,patFrac){let P=0,Gd=0,bad=0;b.results.forEach(r=>{if(r.gra
   let stars=1;if(bad===0&&m===0&&!b.hints&&mP>=Math.ceil(measured.length*.6))stars=3;else if(bad<=1&&m<=2)stars=2;
   return{pts,stars,P,G:Gd,bad,m,speed,measured};}
 function starsHTML(n){return `<div class="stars" aria-label="별 ${n}개">${[1,2,3].map(i=>i<=n?'★':'<span class="off">★</span>').join('')}</div>`;}
-function measureTable(b){const rows=b.results.filter(r=>r.grams!=null&&ING[r.id].kind!=='count').map(r=>{const ing=ING[r.id];const lbl={P:'PERFECT',G:'GOOD',O:'과다',U:'부족'}[r.grade];return `<tr><td>${sideName(r.side)} · ${ing.name}</td><td class="n">${ing.target}g</td><td class="n">${f1(r.grams)}g</td><td><span class="badge ${r.grade}">${lbl}</span></td></tr>`;}).join('');
+function measureTable(b){const rows=b.results.filter(r=>r.grams!=null&&ING[r.id].kind!=='count').map(r=>{const ing=ING[r.id];const lbl={P:'PERFECT',G:'GOOD',O:'과다',U:'부족'}[r.grade];return `<tr><td>${sideName(r.side)} · ${ing.name}${r.face?` (${r.face==='front'?'앞면':'뒷면'})`:''}</td><td class="n"><b class="gram">${ing.target}g</b></td><td class="n"><b>${f1(r.grams)}g</b></td><td><span class="badge ${r.grade}">${lbl}</span></td></tr>`;}).join('');
   return rows?`<table class="mtable"><thead><tr><th>재료</th><th class="n">기준</th><th class="n">내 계량</th><th>판정</th></tr></thead><tbody>${rows}</tbody></table>`:'';}
 function mistakesHTML(b){if(!b.mistakes.length)return '<p style="color:#23864A;font-weight:800">실수 없이 매뉴얼대로 완성!</p>';const uniq=[...new Set(b.mistakes.map(m=>m.text))];return `<p style="font-weight:800;margin-bottom:0">이번 버거에서 놓친 부분</p><ul class="mlist">${uniq.map(t=>`<li>${t}</li>`).join('')}</ul>`;}
 
@@ -962,15 +1065,15 @@ function showCompleteModal(){const b=G.build,B=BURGERS[b.key];
 function showBuildCard(){const b=G.build;if(!b)return;const B=BURGERS[b.key];let note='';
   if(G.mode==='tycoon'&&!(G.day&&G.day.guide)){if(!b.hints){b.hints=1;note='<p style="color:#C9302C;font-weight:800">힌트 사용 — 이번 주문은 ★3을 받을 수 없어요. (빌드카드를 보는 동안 시간은 멈춰요)</p>';}else note='<p style="color:#5D554E">이번 주문에서 이미 힌트를 사용했어요.</p>';}
   openModal(`<div class="m-eyebrow">BUILD CARD</div><h2>${B.name}</h2>${note}<div class="m-box">${stackSVG(b.key)}</div>
-  <ul class="tips">${B.tips.map(t=>`<li>${t}</li>`).join('')}</ul>
+  ${gramTable(B.key)}<ul class="tips">${B.tips.map(t=>`<li>${hiG(t)}</li>`).join('')}</ul>
   <div class="m-box"><b>랩핑 순서</b><ol class="wsteps" style="margin-top:8px">${wrapStepsHTML()}</ol></div>
   <div class="m-btns"><button class="btn btn-primary" data-act="close" data-focus>계속 만들기</button></div>`);}
 function dayIntro(){const D=G.day;
   const how=D.n===1?`<div class="m-box"><b>조작법</b><ul class="tips"><li>아래에서 <b>재료</b>를 고르고 → 올릴 <b>번(크라운/힐)</b>을 터치</li><li>소스·양상추·시즈닝은 번이나 버튼을 <b>꾹 누르고</b> 있다가 목표 그램에서 떼기</li><li>오이피클은 힐을 4번 터치, 패티는 1번 터치</li><li>다 쌓으면 <b>크라운 덮기</b> → 랩핑 → <b>서빙</b></li><li>순서·재료를 틀리면 손님 인내심이 5초 줄어요</li></ul></div>`:'';
   openModal(`<div class="m-eyebrow">DAY ${D.n} / 5</div><h2>${D.title}</h2><p>${D.story}</p>${how}
   ${D.study?`<div class="m-box"><span class="m-tag">STUDY</span><h3>오늘 공부할 4종</h3><div class="mini4">${BKEYS.map((k,i)=>`<div>${stackSVG(k,{labels:false})}<b>${i+1}. ${BURGERS[k].short}</b></div>`).join('')}</div><p class="legend">한 개씩 만들 때마다 그 버거의 빌드 카드를 먼저 보여드려요.</p></div>`:
-   D.blind?`<div class="m-box"><span class="m-tag">FINAL</span><h3>그램 수 최종 점검</h3><ul class="tips"><li>마요네즈 12.5g (크라운·힐 각각)</li><li>화이트·스윗하바네로·뿌링뿌링·맛초킹버거소스 20g</li><li>양상추 15g(큰 잎 3~4장) · 오이피클 4개 25g · 뿌링클 시즈닝 3g</li></ul></div>`:
-   `<div class="m-box"><span class="m-tag">CHECK</span><h3>4종 핵심 비교</h3><ul class="tips"><li><b>클래식</b> · 치킨패티 + 화이트소스 20g + 양상추</li><li><b>콰삭</b> · 콰삭킹 패티 + 스윗하바네로소스 20g · 양상추 없음</li><li><b>뿌링클</b> · 치킨패티 + 시즈닝 3g + 뿌링뿌링소스 20g + 양상추</li><li><b>맛초킹</b> · 치킨패티 + 맛초킹버거소스 20g + 양상추</li></ul></div>`}
+   D.blind?`<div class="m-box"><span class="m-tag">FINAL</span><h3>그램 수 최종 점검</h3><ul class="tips">${['마요네즈 12.5g (크라운·힐 각각)','화이트·스윗하바네로·뿌링뿌링·맛초킹버거소스 20g','양상추 15g(큰 잎 3~4장) · 오이피클 4개 25g','뿌링클 시즈닝: 볼에서 패티 앞면 1.5g · 뒷면 1.5g'].map(t=>`<li>${hiG(t)}</li>`).join('')}</ul></div>`:
+   `<div class="m-box"><span class="m-tag">CHECK</span><h3>4종 핵심 비교</h3><ul class="tips"><li><b>클래식</b> · 치킨패티 + 화이트소스 20g + 양상추</li><li><b>콰삭</b> · 콰삭킹 패티 + 스윗하바네로소스 20g · 양상추 없음</li><li><b>뿌링클</b> · 치킨패티(볼에서 시즈닝 앞·뒤 1.5g씩) + 뿌링뿌링소스 20g + 양상추</li><li><b>맛초킹</b> · 치킨패티 + 맛초킹버거소스 20g + 양상추</li></ul></div>`}
   <div class="m-meta">주문 ${G.dayTotal}건 · 손님 인내심 ${D.patience}초${D.gap?' · 손님이 겹쳐서 와요':' · 한 분씩 차례로'}</div>
   <div class="m-btns"><button class="btn btn-primary" data-act="start-day" data-focus>영업 시작</button><button class="btn btn-ghost" data-act="to-title">처음 화면</button></div>`);}
 function showOrderResult(c,sc){const b=G.build,B=BURGERS[b.key];
@@ -1013,7 +1116,7 @@ function beginOrder(c){G.build=newBuild(c.key);G.build.cust=c;resetStationForBui
 function showStudyCard(key,i){const B=BURGERS[key];
   openModal(`<div class="m-eyebrow">STUDY ${i} / 4 · 빌드 공부</div><h2>${B.name}</h2><p>${B.blurb}</p>
   <div class="m-box">${stackSVG(key)}<p class="legend"><i>●</i> 이 버거만의 포인트 재료</p></div>
-  <ul class="tips">${B.tips.map(t=>`<li>${t}</li>`).join('')}</ul>
+  ${gramTable(B.key)}<ul class="tips">${B.tips.map(t=>`<li>${hiG(t)}</li>`).join('')}</ul>
   <div class="m-btns"><button class="btn btn-primary" data-act="study-go" data-focus>가이드 따라 만들어 보기 →</button></div>`);}
 function advance(){if(G.queue.length)beginOrder(G.queue[0]);else if(G.pending.length){G.build=null;resetStationForBuild();renderRail();say('다음 손님을 기다리는 중…');}else endDay();}
 function customerLeaves(c){const idx=G.queue.indexOf(c);if(idx<0)return;G.queue.splice(idx,1);G.lost.push(c);G.score-=30;SFX.bad();updateHud();
@@ -1043,7 +1146,7 @@ function renderTitle(){$('#hero-stack').innerHTML=stackSVG('classic',{anim:true}
   renderSoundBtns();}
 function renderSelect(){$('#burger-grid').innerHTML=BKEYS.map(k=>{const B=BURGERS[k];return `<button class="pick" data-pick="${k}">${stackSVG(k,{labels:false})}<h3>${B.name}</h3><p>${B.blurb}</p><span class="go">연습 시작 →</span></button>`;}).join('');
   $$('.pick').forEach(b=>b.addEventListener('click',()=>{ac();startPractice(b.dataset.pick);}));}
-function renderCards(){$('#cards-grid').innerHTML=BKEYS.map(k=>{const B=BURGERS[k];return `<article class="card"><div class="sub">BUILD CARD</div><h3>${B.name}</h3>${stackSVG(k)}<p class="legend"><i>●</i> 이 버거만의 포인트</p><ul class="tips">${B.tips.map(t=>`<li>${t}</li>`).join('')}</ul></article>`;}).join('');
+function renderCards(){$('#cards-grid').innerHTML=BKEYS.map(k=>{const B=BURGERS[k];return `<article class="card"><div class="sub">BUILD CARD</div><h3>${B.name}</h3>${stackSVG(k)}<p class="legend"><i>●</i> 이 버거만의 포인트</p>${gramTable(B.key)}<ul class="tips">${B.tips.map(t=>`<li>${hiG(t)}</li>`).join('')}</ul></article>`;}).join('');
   $('#wrap-guide').innerHTML=wrapStepsHTML();}
 
 /* ================= events ================= */
@@ -1082,7 +1185,8 @@ $('#btn-guide').addEventListener('click',()=>{G.guide=!G.guide;updateHud();rende
 $('#btn-pause').addEventListener('click',()=>{
   if(G.mode==='practice'){openModal(`<h2>잠깐 멈춤</h2><div class="m-btns"><button class="btn btn-primary" data-act="resume" data-focus>계속하기</button><button class="btn btn-ghost" data-act="restart-practice">이 버거 처음부터</button><button class="btn btn-ghost" data-act="practice-other">다른 버거 고르기</button><button class="btn btn-ghost" data-act="to-title">처음 화면</button></div>`);return;}
   openModal(`<div class="m-eyebrow">DAY ${G.day.n} · 일시정지</div><h2>잠깐 멈춤</h2><p>손님 시계가 멈춰 있어요.</p><div class="m-btns"><button class="btn btn-primary" data-act="resume" data-focus>계속하기</button><button class="btn btn-ghost" data-act="retry-day">DAY ${G.day.n} 처음부터</button><button class="btn btn-ghost" data-act="to-title">처음 화면</button></div>`);});
-$$('.dp').forEach(b=>b.addEventListener('click',()=>{ac();wrapAction(b.dataset.w);}));
+$$('.dp[data-w]').forEach(b=>b.addEventListener('click',()=>{ac();wrapAction(b.dataset.w);}));
+$$('.dp[data-b]').forEach(b=>b.addEventListener('click',()=>bowlAction(b.dataset.b)));
 const sq=$('#squeeze');
 sq.addEventListener('pointerdown',e=>{e.preventDefault();ac();if(sq.setPointerCapture)try{sq.setPointerCapture(e.pointerId);}catch(_){}beginHold();});
 sq.addEventListener('contextmenu',e=>e.preventDefault());
