@@ -308,14 +308,14 @@ h1.logo .accent{color:var(--mustard);display:inline-block;transform:rotate(-2deg
       <div>
         <div class="eyebrow">bhc 가맹교육 · BURGER BUILD TRAINING</div>
         <h1 class="logo">버거 빌드<br><span class="accent">타이쿤</span></h1>
-        <p class="lead">클래식 · 콰삭 · 뿌링클 · 맛초킹 치킨버거. 주문이 들어오면 매뉴얼 그대로 소스를 짜고, 재료를 쌓고, 랩핑해서 내보내세요. 순서와 그램 수를 손으로 익히는 게임입니다.</p>
+        <p class="lead">클래식 · 뿌링클 · 맛초킹 · 콰삭 치킨버거. 주문이 들어오면 매뉴얼 그대로 소스를 짜고, 재료를 쌓고, 랩핑해서 내보내세요. 순서와 그램 수를 손으로 익히는 게임입니다.</p>
         <div class="menu-btns">
           <button class="btn btn-primary" id="btn-tycoon">영업 시작 <small id="tycoon-day">DAY 1</small></button>
           <button class="btn btn-ghost" id="btn-practice">연습 모드 <small>가이드 따라 천천히</small></button>
           <button class="btn btn-ghost" id="btn-cards">빌드 카드 보기 <small>4종 단면 · 랩핑 순서</small></button>
         </div>
         <div class="days" id="day-chips"></div>
-        <p class="day-note">DAY 1 · 4종 공부(클래식→콰삭→뿌링클→맛초킹) → DAY 2 · 복습 → DAY 3~5 · 랜덤 주문·러시·피크타임</p>
+        <p class="day-note">DAY 1 · 4종 1개씩 공부(클래식→뿌링클→맛초킹→콰삭) → DAY 2 · 복습 → DAY 3~5 · 랜덤 주문·러시·피크타임</p>
       </div>
       <div class="hero-card">
         <div class="hero-head"><span>BUILD CARD</span><b>클래식 치킨버거</b></div>
@@ -448,7 +448,7 @@ const BURGERS={
     tips:['클래식과 같은 빌드업','소스만 맛초킹버거소스 20g 지그재그','패티는 일반 치킨패티 1장','크라운: 마요네즈 12.5g + 양상추 15g(큰 잎 3~4장)'],
     blurb:'클래식 빌드에 맛초킹버거소스 20g.'},
 };
-const BKEYS=['classic','kwasak','bburinkle','matcho'];
+const BKEYS=['classic','bburinkle','matcho','kwasak'];
 function stepText(id){
   switch(id){
     case 'mayo':return '마요네즈 12.5g · 가장자리→안쪽 동그랗게';
@@ -469,9 +469,9 @@ const WRAP_STEPS=[
   {id:'flip',label:'뒤집기',desc:'뒤집어서 bhc 로고가 위로 보이게'},
 ];
 const DAYS=[
-  {n:1,title:'4종 공부하기',study:true,guide:true,orders:['classic','kwasak','bburinkle','matcho'],gap:0,patience:260,rate:1,
-   story:'첫 출근! 오늘은 클래식 → 콰삭 → 뿌링클 → 맛초킹, 4종을 하나씩 공부하며 만들어요. 주문마다 빌드 카드를 먼저 보여주고, 만드는 동안 가이드가 다음 재료를 알려줘요.'},
-  {n:2,title:'4종 복습',orders:['classic','kwasak','bburinkle','matcho'],gap:0,patience:210,rate:1,
+  {n:1,title:'4종 공부하기',study:true,guide:true,orders:['classic','bburinkle','matcho','kwasak'],gap:0,patience:260,rate:1,
+   story:'첫 출근! 오늘은 클래식 → 뿌링클 → 맛초킹 → 콰삭, 4종을 1개씩 공부하며 만들어요. 주문마다 빌드 카드를 먼저 보여주고, 만드는 동안 가이드가 다음 재료를 알려줘요.'},
+  {n:2,title:'4종 복습',orders:['classic','bburinkle','matcho','kwasak'],gap:0,patience:210,rate:1,
    story:'어제 공부한 4종을 같은 순서로 다시 만들어요. 오늘은 가이드가 없어요. 막히면 [빌드카드]를 볼 수 있지만, 그 주문은 ★3을 받을 수 없어요.'},
   {n:3,title:'랜덤 주문',orders:'mix5',gap:0,patience:180,rate:1,
    story:'이제 주문 순서가 섞여서 들어와요. 주문표를 잘 보고 버거에 맞는 패티와 소스를 고르세요.'},
@@ -954,7 +954,7 @@ function endDay(){if(!G.running)return;G.running=false;G.build=null;resetStation
   <div class="kpis"><div class="kpi"><b>${served}</b><span>서빙</span></div><div class="kpi"><b>${lost}</b><span>놓친 손님</span></div><div class="kpi"><b>${avg.toFixed(1)}</b><span>평균 ★</span></div><div class="kpi"><b>${pRate}%</b><span>계량 PERFECT</span></div></div>
   ${top.length?`<p style="font-weight:800;margin-bottom:0">오늘의 복습 포인트</p><ul class="mlist">${top.map(([t,n])=>`<li>${t}${n>1?` <b>×${n}</b>`:''}</li>`).join('')}</ul>`:'<p style="color:#23864A;font-weight:800">실수 없는 완벽한 영업이었어요!</p>'}
   <div class="m-btns">${D.n<5?`<button class="btn btn-primary" data-act="next-day" data-focus>DAY ${D.n+1} 영업 →</button>`:`<button class="btn btn-primary" data-act="cert" data-focus>수료증 받기</button>`}<button class="btn btn-ghost" data-act="retry-day">DAY ${D.n} 다시 하기</button><button class="btn btn-ghost" data-act="to-title">처음 화면</button></div>`);}
-function showCert(){const d=new Date();openModal(`<div class="cert"><div class="m-eyebrow">bhc 가맹교육</div><h2>버거 빌드 마스터</h2><p>클래식 · 콰삭 · 뿌링클 · 맛초킹<br>4종 치킨버거의 빌드와 랩핑을 모두 마쳤습니다.</p>
+function showCert(){const d=new Date();openModal(`<div class="cert"><div class="m-eyebrow">bhc 가맹교육</div><h2>버거 빌드 마스터</h2><p>클래식 · 뿌링클 · 맛초킹 · 콰삭<br>4종 치킨버거의 빌드와 랩핑을 모두 마쳤습니다.</p>
   <div style="display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:6px;margin:10px 0">${BKEYS.map(k=>`<div>${stackSVG(k,{labels:false})}<div style="font-size:12px;font-weight:800">${BURGERS[k].short}</div></div>`).join('')}</div>
   <p class="m-meta">${d.getFullYear()}. ${d.getMonth()+1}. ${d.getDate()} · DAY별 최고 등급 ${[1,2,3,4,5].map(n=>G.save.best[n]||'-').join(' / ')}</p></div>
   <div class="m-btns"><button class="btn btn-primary" data-act="to-title" data-focus>처음 화면으로</button></div>`);}
