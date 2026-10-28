@@ -1,0 +1,1051 @@
+<!doctype html>
+<html lang="ko">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1,maximum-scale=1,user-scalable=no,viewport-fit=cover">
+<meta name="theme-color" content="#221E1B">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+<meta name="apple-mobile-web-app-title" content="버거 빌드">
+<meta name="application-name" content="버거 빌드">
+<link rel="manifest" href="manifest.json">
+<link rel="apple-touch-icon" sizes="180x180" href="icons/apple-touch-icon.png">
+<link rel="icon" type="image/png" sizes="32x32" href="icons/favicon-32.png">
+<link rel="icon" type="image/png" sizes="192x192" href="icons/icon-192.png">
+<meta name="robots" content="noindex,nofollow">
+<style>:root{padding-top:env(safe-area-inset-top,0px);padding-bottom:env(safe-area-inset-bottom,0px)}body{margin:0}img{max-width:100%}[hidden]{display:none!important}</style>
+<title>bhc 버거 빌드 타이쿤</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Black+Han+Sans&family=Gothic+A1:wght@400;600;800&family=Nanum+Gothic+Coding:wght@400;700&display=swap" rel="stylesheet">
+<style>
+/* Layout: kitchen line — dark tiled wall, brushed-steel build station, thermal-paper order tickets. One committed look (single theme). */
+:root{
+  --wall:#221E1B; --wall-line:#2E2824; --panel:#191513; --panel-2:#2A2420; --line:#3D3631;
+  --red:#A81D2E; --red-d:#73121F; --mustard:#F2B632; --paper:#FFFDF6; --paper-2:#F3EEE2;
+  --ink:#1E1E1E; --ink-2:#5D554E; --muted:#B8AEA4;
+  --ok:#2F9E57; --warn:#E39B19; --bad:#D2382B;
+  --f-display:'Black Han Sans','Gothic A1','Malgun Gothic',sans-serif;
+  --f-body:'Gothic A1','Malgun Gothic','Apple SD Gothic Neo',sans-serif;
+  --f-mono:'Nanum Gothic Coding',ui-monospace,'Courier New',monospace;
+  color-scheme:dark;
+}
+html,body{height:100%}
+body{
+  background-color:var(--wall);
+  background-image:linear-gradient(var(--wall-line) 1px,transparent 1px),linear-gradient(90deg,var(--wall-line) 1px,transparent 1px);
+  background-size:44px 44px;
+  color:var(--paper); font-family:var(--f-body); font-size:14px;
+  padding-left:max(16px,env(safe-area-inset-left,0px)); padding-right:max(16px,env(safe-area-inset-right,0px)); padding-block:12px 28px;
+  -webkit-tap-highlight-color:transparent;
+}
+*{box-sizing:border-box}
+button{font-family:inherit;cursor:pointer;color:inherit;touch-action:manipulation}
+#app{-webkit-user-select:none;user-select:none}
+.day-note{font-size:12.5px;color:var(--muted);margin:10px 0 0;line-height:1.5}
+button:focus-visible,[tabindex]:focus-visible{outline:3px solid var(--mustard);outline-offset:2px}
+#app{max-width:1120px;margin:0 auto}
+small{font-weight:600}
+
+/* ---------- buttons ---------- */
+.btn{border-radius:12px;padding:12px 14px;font-size:15px;font-weight:800;border:2px solid transparent;display:flex;align-items:center;justify-content:center;gap:8px;transition:transform .08s}
+.btn:active{transform:translateY(2px)}
+.btn-primary{background:var(--red);color:#fff;box-shadow:0 4px 0 var(--red-d);font-family:var(--f-display);font-weight:400;font-size:19px;letter-spacing:.01em}
+.btn-primary small{font-family:var(--f-mono);font-size:12px;background:rgba(0,0,0,.25);border-radius:6px;padding:3px 7px;letter-spacing:.05em}
+.btn-ghost{background:transparent;border-color:#57504A;color:var(--paper);justify-content:space-between}
+.btn-ghost small{color:var(--muted);font-weight:600;font-size:12px}
+.btn-act{background:var(--mustard);color:var(--ink);box-shadow:0 4px 0 #A87A12;font-family:var(--f-display);font-weight:400;font-size:17px}
+.btn-sub{background:var(--panel-2);border-color:var(--line);color:var(--paper)}
+.btn[disabled]{opacity:.45;cursor:default}
+.btn.guide{animation:glow 1.1s ease-in-out infinite}
+@keyframes glow{0%,100%{box-shadow:0 4px 0 #A87A12,0 0 0 0 rgba(242,182,50,0)}50%{box-shadow:0 4px 0 #A87A12,0 0 0 6px rgba(242,182,50,.45)}}
+.link-btn{background:none;border:none;color:var(--muted);text-decoration:underline;font-size:13px;padding:6px}
+
+/* ---------- title ---------- */
+.title-wrap{display:grid;grid-template-columns:minmax(0,1fr);gap:22px;align-items:center;padding-block:14px 6px}
+@media (min-width:880px){.title-wrap{grid-template-columns:minmax(0,1.05fr) minmax(0,1fr);gap:40px}}
+.eyebrow{font-family:var(--f-mono);font-weight:700;letter-spacing:.14em;color:var(--mustard);font-size:12px}
+h1.logo{font-family:var(--f-display);font-weight:400;font-size:clamp(46px,10vw,88px);line-height:.95;margin:10px 0 14px;text-wrap:balance}
+h1.logo .accent{color:var(--mustard);display:inline-block;transform:rotate(-2deg)}
+.lead{color:#DCD3CA;font-size:15px;line-height:1.65;max-width:44ch;margin:0}
+.menu-btns{display:flex;flex-direction:column;gap:10px;margin-top:22px;max-width:440px}
+.days{display:flex;gap:6px;margin-top:16px;flex-wrap:wrap}
+.daychip{background:var(--panel);border:1px solid var(--line);border-radius:10px;padding:7px 10px;font-family:var(--f-mono);font-size:12px;color:var(--paper);display:flex;flex-direction:column;align-items:flex-start;min-width:64px}
+.daychip b{font-size:13px}
+.daychip span{color:var(--muted)}
+.daychip.locked{opacity:.4}
+.daychip.cur{border-color:var(--mustard)}
+.hero-card{background:var(--paper);color:var(--ink);border-radius:18px;padding:14px 14px 8px;box-shadow:0 10px 0 rgba(0,0,0,.35);position:relative}
+.hero-head{display:flex;justify-content:space-between;align-items:baseline;border-bottom:2px dashed #D9D0C0;padding-bottom:8px;margin-bottom:4px}
+.hero-head span{font-family:var(--f-mono);font-size:11px;letter-spacing:.16em;color:var(--red);font-weight:700}
+.hero-head b{font-family:var(--f-display);font-weight:400;font-size:20px}
+.howto{list-style:none;padding:0;margin:26px 0 0;display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:8px;counter-reset:h}
+@media (min-width:880px){.howto{grid-template-columns:repeat(4,minmax(0,1fr))}}
+.howto li{background:var(--panel);border:1px solid var(--line);border-radius:12px;padding:12px;counter-increment:h;display:flex;flex-direction:column;gap:4px}
+.howto li::before{content:counter(h);font-family:var(--f-display);color:var(--mustard);font-size:22px;line-height:1}
+.howto b{font-size:14px}
+.howto span{color:var(--muted);font-size:12.5px;line-height:1.5}
+.foot-row{display:flex;justify-content:flex-end;margin-top:10px}
+
+/* ---------- sub screens ---------- */
+.bar{display:flex;align-items:center;gap:12px;padding-block:6px 14px;flex-wrap:wrap}
+.back{background:var(--panel);border:1px solid var(--line);border-radius:10px;padding:8px 12px;font-weight:700}
+.scr-h{font-family:var(--f-display);font-weight:400;font-size:26px;margin:0}
+.burger-grid,.cards-grid{display:grid;grid-template-columns:minmax(0,1fr);gap:12px}
+@media (min-width:640px){.burger-grid,.cards-grid{grid-template-columns:repeat(2,minmax(0,1fr))}}
+@media (min-width:1000px){.burger-grid{grid-template-columns:repeat(4,minmax(0,1fr))}}
+.pick{background:var(--paper);color:var(--ink);border:none;border-radius:16px;padding:14px;text-align:left;display:flex;flex-direction:column;gap:6px;box-shadow:0 6px 0 rgba(0,0,0,.35)}
+.pick:hover{transform:translateY(-2px)}
+.pick h3{font-family:var(--f-display);font-weight:400;font-size:22px;margin:0}
+.pick p{margin:0;color:var(--ink-2);font-size:13px;line-height:1.5}
+.pick .go{margin-top:auto;font-weight:800;color:var(--red)}
+.card{background:var(--paper);color:var(--ink);border-radius:16px;padding:16px;box-shadow:0 6px 0 rgba(0,0,0,.35);min-width:0}
+.card h3{font-family:var(--f-display);font-weight:400;font-size:22px;margin:0 0 2px}
+.card .sub{font-family:var(--f-mono);font-size:11px;letter-spacing:.12em;color:var(--red);font-weight:700}
+.tips{margin:8px 0 0;padding-left:18px;color:#3E3833;font-size:13px;line-height:1.6}
+.tips li::marker{color:var(--red)}
+.legend{font-size:11.5px;color:var(--ink-2);margin:4px 0 0}
+.legend i{color:#D49400;font-style:normal}
+
+/* stack svg */
+.stack{display:block;width:100%;height:auto;max-width:100%}
+.st-l{font-family:var(--f-body);font-size:12.5px;font-weight:600;fill:#2A2522}
+.st-s{fill:#A81D2E;font-weight:800}
+.st-pt{fill:#D49400}
+.g-p{fill:#23864A;font-weight:800}.g-g{fill:#B97A0C;font-weight:800}.g-o{fill:#C9302C;font-weight:800}
+.stack.anim .ly{animation:lyDrop .5s cubic-bezier(.2,.9,.3,1.2) backwards;animation-delay:calc(var(--i) * 110ms + 150ms)}
+@keyframes lyDrop{from{transform:translateY(-30px);opacity:0}}
+
+/* wrap steps */
+.wsteps{list-style:none;margin:0;padding:0;display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:8px}
+@media (min-width:760px){.wsteps.wide{grid-template-columns:repeat(6,minmax(0,1fr))}}
+.wsteps li{background:var(--paper-2);border-radius:10px;padding:6px;display:flex;flex-direction:column;gap:3px;color:var(--ink);border:2px solid transparent}
+.wsteps li b{font-size:12.5px}
+.wsteps li span{font-size:11.5px;color:var(--ink-2);line-height:1.4}
+.wsteps li.done{opacity:.55}
+.wsteps li.next{border-color:var(--mustard);background:#FFF6DC}
+.wmini{width:100%;height:auto;display:block;max-width:110px;margin:0 auto}
+
+/* ---------- game ---------- */
+.hud{display:flex;align-items:center;gap:8px;padding-block:2px 10px;flex-wrap:wrap}
+.hud-title{display:flex;flex-direction:column;line-height:1.15;min-width:0}
+.hud .day{font-family:var(--f-display);font-size:20px;color:var(--mustard)}
+.hud .daytitle{font-size:12.5px;color:#D3CAC1}
+.hud .spacer{flex:1}
+.stat{font-family:var(--f-mono);font-weight:700;background:var(--panel);border:1px solid var(--line);border-radius:8px;padding:6px 10px;font-size:13px;font-variant-numeric:tabular-nums}
+.icon-btn{min-width:40px;height:40px;border-radius:10px;border:1px solid var(--line);background:var(--panel);font-weight:800;font-size:13px;padding:0 10px}
+.icon-btn.on{border-color:var(--mustard);color:var(--mustard)}
+
+.game-grid{display:flex;flex-direction:column;gap:10px}
+.col{display:contents}
+#rail{order:1}#msg{order:2}#station-wrap{order:3}#gauge{order:4}#panel-tools,#panel-wrap{order:5}#actions{order:6}#checklist{order:7}
+@media (min-width:900px){
+  .game-grid{display:grid;grid-template-columns:minmax(0,1.3fr) minmax(0,1fr);gap:14px;align-items:start}
+  .col{display:flex;flex-direction:column;gap:10px;min-width:0}
+}
+.rail{display:flex;gap:8px;overflow-x:auto;padding:2px 2px 10px;min-height:112px;align-items:flex-start}
+.rail-empty{color:var(--muted);font-family:var(--f-mono);font-size:13px;padding:14px 4px}
+.ticket{flex:0 0 auto;width:148px;background:var(--paper);color:var(--ink);border-radius:3px 3px 0 0;padding:8px 10px 10px;position:relative;font-family:var(--f-mono);box-shadow:0 3px 0 rgba(0,0,0,.3)}
+.ticket::after{content:"";position:absolute;left:0;right:0;bottom:-7px;height:7px;background:radial-gradient(circle at 5px -1px,transparent 5px,var(--paper) 5.5px) repeat-x;background-size:10px 7px}
+.ticket.active{outline:3px solid var(--mustard);outline-offset:2px}
+.ticket.enter{animation:tkIn .4s cubic-bezier(.2,.9,.3,1.2)}
+@keyframes tkIn{from{transform:translateY(-24px);opacity:0}}
+.tk-top{display:flex;justify-content:space-between;align-items:center;font-size:11px;color:var(--ink-2);font-weight:700}
+.tk-stamp{background:var(--red);color:#fff;border-radius:4px;padding:1px 5px;font-size:10.5px;font-family:var(--f-body);font-weight:800}
+.tk-who{font-size:24px;line-height:1.2;margin:2px 0}
+.tk-who .mood{font-size:15px;vertical-align:top}
+.tk-menu{font-family:var(--f-body);font-weight:800;font-size:14px;line-height:1.25;word-break:keep-all}
+.tk-note{font-family:var(--f-body);font-size:11.5px;color:var(--ink-2);margin-top:3px}
+.pbar{height:6px;border-radius:3px;background:#E4DDCF;margin-top:7px;overflow:hidden}
+.pbar i{display:block;height:100%;width:100%;background:var(--ok)}
+
+.msg{min-height:46px;background:var(--panel);border:1px solid var(--line);border-left:5px solid var(--mustard);border-radius:10px;padding:10px 12px;font-size:14px;line-height:1.5;word-break:keep-all}
+.msg.ok{border-left-color:var(--ok)}
+.msg.warn{border-left-color:var(--warn);background:#2A2213}
+.msg.err{border-left-color:var(--bad);background:#2C1513}
+.msg.flash{animation:mflash .35s}
+@keyframes mflash{from{filter:brightness(1.8)}}
+
+.station-wrap{position:relative;border-radius:16px;overflow:hidden;box-shadow:inset 0 0 0 2px #8C9298,0 6px 0 #110E0C}
+#station{display:block;width:100%;height:auto;touch-action:none;user-select:none;-webkit-user-select:none;-webkit-touch-callout:none}
+.station-wrap.shake{animation:shake .38s}
+@keyframes shake{20%{transform:translateX(-7px)}40%{transform:translateX(6px)}60%{transform:translateX(-4px)}80%{transform:translateX(2px)}}
+.svg-label{font-family:var(--f-body);font-weight:800;font-size:15px;fill:#454B51;letter-spacing:.02em}
+.float{font-family:var(--f-display);font-size:24px;paint-order:stroke;stroke:#1E1E1E;stroke-width:5px;stroke-linejoin:round;pointer-events:none}
+.ring{fill:none;stroke:transparent;stroke-width:4;stroke-dasharray:12 9;pointer-events:none}
+.ring.neutral{stroke:rgba(40,44,48,.35)}
+.ring.on{stroke:#F2B632;stroke-width:5;animation:dash 1s linear infinite}
+.ring.active{stroke:#A81D2E;stroke-width:4}
+@keyframes dash{to{stroke-dashoffset:-42}}
+.pop{animation:pop .25s ease-out both;transform-box:fill-box;transform-origin:center}
+@keyframes pop{from{transform:scale(1.7);opacity:0}}
+.drop{animation:drop .34s cubic-bezier(.2,.9,.3,1.15) both}
+@keyframes drop{from{transform:translateY(-36px);opacity:0}}
+.hand .glove{transition:transform .08s;transform-box:fill-box;transform-origin:center}
+.hand.squeeze .glove{transform:scaleX(.88)}
+.hand.squeeze .shk{animation:shk .11s infinite alternate;transform-box:fill-box;transform-origin:50% 100%}
+@keyframes shk{from{transform:rotate(-12deg)}to{transform:rotate(12deg)}}
+.whandle{cursor:pointer}
+.whandle .hc{fill:#1E1E1E;stroke:#fff;stroke-width:3}
+.whandle .ht{fill:#fff;font-family:var(--f-body);font-weight:800;font-size:20px;pointer-events:none}
+.whandle.on .hc{fill:#F2B632;stroke:#1E1E1E;animation:hp 1s ease-in-out infinite;transform-box:fill-box;transform-origin:center}
+.whandle.on .ht{fill:#1E1E1E}
+@keyframes hp{50%{transform:scale(1.18)}}
+
+.gauge{background:var(--panel);border:1px solid var(--line);border-radius:12px;padding:10px 12px;display:grid;grid-template-columns:minmax(0,1fr) 124px;gap:8px 12px;align-items:center;min-height:82px}
+.g-info{display:flex;flex-wrap:wrap;justify-content:space-between;align-items:baseline;gap:2px 8px;min-width:0}
+.g-name{font-weight:800;font-size:14px;word-break:keep-all}
+.g-val{font-family:var(--f-mono);font-size:13px;color:var(--muted);white-space:nowrap;font-variant-numeric:tabular-nums}
+.g-val b{font-size:22px;color:var(--paper)}
+.gauge.inzone .g-val b{color:#6BE39A}
+.gauge.over .g-val b{color:#FF8A7A}
+.g-bar{grid-column:1;position:relative;height:20px;border-radius:10px;background:#3A332E;overflow:hidden}
+.g-zone{position:absolute;top:0;bottom:0}
+.g-good{background:rgba(242,182,50,.32)}
+.g-perfect{background:rgba(47,158,87,.75)}
+.g-fill{position:absolute;left:0;top:5px;bottom:5px;border-radius:5px;width:0;background:#fff;box-shadow:0 0 0 1px rgba(0,0,0,.35)}
+.g-target{position:absolute;top:0;bottom:0;width:2px;background:#fff}
+.g-help{grid-column:1;font-size:12.5px;color:var(--muted);line-height:1.4}
+#squeeze{grid-column:2;grid-row:1 / span 2;height:62px;border-radius:14px;border:none;background:var(--red);color:#fff;font-family:var(--f-display);font-size:17px;line-height:1.1;box-shadow:0 5px 0 var(--red-d);touch-action:none;user-select:none;-webkit-user-select:none;-webkit-touch-callout:none}
+#squeeze.holding{transform:translateY(4px);box-shadow:0 1px 0 var(--red-d);background:#C32237}
+#squeeze:disabled{background:#3F3833;box-shadow:0 5px 0 #231E1B;color:#8E857D;cursor:default}
+.gauge.idle .g-bar{opacity:.35}
+
+.panel{background:var(--panel);border:1px solid var(--line);border-radius:14px;padding:10px 12px 12px}
+.panel h3{font-family:var(--f-mono);font-size:11.5px;letter-spacing:.14em;color:var(--muted);margin:2px 0 8px;font-weight:700}
+.panel h3+.tools{margin-bottom:10px}
+.tools{display:grid;grid-template-columns:repeat(5,minmax(0,1fr));gap:6px}
+.tool{background:var(--panel-2);border:2px solid var(--line);border-radius:10px;padding:6px 2px;display:flex;flex-direction:column;align-items:center;gap:3px;font-size:clamp(10px,2.75vw,11.5px);font-weight:700;line-height:1.2;min-height:78px;text-align:center;overflow-wrap:anywhere;min-width:0}
+.tool svg{width:34px;height:34px;flex:none}
+.tool .spec{font-family:var(--f-mono);font-size:10.5px;color:var(--mustard);font-weight:700}
+.tool.sel{border-color:var(--mustard);background:#3B301C}
+.tool.guide{animation:tglow 1.1s ease-in-out infinite}
+@keyframes tglow{50%{box-shadow:0 0 0 4px rgba(242,182,50,.55)}}
+.actions{display:flex;gap:8px;flex-wrap:wrap}
+.actions .btn{flex:1 1 130px}
+.dpad{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));grid-template-areas:". up ." "left mid right" ". flip .";gap:6px;max-width:420px;margin:0 auto}
+.dp{background:var(--panel-2);border:2px solid var(--line);border-radius:10px;padding:10px 4px;font-weight:800;font-size:13px;min-height:52px;word-break:keep-all}
+.dp.next{border-color:var(--mustard);animation:tglow 1.1s ease-in-out infinite}
+.dp.done{opacity:.35}
+.dp.flip{background:#3B301C}
+.serve{width:100%;margin-top:10px}
+.check h3{margin-bottom:6px}
+.ck-grid{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:10px}
+.ck-col h4{margin:0 0 4px;font-size:13px;color:var(--mustard)}
+.ck-col ol{list-style:none;margin:0;padding:0;display:flex;flex-direction:column;gap:4px}
+.ck-col li{font-size:12.5px;line-height:1.4;color:#D9D0C7;display:flex;gap:6px;align-items:flex-start}
+.ck-col li::before{content:"";flex:none;width:12px;height:12px;border-radius:50%;border:2px solid #6B625B;margin-top:2px}
+.ck-col li.done{color:#8A817A;text-decoration:line-through}
+.ck-col li.done::before{background:var(--ok);border-color:var(--ok)}
+.ck-col li.next{color:#fff;font-weight:800}
+.ck-col li.next::before{border-color:var(--mustard);background:var(--mustard)}
+.ck-end{margin:8px 0 0;font-size:12.5px;color:var(--muted)}
+.check .wsteps li{background:#2A2420;color:var(--paper)}
+.check .wsteps li span{color:var(--muted)}
+.check .wsteps li.next{background:#3B301C}
+
+/* ---------- modal ---------- */
+.modal{position:fixed;inset:0;background:rgba(14,11,9,.74);z-index:50;overflow-y:auto;display:flex;justify-content:center;align-items:flex-start;
+  padding:max(16px,env(safe-area-inset-top,0px)) max(16px,env(safe-area-inset-right,0px)) max(16px,env(safe-area-inset-bottom,0px)) max(16px,env(safe-area-inset-left,0px))}
+.sheet{background:var(--paper);color:var(--ink);border-radius:18px;width:100%;max-width:580px;padding:20px 18px;margin:auto 0;box-shadow:0 12px 0 rgba(0,0,0,.4);animation:shIn .28s cubic-bezier(.2,.9,.3,1.1)}
+@keyframes shIn{from{transform:translateY(20px);opacity:0}}
+.sheet h2{font-family:var(--f-display);font-weight:400;font-size:30px;margin:2px 0 6px;color:var(--red);text-wrap:balance}
+.sheet h3{font-family:var(--f-display);font-weight:400;font-size:21px;margin:0}
+.sheet p{line-height:1.6;color:#3C3631;margin:6px 0}
+.m-eyebrow{font-family:var(--f-mono);font-size:12px;letter-spacing:.16em;color:var(--ink-2);font-weight:700}
+.m-box{background:var(--paper-2);border-radius:12px;padding:12px;margin:12px 0}
+.m-tag{display:inline-block;background:var(--mustard);color:var(--ink);font-family:var(--f-mono);font-weight:700;font-size:11px;letter-spacing:.12em;border-radius:5px;padding:2px 7px;margin-bottom:4px}
+.m-meta{font-family:var(--f-mono);font-size:12.5px;color:var(--ink-2);margin:10px 0}
+.m-btns{display:flex;flex-direction:column;gap:8px;margin-top:14px}
+.m-btns .btn-ghost{color:var(--ink);border-color:#CFC6B6;justify-content:center}
+.stars{font-size:34px;letter-spacing:4px;color:#E9A800;line-height:1}
+.stars .off{color:#D8D0C2}
+.kpis{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:6px;margin:12px 0}
+.kpi{background:var(--paper-2);border-radius:10px;padding:8px 6px;text-align:center}
+.kpi b{display:block;font-family:var(--f-display);font-weight:400;font-size:22px;font-variant-numeric:tabular-nums}
+.kpi span{font-size:11.5px;color:var(--ink-2)}
+.mlist{margin:6px 0 0;padding-left:18px;font-size:13px;line-height:1.6;color:#3C3631}
+.mlist li::marker{color:var(--bad)}
+.grade{font-family:var(--f-display);font-size:64px;line-height:1;color:var(--red)}
+.mtable{width:100%;border-collapse:collapse;font-size:13px;margin-top:6px}
+.mtable th,.mtable td{padding:6px 4px;border-bottom:1px solid #E6DED0;text-align:left}
+.mtable td.n{text-align:right;font-family:var(--f-mono);font-variant-numeric:tabular-nums}
+.badge{font-weight:800;font-size:12px;border-radius:5px;padding:2px 6px;color:#fff}
+.badge.P{background:var(--ok)}.badge.G{background:var(--warn)}.badge.O,.badge.U{background:var(--bad)}
+.cert{border:3px double #C9A24A;border-radius:14px;padding:18px;text-align:center;background:#FFF9E8}
+.cert h2{color:var(--ink)}
+@media (prefers-reduced-motion:reduce){*,*::before,*::after{animation-duration:.01ms!important;animation-iteration-count:1!important;transition:none!important}}
+</style>
+
+</head>
+<body>
+<svg width="0" height="0" style="position:absolute" aria-hidden="true" focusable="false">
+<defs>
+  <radialGradient id="gCut" cx="50%" cy="46%" r="55%"><stop offset="0" stop-color="#F9E6B8"/><stop offset=".7" stop-color="#F1CC88"/><stop offset=".93" stop-color="#DFA457"/><stop offset="1" stop-color="#C47F30"/></radialGradient>
+  <radialGradient id="gTop" cx="40%" cy="35%" r="72%"><stop offset="0" stop-color="#F3BA62"/><stop offset=".6" stop-color="#D98B34"/><stop offset="1" stop-color="#A8601E"/></radialGradient>
+  <radialGradient id="gPatty" cx="45%" cy="40%" r="65%"><stop offset="0" stop-color="#F7C65E"/><stop offset=".62" stop-color="#E29835"/><stop offset="1" stop-color="#B8691C"/></radialGradient>
+  <radialGradient id="gKpatty" cx="45%" cy="40%" r="65%"><stop offset="0" stop-color="#F8A85A"/><stop offset=".6" stop-color="#E07131"/><stop offset="1" stop-color="#A8411A"/></radialGradient>
+  <radialGradient id="gLeaf" cx="38%" cy="50%" r="68%"><stop offset="0" stop-color="#F0F9D4"/><stop offset=".45" stop-color="#C6E68E"/><stop offset=".8" stop-color="#97CD5A"/><stop offset="1" stop-color="#74B63E"/></radialGradient>
+  <linearGradient id="gSteel" x1="0" y1="0" x2="1" y2="1"><stop offset="0" stop-color="#E6E9EC"/><stop offset=".42" stop-color="#C5CACF"/><stop offset=".55" stop-color="#D7DBDF"/><stop offset="1" stop-color="#ADB3B9"/></linearGradient>
+  <linearGradient id="sHeel" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#F2C374"/><stop offset="1" stop-color="#C27A2C"/></linearGradient>
+  <linearGradient id="sCrown" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#E9A548"/><stop offset=".7" stop-color="#D08632"/><stop offset="1" stop-color="#C2752A"/></linearGradient>
+  <linearGradient id="sPatty" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#F6C25A"/><stop offset="1" stop-color="#C77720"/></linearGradient>
+  <linearGradient id="sKpatty" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#F59C52"/><stop offset="1" stop-color="#B2461B"/></linearGradient>
+  <pattern id="pBrush" width="7" height="7" patternUnits="userSpaceOnUse" patternTransform="rotate(-18)"><line x1="0" y1="0" x2="7" y2="0" stroke="#ffffff" stroke-opacity=".2" stroke-width="1"/></pattern>
+  <filter id="fShadow" x="-25%" y="-25%" width="150%" height="150%"><feDropShadow dx="0" dy="5" stdDeviation="5" flood-color="#000" flood-opacity=".3"/></filter>
+  <filter id="fSoft" x="-15%" y="-15%" width="130%" height="130%"><feDropShadow dx="0" dy="2" stdDeviation="2" flood-color="#000" flood-opacity=".18"/></filter>
+</defs>
+</svg>
+
+<div id="app">
+  <!-- TITLE -->
+  <section id="scr-title" class="screen">
+    <div class="title-wrap">
+      <div>
+        <div class="eyebrow">bhc 가맹교육 · BURGER BUILD TRAINING</div>
+        <h1 class="logo">버거 빌드<br><span class="accent">타이쿤</span></h1>
+        <p class="lead">클래식 · 콰삭 · 뿌링클 · 맛초킹 치킨버거. 주문이 들어오면 매뉴얼 그대로 소스를 짜고, 재료를 쌓고, 랩핑해서 내보내세요. 순서와 그램 수를 손으로 익히는 게임입니다.</p>
+        <div class="menu-btns">
+          <button class="btn btn-primary" id="btn-tycoon">영업 시작 <small id="tycoon-day">DAY 1</small></button>
+          <button class="btn btn-ghost" id="btn-practice">연습 모드 <small>가이드 따라 천천히</small></button>
+          <button class="btn btn-ghost" id="btn-cards">빌드 카드 보기 <small>4종 단면 · 랩핑 순서</small></button>
+        </div>
+        <div class="days" id="day-chips"></div>
+        <p class="day-note">DAY 1~4 · 버거 종류별로 4개씩 차례로 → DAY 5 · 4종이 섞인 피크타임</p>
+      </div>
+      <div class="hero-card">
+        <div class="hero-head"><span>BUILD CARD</span><b>클래식 치킨버거</b></div>
+        <div id="hero-stack"></div>
+      </div>
+    </div>
+    <ol class="howto">
+      <li><b>주문 확인</b><span>주문표에 적힌 버거를 확인해요.</span></li>
+      <li><b>재료 고르고 번 터치</b><span>크라운(윗번)·힐(아랫번) 중 올릴 곳을 터치해요.</span></li>
+      <li><b>꾹 눌러 짜기</b><span>저울을 보며 목표 그램에서 손을 떼요.</span></li>
+      <li><b>덮고 랩핑</b><span>크라운을 덮고 포장지를 순서대로 접어 서빙!</span></li>
+    </ol>
+    <div class="foot-row"><button class="link-btn" id="btn-bgm">배경음 끄기</button><button class="link-btn" id="btn-mute">효과음 끄기</button></div>
+  </section>
+
+  <!-- PRACTICE SELECT -->
+  <section id="scr-select" class="screen" hidden>
+    <div class="bar"><button class="back" data-go="title">← 처음으로</button><h2 class="scr-h">연습할 버거를 고르세요</h2></div>
+    <div class="burger-grid" id="burger-grid"></div>
+  </section>
+
+  <!-- BUILD CARDS -->
+  <section id="scr-cards" class="screen" hidden>
+    <div class="bar"><button class="back" data-go="title">← 처음으로</button><h2 class="scr-h">가맹점 BURGER BUILD</h2></div>
+    <div class="cards-grid" id="cards-grid"></div>
+    <div class="card" style="margin-top:12px">
+      <div class="sub">WRAPPING</div>
+      <h3>버거 랩핑 5단계</h3>
+      <p class="legend">랩지는 2장이 하나로 붙은 봉투형이에요. 열린 쪽으로 버거를 넣고, ◇(다이아몬드) 방향으로 돌려서 접어요.</p>
+      <ol class="wsteps wide" id="wrap-guide" style="margin-top:10px"></ol>
+    </div>
+  </section>
+
+  <!-- GAME -->
+  <section id="scr-game" class="screen" hidden>
+    <header class="hud">
+      <button class="icon-btn" id="btn-pause" aria-label="일시정지">II</button>
+      <div class="hud-title"><span class="day" id="hud-day">DAY 1</span><span class="daytitle" id="hud-sub">오픈 첫날</span></div>
+      <div class="spacer"></div>
+      <div class="stat" id="hud-served">0/3</div>
+      <div class="stat" id="hud-score">0점</div>
+      <button class="icon-btn on" id="btn-bgm2" aria-label="배경음 켜고 끄기">♪</button>
+      <button class="icon-btn on" id="btn-guide" hidden>가이드 ON</button>
+    </header>
+    <div class="game-grid">
+      <div class="col">
+        <div class="station-wrap" id="station-wrap"><svg id="station" viewBox="0 0 600 380" role="img" aria-label="버거 조립대: 왼쪽 크라운, 오른쪽 힐"></svg></div>
+        <div class="gauge idle" id="gauge">
+          <div class="g-info"><span class="g-name" id="g-name">저울</span><span class="g-val" id="g-val"></span></div>
+          <div class="g-bar" id="g-bar"><div class="g-zone g-good" id="g-good"></div><div class="g-zone g-perfect" id="g-perfect"></div><div class="g-fill" id="g-fill"></div><div class="g-target" id="g-target"></div></div>
+          <button id="squeeze" disabled>꾹 눌러<br>짜기</button>
+        </div>
+        <div class="panel check" id="checklist" hidden></div>
+      </div>
+      <div class="col">
+        <div class="rail" id="rail"></div>
+        <div class="msg" id="msg" role="status" aria-live="polite"></div>
+        <div class="panel" id="panel-tools">
+          <h3>소스 스테이션</h3><div class="tools" id="tools-sauce"></div>
+          <h3>토핑 · 패티</h3><div class="tools" id="tools-top"></div>
+        </div>
+        <div class="panel" id="panel-wrap" hidden>
+          <h3>랩핑 — 접을 곳을 순서대로</h3>
+          <div class="dpad">
+            <button class="dp" data-w="tuck" style="grid-area:up">위 끝 꽂아 넣기 ↓</button>
+            <button class="dp" data-w="left" style="grid-area:left">왼쪽 접기 →</button>
+            <button class="dp" data-w="insert" style="grid-area:mid">버거 넣기</button>
+            <button class="dp" data-w="right" style="grid-area:right">← 오른쪽 접기</button>
+            <button class="dp flip" data-w="flip" style="grid-area:flip">뒤집기 ⟲</button>
+          </div>
+          <button class="btn btn-primary serve" id="btn-serve" hidden>서빙하기</button>
+        </div>
+        <div class="actions" id="actions">
+          <button class="btn btn-act" id="btn-close">크라운 덮기</button>
+          <button class="btn btn-sub" id="btn-card">빌드카드</button>
+          <button class="btn btn-sub" id="btn-reset" hidden>처음부터</button>
+        </div>
+      </div>
+    </div>
+  </section>
+</div>
+
+<div class="modal" id="modal" hidden><div class="sheet" id="sheet" role="dialog" aria-modal="true"></div></div>
+
+<script>
+(()=>{
+'use strict';
+/* ================= utils ================= */
+const $=s=>document.querySelector(s), $$=s=>[...document.querySelectorAll(s)];
+const NS='http://www.w3.org/2000/svg';
+const RM=matchMedia('(prefers-reduced-motion: reduce)').matches;
+function S(tag,attrs,parent){const e=document.createElementNS(NS,tag);if(attrs)for(const k in attrs)e.setAttribute(k,attrs[k]);if(parent)parent.appendChild(e);return e;}
+function rng(seed){let s=(Math.imul(seed|0,2654435761)>>>0)||1;return()=>{s=(Math.imul(s,1664525)+1013904223)>>>0;return s/4294967296;};}
+const clamp=(v,a,b)=>Math.max(a,Math.min(b,v)), lerp=(a,b,t)=>a+(b-a)*t;
+const easeOut=t=>1-Math.pow(1-t,3), easeInOut=t=>t<.5?2*t*t:1-Math.pow(-2*t+2,2)/2;
+const f1=n=>(+n).toFixed(1);
+function tween(dur,fn,done){dur=RM?Math.min(dur,90):dur;const t0=performance.now();const step=now=>{const t=clamp((now-t0)/dur,0,1);fn(t);if(t<1)requestAnimationFrame(step);else if(done)done();};requestAnimationFrame(step);}
+function josa(w,a,b){const c=w.charCodeAt(w.length-1);const has=c>=0xAC00&&c<=0xD7A3&&(c-0xAC00)%28!==0;return w+(has?a:b);}
+const pathD=pts=>pts.length?'M'+pts.map(p=>f1(p[0])+','+f1(p[1])).join('L'):'';
+const pick=a=>a[Math.random()*a.length|0];
+function shuffle(a){for(let i=a.length-1;i>0;i--){const j=Math.random()*(i+1)|0;[a[i],a[j]]=[a[j],a[i]];}return a;}
+
+/* ================= data ================= */
+const ING={
+  mayo:{name:'마요네즈',short:'마요네즈',kind:'sauce',pattern:'spiral',target:12.5,rate:7.2,tolP:1.0,tolG:2.0,color:'#FBF4DA',edge:'#CDB97F',bottle:'#FFF6DC',label:'마요'},
+  white:{name:'화이트소스',short:'화이트소스',kind:'sauce',pattern:'zigzag',target:20,rate:10,tolP:1.5,tolG:3,color:'#FFFFFF',edge:'#BDB9AE',bottle:'#FFFFFF',label:'화이트'},
+  habanero:{name:'스윗하바네로소스',short:'스윗하바네로',kind:'sauce',pattern:'zigzag',target:20,rate:10,tolP:1.5,tolG:3,color:'#EE6630',edge:'#A93912',bottle:'#F07A43',label:'하바네로'},
+  bburing:{name:'뿌링뿌링소스',short:'뿌링뿌링소스',kind:'sauce',pattern:'zigzag',target:20,rate:10,tolP:1.5,tolG:3,color:'#F7E7B5',edge:'#BFA35C',bottle:'#F6E2A4',label:'뿌링뿌링'},
+  matcho:{name:'맛초킹버거소스',short:'맛초킹소스',kind:'sauce',pattern:'zigzag',target:20,rate:10,tolP:1.5,tolG:3,color:'#5E2C12',edge:'#2E1205',bottle:'#7A3A18',label:'맛초킹'},
+  pickle:{name:'오이피클',short:'오이피클',kind:'count',count:4,target:25},
+  lettuce:{name:'양상추',short:'양상추',kind:'pile',target:15,rate:8,tolP:1.5,tolG:3,color:'#8CC84B'},
+  patty:{name:'치킨패티',short:'치킨패티',kind:'place'},
+  kpatty:{name:'콰삭킹 패티',short:'콰삭킹패티',kind:'place'},
+  seasoning:{name:'뿌링클 시즈닝',short:'뿌링클시즈닝',kind:'shake',target:3,rate:2,tolP:0.3,tolG:0.6,color:'#F2C94C'},
+};
+for(const k in ING) ING[k].id=k;
+const SAUCE_TOOLS=['mayo','white','habanero','bburing','matcho'];
+const TOP_TOOLS=['pickle','lettuce','patty','kpatty','seasoning'];
+const BURGERS={
+  classic:{name:'클래식 치킨버거',short:'클래식',crown:['mayo','lettuce'],heel:['mayo','pickle','patty','white'],point:['white'],
+    tips:['크라운·힐 모두 마요네즈 12.5g — 번 가장자리에서 안쪽으로 동그랗게','힐: 오이피클 4개(25g) → 치킨패티 1장','화이트소스 20g은 패티 위에 지그재그','크라운: 마요네즈 위 양상추 15g(큰 잎 3~4장) → 힐 위에 덮기'],
+    blurb:'모든 버거의 기본 빌드. 화이트소스 지그재그 20g.'},
+  kwasak:{name:'콰삭 치킨버거',short:'콰삭',crown:['mayo'],heel:['mayo','pickle','kpatty','habanero'],point:['kpatty','habanero'],
+    tips:['크라운엔 마요네즈 12.5g만 — 양상추 없음!','힐: 마요네즈 12.5g → 오이피클 4개(25g)','패티는 콰삭킹 패티 1장','스윗하바네로소스 20g 지그재그 → 크라운 덮기'],
+    blurb:'양상추 없이 콰삭킹 패티 + 스윗하바네로소스.'},
+  bburinkle:{name:'뿌링클 치킨버거',short:'뿌링클',crown:['mayo','lettuce'],heel:['mayo','pickle','patty','seasoning','bburing'],point:['seasoning','bburing'],
+    tips:['클래식과 같은 빌드업, 다른 점은 2가지','패티 위에 뿌링클 시즈닝 3g을 골고루','소스는 뿌링뿌링소스 20g','크라운: 마요네즈 12.5g + 양상추 15g(큰 잎 3~4장)'],
+    blurb:'패티 위 뿌링클 시즈닝 3g + 뿌링뿌링소스.'},
+  matcho:{name:'맛초킹 치킨버거',short:'맛초킹',crown:['mayo','lettuce'],heel:['mayo','pickle','patty','matcho'],point:['matcho'],
+    tips:['클래식과 같은 빌드업','소스만 맛초킹버거소스 20g 지그재그','패티는 일반 치킨패티 1장','크라운: 마요네즈 12.5g + 양상추 15g(큰 잎 3~4장)'],
+    blurb:'클래식 빌드에 맛초킹버거소스 20g.'},
+};
+const BKEYS=['classic','kwasak','bburinkle','matcho'];
+function stepText(id){
+  switch(id){
+    case 'mayo':return '마요네즈 12.5g · 가장자리→안쪽 동그랗게';
+    case 'pickle':return '오이피클 4개 (25g)';
+    case 'patty':return '치킨패티 1장';
+    case 'kpatty':return '콰삭킹 패티 1장';
+    case 'seasoning':return '뿌링클 시즈닝 3g · 패티 위 골고루';
+    case 'lettuce':return '양상추 15g (큰 잎 3~4장) · 마요네즈 위에';
+    default:return ING[id].name+' 20g · 패티 위 지그재그';
+  }
+}
+function specOf(id){const i=ING[id];if(i.kind==='count')return '4개·25g';if(i.kind==='place')return '1장';return i.target+'g';}
+const WRAP_STEPS=[
+  {id:'insert',label:'버거 넣기',desc:'2장이 붙은 랩지의 열린 쪽으로 버거를 넣어요'},
+  {id:'left',label:'왼쪽 접기',desc:'◇ 방향으로 돌린 뒤 왼쪽 끝을 안쪽으로 접어요'},
+  {id:'right',label:'오른쪽 접기',desc:'오른쪽 끝을 안쪽으로 접어요'},
+  {id:'tuck',label:'위 끝 꽂아 넣기',desc:'위쪽 끝을 접어 좌·우 접은 사이에 넣어요'},
+  {id:'flip',label:'뒤집기',desc:'뒤집어서 bhc 로고가 위로 보이게'},
+];
+const DAYS=[
+  {n:1,title:'클래식 4개',newMenu:'classic',orders:['classic','classic','classic','classic'],gap:0,patience:200,rate:1,
+   story:'첫 출근! 오늘은 클래식 치킨버거만 4개를 차례로 만들어요. 손님이 한 분씩 오니까 빌드 순서를 손에 익혀봐요.'},
+  {n:2,title:'콰삭 4개',newMenu:'kwasak',orders:['kwasak','kwasak','kwasak','kwasak'],gap:0,patience:190,rate:1,
+   story:'오늘은 콰삭 치킨버거 4개! 크라운엔 마요네즈만, 패티는 콰삭킹 패티, 소스는 스윗하바네로소스.'},
+  {n:3,title:'뿌링클 4개',newMenu:'bburinkle',orders:['bburinkle','bburinkle','bburinkle','bburinkle'],gap:0,patience:190,rate:1,
+   story:'오늘은 뿌링클 치킨버거 4개! 패티 위 시즈닝 3g, 소스는 뿌링뿌링소스.'},
+  {n:4,title:'맛초킹 4개',newMenu:'matcho',orders:['matcho','matcho','matcho','matcho'],gap:0,patience:185,rate:1,
+   story:'오늘은 맛초킹 치킨버거 4개! 클래식과 같은 빌드에 소스만 맛초킹버거소스.'},
+  {n:5,title:'주말 피크타임',newMenu:null,orders:null,gap:46,patience:140,rate:1.1,blind:true,
+   story:'4종을 모두 4개씩 만들어 봤어요. 이제 진짜 타이쿤! 4종이 섞여서 몰려오고, 저울의 목표 눈금도 보이지 않아요 — 그램 수를 기억해서 짜세요.'},
+];
+const FACES=['🧑‍💼','👩‍🎓','👨‍🔧','👵','🧑‍🎤','👷','👩‍💻','🧔','🙋‍♀️','👴','🧑‍🏫','👩‍🦰'];
+const REACT={3:['😋 완벽해요! 매뉴얼 그대로네요','🤩 바로 이 맛이죠!','😍 포장까지 깔끔해요'],2:['🙂 맛있게 먹을게요','😊 잘 받았어요!'],1:['😕 뭔가 평소랑 다른데…','🤔 소스가 좀 이상해요']};
+
+/* ================= state ================= */
+const SKEY='bhc-burger-build-tycoon-v1';
+function loadSave(){try{return JSON.parse(localStorage.getItem(SKEY))||{};}catch(e){return {};}}
+const G={mode:null,guide:true,phase:'idle',tool:null,build:null,disp:null,holding:false,holdStart:0,lastSquish:0,
+  day:null,queue:[],pending:[],lost:[],dayLog:[],score:0,arrT:0,waitT:0,running:false,modalOpen:false,orderNo:0,wrap:null,
+  save:loadSave()};
+G.save.unlocked=G.save.unlocked||1; G.save.best=G.save.best||{};
+function persist(){try{localStorage.setItem(SKEY,JSON.stringify(G.save));}catch(e){}}
+
+/* ================= audio ================= */
+let AC=null;
+function ac(){if(!AC){try{AC=new(window.AudioContext||window.webkitAudioContext)();}catch(e){AC=null;}}if(AC&&AC.state==='suspended')AC.resume();return AC;}
+function tone(fq,dur=.12,type='sine',vol=.08,slide=0,delay=0){if(G.save.muted)return;const a=ac();if(!a)return;const t=a.currentTime+delay;const o=a.createOscillator(),g=a.createGain();o.type=type;o.frequency.setValueAtTime(fq,t);if(slide)o.frequency.exponentialRampToValueAtTime(Math.max(40,fq+slide),t+dur);g.gain.setValueAtTime(.0001,t);g.gain.exponentialRampToValueAtTime(vol,t+.01);g.gain.exponentialRampToValueAtTime(.0001,t+dur);o.connect(g).connect(a.destination);o.start(t);o.stop(t+dur+.03);}
+const SFX={
+  tick:()=>tone(900,.04,'square',.025),
+  pop:()=>tone(520,.12,'sine',.09,-260),
+  perfect:()=>{tone(880,.12,'triangle',.08);tone(1320,.2,'triangle',.08,0,.1);},
+  good:()=>tone(700,.16,'triangle',.07),
+  bad:()=>tone(150,.26,'square',.05,-40),
+  low:()=>tone(330,.12,'sine',.06),
+  bell:()=>{tone(1568,.5,'sine',.06);tone(2093,.6,'sine',.04,0,.03);},
+  squish:()=>tone(150+Math.random()*60,.06,'sawtooth',.018,-60),
+  shake:()=>tone(2400+Math.random()*800,.03,'square',.012),
+  fold:()=>tone(240,.12,'triangle',.05,140),
+  cash:()=>{tone(1046,.08,'square',.035);tone(1318,.1,'square',.035,0,.08);tone(1568,.22,'square',.035,0,.16);},
+};
+/* background music: audio/bgm.mp3 — decoded once, looped through a quiet gain (works on iPhone, where <audio>.volume is ignored) */
+const BGM={url:'audio/bgm.mp3',vol:.14,buf:null,src:null,gain:null,loading:null,starting:false,a:0,b:0};
+function bgmLoad(){if(!BGM.loading)BGM.loading=fetch(BGM.url).then(r=>{if(!r.ok)throw new Error(r.status);return r.arrayBuffer();}).catch(()=>null);return BGM.loading;}
+function trimBounds(buf){const ch=buf.getChannelData(0),n=ch.length,th=1e-3;let a=0,b=n-1;while(a<n&&Math.abs(ch[a])<th)a++;while(b>a&&Math.abs(ch[b])<th)b--;return[a/buf.sampleRate,(b+1)/buf.sampleRate];}
+async function bgmStart(){if(G.save.bgmOff||BGM.src||BGM.starting)return;const a=ac();if(!a)return;BGM.starting=true;
+  try{if(!BGM.buf){const ab=await bgmLoad();if(!ab)return;BGM.buf=await new Promise((res,rej)=>a.decodeAudioData(ab.slice(0),res,rej));[BGM.a,BGM.b]=trimBounds(BGM.buf);}
+    if(G.save.bgmOff||BGM.src)return;
+    if(!BGM.gain){BGM.gain=a.createGain();BGM.gain.connect(a.destination);}
+    const t=a.currentTime;BGM.gain.gain.cancelScheduledValues(t);BGM.gain.gain.setValueAtTime(.0001,t);BGM.gain.gain.exponentialRampToValueAtTime(BGM.vol,t+1.5);
+    const src=a.createBufferSource();src.buffer=BGM.buf;src.loop=true;src.loopStart=BGM.a;src.loopEnd=BGM.b;src.connect(BGM.gain);src.start(0,BGM.a);BGM.src=src;}
+  catch(e){}finally{BGM.starting=false;}}
+function bgmStop(){if(!BGM.src||!AC)return;const src=BGM.src;BGM.src=null;try{BGM.gain.gain.setTargetAtTime(.0001,AC.currentTime,.12);src.stop(AC.currentTime+.6);}catch(e){}}
+function toggleBgm(){G.save.bgmOff=!G.save.bgmOff;persist();if(G.save.bgmOff)bgmStop();else bgmStart();renderSoundBtns();}
+function renderSoundBtns(){$('#btn-mute').textContent=G.save.muted?'효과음 켜기':'효과음 끄기';$('#btn-bgm').textContent=G.save.bgmOff?'배경음 켜기':'배경음 끄기';
+  const h=$('#btn-bgm2');h.classList.toggle('on',!G.save.bgmOff);h.setAttribute('aria-pressed',String(!G.save.bgmOff));h.textContent=G.save.bgmOff?'♪ OFF':'♪';}
+
+/* ================= side-view build card ================= */
+const LH={heel:24,mayo:8,pickle:14,patty:30,kpatty:32,seasoning:8,white:11,habanero:11,bburing:12,matcho:11,lettuce:15,crown:50};
+function finalLayers(key){const B=BURGERS[key];const L=[{id:'heel'}];B.heel.forEach(id=>L.push({id,side:'heel'}));B.crown.slice().reverse().forEach(id=>L.push({id,side:'crown'}));L.push({id:'crown'});return L;}
+function layerLabel(id){if(id==='heel')return['버거 힐',''];if(id==='crown')return['크라운',''];const i=ING[id];return[i.name,i.kind==='count'?'25g (4개)':i.kind==='place'?'1장':i.target+'g'];}
+function halfW(id,w){return({heel:w/2,crown:w/2,patty:w/2+3,kpatty:w/2+5,pickle:w/2-6,lettuce:w/2,seasoning:w/2-14}[id])??(w/2-6);}
+function capsule(cx,t,h,w,fill,stroke){return `<rect x="${f1(cx-w/2)}" y="${f1(t)}" width="${f1(w)}" height="${h}" rx="${h/2}" fill="${fill}" stroke="${stroke}" stroke-width="1"/>`;}
+function drips(cx,b,w,fill,stroke,r,n){let s='';for(let j=0;j<n;j++){const x=cx-w/2+w*(j+.5)/n+(r()-.5)*12;s+=`<path d="M${f1(x-3)},${f1(b-1.5)} q3,${f1(5+r()*4)} 6,0" fill="${fill}" stroke="${stroke}" stroke-width=".8"/>`;}return s;}
+function zigLine(cx,t,h,w,id){let d='';const n=12;for(let j=0;j<=n;j++){const x=cx-w/2+w*j/n,y=j%2?t+h*.3:t+h*.72;d+=(j?'L':'M')+f1(x)+','+f1(y);}const hl=id==='matcho'?'#9A5530':id==='habanero'?'#FFB38E':'#FFFFFF';return `<path d="${d}" fill="none" stroke="${hl}" stroke-width="1.3" opacity=".9"/>`;}
+function layerShape(id,cx,t,h,w,seed){
+  const r=rng(seed+3),x0=cx-w/2,x1=cx+w/2,b=t+h;
+  switch(id){
+    case 'heel':return `<path d="M${x0},${t} L${x1},${t} L${x1},${b-9} Q${x1},${b} ${x1-13},${b} L${x0+13},${b} Q${x0},${b} ${x0},${b-9} Z" fill="url(#sHeel)" stroke="#9A5A1E" stroke-width="1.2"/><rect x="${x0+1.5}" y="${t+.6}" width="${w-3}" height="5" fill="#F7DDA6"/>`;
+    case 'crown':{let s=`<path d="M${x0},${b} C${x0},${f1(t+h*.2)} ${f1(x0+w*.2)},${t} ${cx},${t} C${f1(x1-w*.2)},${t} ${x1},${f1(t+h*.2)} ${x1},${b} Z" fill="url(#sCrown)" stroke="#9A5A1E" stroke-width="1.2"/><rect x="${x0+1.5}" y="${f1(b-5.6)}" width="${w-3}" height="5" fill="#F7DDA6"/>`;
+      for(let k=0;k<14;k++){const xx=lerp(cx-w*.36,cx+w*.36,r());const rel=(xx-cx)/(w/2);const top=b-h*Math.sqrt(Math.max(0,1-rel*rel));const yy=top+7+r()*Math.max(2,(b-top-18)*.6);s+=`<ellipse cx="${f1(xx)}" cy="${f1(yy)}" rx="2.8" ry="1.4" fill="#FFF4D8" stroke="#D2B172" stroke-width=".5" transform="rotate(${(r()*120-60)|0} ${f1(xx)} ${f1(yy)})"/>`;}
+      return s;}
+    case 'mayo':return capsule(cx,t,h,w-12,'#FBF4DA','#CDB97F')+drips(cx,b,w-30,'#FBF4DA','#CDB97F',r,2);
+    case 'white':case 'habanero':case 'bburing':case 'matcho':{const i=ING[id];return capsule(cx,t,h,w-12,i.color,i.edge)+zigLine(cx,t,h,w-26,id)+drips(cx,b,w-26,i.color,i.edge,r,3);}
+    case 'pickle':{let s='';[-46,-15,16,47].forEach((dx,k)=>{const yc=t+h/2,rot=k%2?5:-5;s+=`<g transform="rotate(${rot} ${cx+dx} ${yc})"><ellipse cx="${cx+dx}" cy="${yc}" rx="23" ry="${h/2-.5}" fill="#97B446" stroke="#5F7A22" stroke-width="1.2"/><ellipse cx="${cx+dx}" cy="${yc-1}" rx="15" ry="${h/2-3.5}" fill="#BCD06C" opacity=".85"/></g>`;});return s;}
+    case 'patty':case 'kpatty':{const k=id==='kpatty',n=k?22:14,amp=k?6:3.5,xs0=x0-(k?5:3),xs1=x1+(k?5:3);const tp=[],bp=[];
+      for(let j=0;j<=n;j++){const x=lerp(xs0+6,xs1-6,j/n);tp.push([x,t+(r()-.3)*amp]);bp.push([x,b-(r()-.3)*amp*.6]);}
+      let d=`M${f1(tp[0][0])},${f1(tp[0][1]+h*.25)} `;tp.forEach(p=>d+=`L${f1(p[0])},${f1(p[1])} `);d+=`Q${f1(xs1+2)},${f1(t+h/2)} ${f1(bp[n][0])},${f1(bp[n][1])} `;for(let j=n;j>=0;j--)d+=`L${f1(bp[j][0])},${f1(bp[j][1])} `;d+=`Q${f1(xs0-2)},${f1(t+h/2)} ${f1(tp[0][0])},${f1(tp[0][1]+h*.25)} Z`;
+      let s=`<path d="${d}" fill="url(#${k?'sKpatty':'sPatty'})" stroke="${k?'#9A3A14':'#A0601C'}" stroke-width="1.2" stroke-linejoin="round"/>`;
+      for(let j=0;j<(k?26:16);j++){const x=lerp(xs0+12,xs1-12,r()),y=t+4+r()*(h-9);s+=`<ellipse cx="${f1(x)}" cy="${f1(y)}" rx="${f1(2+r()*(k?4:3))}" ry="${f1(1.2+r()*2)}" fill="${r()<.6?(k?'#FBC07A':'#F9D98E'):(k?'#B4471B':'#C27522')}" opacity=".7"/>`;}
+      return s;}
+    case 'seasoning':{let s='';for(let j=0;j<50;j++){const x=lerp(x0+16,x1-16,r()),y=t+r()*h;s+=`<circle cx="${f1(x)}" cy="${f1(y)}" r="${f1(1.1+r()*1.6)}" fill="${['#F5D46A','#EDC04A','#FBE7A2','#E2A93A'][r()*4|0]}"/>`;}return s;}
+    case 'lettuce':{const n=14;let d=`M${x0+2},${f1(t+h*.55)} `;for(let j=0;j<n;j++){const xa=lerp(x0+2,x1-2,j/n),xb=lerp(x0+2,x1-2,(j+1)/n);d+=`Q${f1((xa+xb)/2)},${f1(t-3+r()*4)} ${f1(xb)},${f1(t+h*.35+r()*3)} `;}d+=`L${x1-2},${b-3} `;for(let j=n;j>0;j--){const xa=lerp(x0+2,x1-2,j/n),xb=lerp(x0+2,x1-2,(j-1)/n);d+=`Q${f1((xa+xb)/2)},${f1(b+3-r()*3)} ${f1(xb)},${f1(b-4+r()*2)} `;}d+='Z';
+      let s=`<path d="${d}" fill="#8CC84B" stroke="#4F8E26" stroke-width="1.1" stroke-linejoin="round"/>`;for(let j=0;j<6;j++){const x=lerp(x0+14,x1-14,r());s+=`<path d="M${f1(x)},${f1(t+4)} q${f1(r()*8-4)},${f1(h*.3)} ${f1(r()*6-3)},${f1(h*.55)}" stroke="#C6E58F" stroke-width="1.4" fill="none"/>`;}return s;}
+  }
+  return '';
+}
+function gradeTspan(r){if(!r)return'';const g=r.grams!=null?f1(r.grams)+'g':'';if(r.grade==='P')return ` <tspan class="g-p">✓${g?' '+g:''}</tspan>`;if(r.grade==='G')return ` <tspan class="g-g">△ ${g}</tspan>`;if(r.grade==='O')return ` <tspan class="g-o">✕ 과다 ${g}</tspan>`;return ` <tspan class="g-o">✕ ${g}</tspan>`;}
+function stackSVG(key,opt={}){
+  const labels=opt.labels!==false,grades=opt.grades||null,B=BURGERS[key],L=finalLayers(key);
+  const gap=labels?9:5,w=150,cx=labels?96:100,W=labels?(grades?440:370):200,pad=12;
+  const total=L.reduce((s,l)=>s+LH[l.id],0)+gap*(L.length-1),H=total+pad*2;
+  let y=H-pad;const items=[];
+  L.forEach((l,i)=>{const h=LH[l.id],t=y-h;items.push({l,t,h,yc:t+h/2});y=t-gap;});
+  const ly=items.map(it=>it.yc);for(let i=1;i<ly.length;i++){if(ly[i-1]-ly[i]<18)ly[i]=ly[i-1]-18;}
+  const minY=Math.min(...ly),shift=minY<10?10-minY:0;
+  let out='';
+  items.forEach((it,k)=>{
+    let g=layerShape(it.l.id,cx,it.t,it.h,w,key.length*7+k);
+    if(labels){const yy=ly[k]+shift,lx=cx+w/2+34,right=cx+halfW(it.l.id,w),isPt=B.point.includes(it.l.id),[nm,sp]=layerLabel(it.l.id);
+      let gr='';if(grades&&it.l.side){gr=gradeTspan(grades.find(r=>r.id===it.l.id&&r.side===it.l.side));}
+      g+=`<path d="M${f1(right+3)},${f1(it.yc)} L${f1(lx-16)},${f1(it.yc)} L${f1(lx-6)},${f1(yy)}" fill="none" stroke="#B4A99C" stroke-width="1"/><text x="${lx}" y="${f1(yy+4.5)}" class="st-l">${isPt?'<tspan class="st-pt">● </tspan>':''}${nm}${sp?` <tspan class="st-s">${sp}</tspan>`:''}${gr}</text>`;}
+    out+=`<g class="ly" style="--i:${k}">${g}</g>`;
+  });
+  return `<svg class="stack${opt.anim?' anim':''}" viewBox="0 0 ${W} ${Math.round(H+shift)}" role="img" aria-label="${B.name} 빌드 단면도">${out}</svg>`;
+}
+
+/* ================= wrap geometry ================= */
+const WD=150, BURGER_R=38, BURGER_Y=-12, LIP=10;
+/* 랩지 = 2장이 하나로 붙은 봉투형. ◇ 기준 왼쪽 위 변이 열린 쪽 → 세워 두면(45° 회전) 위쪽이 열린 정사각형 */
+const BURGER_START=[-108,-108];
+/* left/right: 좌우 끝 접기(사이에 틈이 생김) · tuck: 위 끝을 접어 좌우 접은 사이로 넣기 */
+const FOLDS={left:{n:[-1,0],c:-56,flap:true},right:{n:[1,0],c:-56,flap:true},tuck:{n:[0,-1],c:-80,under:true}};
+const flipSide=s=>s==='in'?'out':'in';
+function clipPoly(pts,F,pos){const out=[],n=pts.length;for(let i=0;i<n;i++){const P=pts[i],Q=pts[(i+1)%n];const vp=F.n[0]*P[0]+F.n[1]*P[1]+F.c,vq=F.n[0]*Q[0]+F.n[1]*Q[1]+F.c;const inP=pos?vp>0:vp<=0,inQ=pos?vq>0:vq<=0;if(inP)out.push(P);if(inP!==inQ){const t=vp/(vp-vq);out.push([P[0]+(Q[0]-P[0])*t,P[1]+(Q[1]-P[1])*t]);}}return out.length>=3?out:null;}
+function foldPoint(p,F,s){const d=F.n[0]*p[0]+F.n[1]*p[1]+F.c;return[p[0]-(1-s)*d*F.n[0],p[1]-(1-s)*d*F.n[1]];}
+function initialPaper(){const D=WD,o=LIP/Math.SQRT2;return[{type:'paper',pts:[[0,-D],[D,0],[0,D],[-D,0]],side:'in'},{type:'burger'},{type:'paper',pts:[[o,-D+o],[D,0],[0,D],[-D+o,o]],side:'out'}];}
+function splitFold(items,F){const stay=[],move=[];items.forEach(it=>{if(it.type==='burger'){stay.push(it);return;}const a=clipPoly(it.pts,F,false),b=clipPoly(it.pts,F,true);if(a)stay.push({type:'paper',pts:a,side:it.side,flap:it.flap});if(b)move.push({type:'paper',pts:b,orig:b,side:it.side,flap:it.flap||!!F.flap});});move.reverse();
+  const order=F.under?stay.filter(i=>!i.flap).concat(move,stay.filter(i=>i.flap)):stay.concat(move);return{order,move};}
+function applyFold(items,F){const{order,move}=splitFold(items,F);move.forEach(m=>{m.pts=m.orig.map(p=>foldPoint(p,F,-1));m.side=flipSide(m.side);delete m.orig;});return order;}
+function simulateWrap(keys){let items=initialPaper();keys.forEach(k=>{if(FOLDS[k])items=applyFold(items,FOLDS[k]);});return items;}
+const PAPER_FILL={in:'#FFFFFF',out:'#EEE7D4'}, PAPER_OP={in:1,out:.8};
+function arrowSVG(x1,y1,x2,y2){const a=Math.atan2(y2-y1,x2-x1),h=34,w=22;const bx=x2-Math.cos(a)*h,by=y2-Math.sin(a)*h;const lx=bx+Math.cos(a+Math.PI/2)*w,lyy=by+Math.sin(a+Math.PI/2)*w,rx=bx-Math.cos(a+Math.PI/2)*w,ry=by-Math.sin(a+Math.PI/2)*w;return `<path d="M${x1},${y1} L${f1(bx)},${f1(by)}" stroke="#E0A100" stroke-width="14" stroke-linecap="round"/><path d="M${f1(x2)},${f1(y2)} L${f1(lx)},${f1(lyy)} L${f1(rx)},${f1(ry)} Z" fill="#E0A100"/>`;}
+function burgerMiniSVG(x,y){const r=BURGER_R;return `<circle cx="${x}" cy="${y}" r="${r+3}" fill="#C9802C"/><circle cx="${x}" cy="${y}" r="${r}" fill="#DC8F3A" stroke="#9A5A1E" stroke-width="3"/><ellipse cx="${x-16}" cy="${y-12}" rx="6" ry="3" fill="#FFF3D2"/><ellipse cx="${x+14}" cy="${y-4}" rx="6" ry="3" fill="#FFF3D2"/><ellipse cx="${x-2}" cy="${y+16}" rx="6" ry="3" fill="#FFF3D2"/>`;}
+const WRAPPED_PATH='M-58,-56 C-58,-98 58,-98 58,-56 L56,94 L4,150 L-4,150 L-56,94 Z';
+function wrappedSVG(scale=1){return `<g transform="scale(${scale})"><path d="${WRAPPED_PATH}" fill="#F8F5EC" stroke="#BDB49F" stroke-width="2"/><path d="M-56,94 L-3,148 M56,94 L3,148 M-44,-82 C-22,-72 22,-72 44,-82" stroke="#D9D2C0" stroke-width="2" fill="none"/><text x="0" y="-44" text-anchor="middle" font-family="Gothic A1,sans-serif" font-weight="800" font-size="15" fill="#1E1E1E">bhc</text><g transform="rotate(-6)"><text x="0" y="-12" text-anchor="middle" font-family="Black Han Sans,sans-serif" font-size="23" fill="#F6C21C" stroke="#4A3210" stroke-width="1.5" paint-order="stroke">Chicken</text><text x="0" y="20" text-anchor="middle" font-family="Black Han Sans,sans-serif" font-size="28" fill="#F6C21C" stroke="#4A3210" stroke-width="1.5" paint-order="stroke">Burger</text></g></g>`;}
+function curvedArrowSVG(){return `<path d="M-120,-130 A170,170 0 0 1 120,-130" fill="none" stroke="#E0A100" stroke-width="12" stroke-linecap="round"/><path d="M134,-114 L104,-150 L138,-156 Z" fill="#E0A100"/>`;}
+function paperSVG(items,burgerAt){let s='';items.forEach(it=>{if(it.type==='burger'){s+=burgerMiniSVG(burgerAt[0],burgerAt[1]);return;}s+=`<path d="${pathD(it.pts)}Z" fill="${PAPER_FILL[it.side]}" fill-opacity="${PAPER_OP[it.side]}" stroke="#A89F8A" stroke-width="3" stroke-linejoin="round"/>`;});return s;}
+function wrapMiniFinal(){return `<svg class="wmini" viewBox="-180 -180 360 360" aria-hidden="true"><g transform="translate(0,-18)">${wrappedSVG(1)}</g></svg>`;}
+function wrapMini(idx){
+  const step=WRAP_STEPS[idx];const s='<svg class="wmini" viewBox="-180 -180 360 360" aria-hidden="true">';
+  if(step.id==='insert')return s+`<g transform="translate(0,26) rotate(45)">${paperSVG(initialPaper(),BURGER_START)}</g>`+arrowSVG(0,-86,0,-4)+'</svg>';
+  const before=WRAP_STEPS.slice(0,idx).map(x=>x.id).filter(k=>FOLDS[k]);
+  let body=paperSVG(simulateWrap(before),[0,BURGER_Y]);
+  if(step.id==='left')body+=arrowSVG(-165,-8,30,-8);
+  else if(step.id==='right')body+=arrowSVG(165,-8,-30,-8);
+  else if(step.id==='tuck')body+=arrowSVG(0,-172,0,-22);
+  else if(step.id==='flip')body+=curvedArrowSVG();
+  return s+body+'</svg>';
+}
+function wrapStepsHTML(stateFn,doneAll){return WRAP_STEPS.map((st,i)=>`<li class="${stateFn?stateFn(st.id):''}">${wrapMini(i)}<b>${i+1}. ${st.label}</b><span>${st.desc}</span></li>`).join('')+`<li class="${doneAll?'next':''}">${wrapMiniFinal()}<b>완성</b><span>꼬리는 아래, bhc 로고는 위로</span></li>`;}
+
+/* ================= station (top-down) ================= */
+const R=108,PR=100,CENTER={crown:[150,198],heel:[450,198]};
+const PICKLE_POS=[[-30,-30],[31,-27],[-28,31],[31,30]];
+let svg,gBuild,gWrap,gOv,bunG={},layerG={},ringG={},handEl=null;
+function initStation(){
+  svg=$('#station');svg.innerHTML='';
+  S('rect',{x:0,y:0,width:600,height:380,fill:'url(#gSteel)'},svg);
+  S('rect',{x:0,y:0,width:600,height:380,fill:'url(#pBrush)'},svg);
+  S('rect',{x:0,y:370,width:600,height:10,fill:'#959BA1'},svg);
+  gBuild=S('g',{},svg);gWrap=S('g',{display:'none'},svg);gOv=S('g',{},svg);
+  [['crown','크라운 · 윗번'],['heel','힐 · 아랫번']].forEach(([s,t])=>{const tx=S('text',{x:CENTER[s][0],y:350,'text-anchor':'middle',class:'svg-label'},gBuild);tx.textContent=t;});
+  svg.addEventListener('pointerdown',onStationDown);
+  svg.addEventListener('contextmenu',e=>e.preventDefault());
+}
+function drawBunBase(g,seed){const r=rng(seed);S('ellipse',{cx:3,cy:9,rx:R+3,ry:R,fill:'#2B2F33',opacity:.22},g);S('circle',{r:R,fill:'url(#gCut)',stroke:'#B8732B','stroke-width':2.5},g);
+  for(let i=0;i<55;i++){const a=r()*Math.PI*2,d=Math.sqrt(r())*R*.86,x=f1(Math.cos(a)*d),y=f1(Math.sin(a)*d);S('ellipse',{cx:x,cy:y,rx:f1(1.2+r()*2.2),ry:f1(.8+r()*1.3),fill:r()<.5?'#E3B46C':'#FCEFCF',opacity:.65,transform:`rotate(${(r()*180)|0} ${x} ${y})`},g);}}
+function drawTopBun(g,rad){S('circle',{r:rad+2,fill:'#C9802C'},g);S('circle',{r:rad,fill:'url(#gTop)',stroke:'#9A5A1E','stroke-width':2},g);const r=rng(91);
+  for(let i=0;i<Math.round(rad*.32);i++){const a=r()*Math.PI*2,d=Math.sqrt(r())*rad*.8,x=f1(Math.cos(a)*d),y=f1(Math.sin(a)*d);S('ellipse',{cx:x,cy:y,rx:f1(rad*.032),ry:f1(rad*.016),fill:'#FFF3D2',stroke:'#D6B06A','stroke-width':.6,transform:`rotate(${(r()*180)|0} ${x} ${y})`},g);}
+  S('ellipse',{cx:f1(-rad*.3),cy:f1(-rad*.35),rx:f1(rad*.35),ry:f1(rad*.17),fill:'#fff',opacity:.15,transform:`rotate(-30 ${f1(-rad*.3)} ${f1(-rad*.35)})`},g);}
+function resetBuns(){
+  ['crown','heel'].forEach(side=>{if(bunG[side])bunG[side].remove();const[x,y]=CENTER[side];const g=S('g',{transform:`translate(${x},${y})`,'data-side':side,class:'bun'},gBuild);
+    drawBunBase(g,side==='crown'?11:23);layerG[side]=S('g',{},g);ringG[side]=S('circle',{r:R+9,class:'ring'},g);S('circle',{r:R+14,fill:'transparent','data-side':side},g);bunG[side]=g;});
+}
+function blobPath(rad,seed,amp,n){const r=rng(seed),ph=[r()*6,r()*6];let d='';for(let i=0;i<n;i++){const a=i/n*Math.PI*2;const rr=rad*(1+.05*amp*Math.sin(3*a+ph[0])+.03*amp*Math.sin(7*a+ph[1])+.028*amp*(r()-.5)*2);d+=(i?'L':'M')+f1(Math.cos(a)*rr)+','+f1(Math.sin(a)*rr);}return d+'Z';}
+function drawPatty(side,id){const k=id==='kpatty';const outer=S('g',{},layerG[side]);const g=S('g',{class:'drop'},outer);
+  S('path',{d:blobPath(PR+2,7,1,36),fill:'#000',opacity:.22,transform:'translate(2,7)'},g);
+  S('path',{d:blobPath(PR,k?31:7,k?2.2:1,k?60:40),fill:`url(#${k?'gKpatty':'gPatty'})`,stroke:k?'#9A3A14':'#A85E18','stroke-width':1.6},g);
+  const r=rng(k?5:9);for(let i=0;i<(k?80:46);i++){const a=r()*Math.PI*2,d=Math.sqrt(r())*PR*.86,x=f1(Math.cos(a)*d),y=f1(Math.sin(a)*d);S('ellipse',{cx:x,cy:y,rx:f1(k?2.5+r()*5:2+r()*3.5),ry:f1(k?1.6+r()*3:1.3+r()*2.2),fill:r()<.55?(k?'#FBC07A':'#F8D488'):(k?'#B9481C':'#C67822'),opacity:.75,transform:`rotate(${(r()*180)|0} ${x} ${y})`},g);}
+}
+function drawPickle(side,pos){const outer=S('g',{transform:`translate(${pos[0]},${pos[1]})`},layerG[side]);const g=S('g',{class:'drop'},outer);
+  S('circle',{r:25,cy:3,fill:'#000',opacity:.2},g);S('circle',{r:24,fill:'#8DAA3C',stroke:'#5F7A22','stroke-width':2.5},g);S('circle',{r:23,fill:'none',stroke:'#4E6619','stroke-width':2,'stroke-dasharray':'2.5 3'},g);S('circle',{r:15,fill:'#B9CF6A'},g);
+  for(let i=0;i<6;i++){const a=i/6*Math.PI*2;S('ellipse',{cx:f1(Math.cos(a)*9),cy:f1(Math.sin(a)*9),rx:2.6,ry:1.5,fill:'#E9EFC0',transform:`rotate(${(a*180/Math.PI)|0} ${f1(Math.cos(a)*9)} ${f1(Math.sin(a)*9)})`},g);}}
+/* 양상추: 실제 버거처럼 큰 잎 — 15g이면 3~4장 */
+const LEAF_POS=[[-30,-26,-35],[32,-22,30],[-26,32,200],[30,30,140],[0,-2,95],[4,-44,10]];
+const LEAF_AT=[.2,4.5,9,13.2,17,20.5];
+function leafPath(rx,ry,seed){const r=rng(seed),n=40,ph=r()*6,pts=[];for(let k=0;k<n;k++){const a=k/n*Math.PI*2;const rr=1+.075*Math.sin(9*a+ph)+.035*Math.sin(17*a+ph*2)+(r()-.5)*.04;const taper=.72+.28*(1+Math.cos(a))/2;pts.push([Math.cos(a)*rx*rr,Math.sin(a)*ry*rr*taper]);}
+  const mid=(p,q)=>[(p[0]+q[0])/2,(p[1]+q[1])/2];const m0=mid(pts[n-1],pts[0]);let d=`M${f1(m0[0])},${f1(m0[1])}`;for(let k=0;k<n;k++){const p=pts[k],m=mid(p,pts[(k+1)%n]);d+=` Q${f1(p[0])},${f1(p[1])} ${f1(m[0])},${f1(m[1])}`;}return d+'Z';}
+function lettuceLeaf(g,i){const[x,y,rot]=LEAF_POS[i%LEAF_POS.length];const outer=S('g',{transform:`translate(${x},${y}) rotate(${rot})`},g);const inner=S('g',{class:'pop'},outer);const rx=54,ry=38;
+  S('path',{d:leafPath(rx+2,ry+2,60+i),fill:'#000',opacity:.14,transform:'translate(2,4)'},inner);
+  S('path',{d:leafPath(rx,ry,60+i),fill:'url(#gLeaf)',stroke:'#5C9E2E','stroke-width':1.6,'stroke-linejoin':'round'},inner);
+  S('path',{d:leafPath(rx*.68,ry*.6,90+i),fill:'#EEF8D2',opacity:.4},inner);
+  S('path',{d:`M${f1(-rx*.85)},3 Q0,-5 ${f1(rx*.82)},0`,fill:'none',stroke:'#F4FADF','stroke-width':4,'stroke-linecap':'round'},inner);
+  [-2,-1,1,2].forEach(k=>{const vx=k*rx*.22;[-1,1].forEach(sy=>S('path',{d:`M${f1(vx)},-1 q${f1(rx*.12)},${f1(sy*ry*.25)} ${f1(rx*.24)},${f1(sy*ry*.55)}`,fill:'none',stroke:'#E6F3C2','stroke-width':1.8,'stroke-linecap':'round'},inner));});}
+function lettucePiece(g,r){const a=r()*Math.PI*2,dist=Math.sqrt(r())*R*.76,x=f1(Math.cos(a)*dist),y=f1(Math.sin(a)*dist),len=12+r()*16,w=3.5+r()*5;
+  const cols=['#9BD157','#7FBF3F','#B7E07A','#6AAE36','#CBE89A','#A8D86B'];const outer=S('g',{transform:`translate(${x},${y}) rotate(${(r()*180)|0})`},g);
+  S('path',{d:`M${f1(-len/2)},0 Q${f1(-len/4)},${f1(-w)} 0,${f1(-w*.6)} Q${f1(len/4)},${f1(-w*1.1)} ${f1(len/2)},0 Q${f1(len/5)},${f1(w*.8)} 0,${f1(w*.5)} Q${f1(-len/4)},${f1(w)} ${f1(-len/2)},0Z`,fill:cols[r()*cols.length|0],stroke:'#4F8E26','stroke-width':.7,class:'pop'},outer);}
+function seasonDot(g,r){const a=r()*Math.PI*2,d=Math.sqrt(r())*PR*.86;S('circle',{cx:f1(Math.cos(a)*d),cy:f1(Math.sin(a)*d),r:f1(1.3+r()*1.7),fill:['#FFF4C8','#FDE9A3','#FFFBE6','#F9DE7E'][r()*4|0],stroke:'#B98A2A','stroke-width':.5,class:'pop'},g);}
+const SPIRAL_N=240;
+function spiralPts(){const pts=[],total=Math.round(SPIRAL_N*1.6);for(let i=0;i<=total;i++){const t=i/SPIRAL_N;const r=t<=1?R*(.84-.6*t):Math.max(R*.05,R*.24-(t-1)*R*.32);const th=-Math.PI/2+t*2.3*Math.PI*2;pts.push([Math.cos(th)*r,Math.sin(th)*r]);}return{pts,N:SPIRAL_N};}
+function zigzagPts(){const rows=8,top=-PR*.62,bot=PR*.62,raw=[];for(let k=0;k<=rows;k++){const y=lerp(top,bot,k/rows);const hw=Math.sqrt(Math.max(0,(PR*.86)**2-y*y));raw.push([(k%2?1:-1)*hw*.9,y]);}
+  const dense=[];for(let i=0;i<raw.length-1;i++){for(let j=0;j<24;j++){const t=j/24;dense.push([lerp(raw[i][0],raw[i+1][0],t),lerp(raw[i][1],raw[i+1][1],t)]);}}dense.push(raw[raw.length-1]);
+  const N=dense.length-1;const back=dense.slice().reverse().map(([x,y])=>[x*.8+6,y+5]);return{pts:dense.concat(back),N};}
+
+/* hands */
+function makeBottleHand(ing){const g=S('g',{class:'hand'});const inner=S('g',{transform:'rotate(-28)'},g);
+  S('path',{d:'M-4,-22 L4,-22 L1.4,-1 L-1.4,-1 Z',fill:'#F4F1EA',stroke:'#8E8A82','stroke-width':1},inner);
+  S('rect',{x:-13,y:-38,width:26,height:17,rx:4,fill:'#E9E6DF',stroke:'#8E8A82','stroke-width':1.2},inner);
+  S('rect',{x:-21,y:-128,width:42,height:92,rx:13,fill:ing.bottle,stroke:'rgba(0,0,0,.4)','stroke-width':1.5},inner);
+  S('rect',{x:-21,y:-66,width:42,height:24,fill:'#fff',opacity:.92},inner);
+  const tx=S('text',{x:0,y:-49,'text-anchor':'middle','font-size':11,'font-weight':800,fill:'#A81D2E','font-family':'Gothic A1,sans-serif'},inner);tx.textContent=ing.label;
+  const glove=S('g',{class:'glove'},inner);
+  S('rect',{x:15,y:-124,width:22,height:64,rx:11,fill:'#93A9EE',stroke:'#6F86D6','stroke-width':1.5},glove);
+  for(let k=0;k<4;k++)S('rect',{x:-25,y:-126+k*14,width:52,height:13,rx:6.5,fill:'#A9BCF5',stroke:'#6F86D6','stroke-width':1.3},glove);
+  S('rect',{x:-31,y:-84,width:13,height:28,rx:6.5,fill:'#A9BCF5',stroke:'#6F86D6','stroke-width':1.3,transform:'rotate(14 -24 -70)'},glove);
+  return g;}
+function makeShakerHand(){const g=S('g',{class:'hand'});const inner=S('g',{transform:'rotate(-12)'},g);const shk=S('g',{class:'shk'},inner);
+  S('rect',{x:-17,y:-96,width:34,height:66,rx:9,fill:'#F7D25E',stroke:'rgba(0,0,0,.35)','stroke-width':1.5},shk);
+  S('rect',{x:-17,y:-72,width:34,height:20,fill:'#fff',opacity:.9},shk);
+  const tx=S('text',{x:0,y:-58,'text-anchor':'middle','font-size':9.5,'font-weight':800,fill:'#A81D2E','font-family':'Gothic A1,sans-serif'},shk);tx.textContent='시즈닝';
+  S('rect',{x:-18,y:-32,width:36,height:12,rx:4,fill:'#E4E4E4',stroke:'#8E8A82'},shk);
+  for(let i=-2;i<=2;i++)S('circle',{cx:i*6,cy:-24,r:1.4,fill:'#777'},shk);
+  const glove=S('g',{class:'glove'},shk);for(let k=0;k<3;k++)S('rect',{x:-22,y:-94+k*13,width:44,height:12,rx:6,fill:'#A9BCF5',stroke:'#6F86D6','stroke-width':1.3},glove);
+  return g;}
+function makeLettuceHand(){const g=S('g',{class:'hand'});const inner=S('g',{transform:'rotate(-20)'},g);
+  S('path',{d:leafPath(34,24,7),fill:'url(#gLeaf)',stroke:'#5C9E2E','stroke-width':1.4,transform:'translate(0,-2) rotate(-15)'},inner);
+  const glove=S('g',{class:'glove'},inner);S('rect',{x:-18,y:-46,width:36,height:34,rx:14,fill:'#A9BCF5',stroke:'#6F86D6','stroke-width':1.4},glove);S('rect',{x:-14,y:-74,width:28,height:34,rx:10,fill:'#93A9EE',stroke:'#6F86D6','stroke-width':1.4},glove);
+  return g;}
+function showHand(d){hideHand();const ing=ING[d.id];handEl=ing.kind==='sauce'?makeBottleHand(ing):ing.kind==='shake'?makeShakerHand():makeLettuceHand();gOv.appendChild(handEl);updateDispense(d);}
+function hideHand(){if(handEl){handEl.remove();handEl=null;}}
+function moveHand(x,y){if(handEl)handEl.setAttribute('transform',`translate(${f1(x)},${f1(y)})`);}
+function floatText(x,y,text,color){const t=S('text',{x,y,'text-anchor':'middle',class:'float',fill:color},gOv);t.textContent=text;tween(1150,k=>{t.setAttribute('y',f1(y-34*easeOut(k)));t.setAttribute('opacity',f1(1-Math.max(0,(k-.6)/.4)));},()=>t.remove());}
+function shake(){const w=$('#station-wrap');w.classList.remove('shake');void w.offsetWidth;w.classList.add('shake');}
+
+/* ================= messages / UI ================= */
+function say(text,type){const m=$('#msg');m.className='msg'+(type?' '+type:'');m.textContent=text;void m.offsetWidth;m.classList.add('flash');}
+function showScreen(name){['title','select','cards','game'].forEach(n=>$('#scr-'+n).hidden=n!==name);window.scrollTo(0,0);}
+function isGuide(){return G.mode==='practice'&&G.guide;}
+function toolIcon(id){const i=ING[id];
+  if(i.kind==='sauce')return `<svg viewBox="0 0 40 40" aria-hidden="true"><path d="M18.5,2 L21.5,2 L21,8 L19,8Z" fill="#DDD"/><rect x="14" y="7" width="12" height="6" rx="2" fill="#E9E6DF"/><rect x="11" y="12" width="18" height="26" rx="5" fill="${i.bottle}" stroke="rgba(0,0,0,.45)"/><rect x="11" y="24" width="18" height="7" fill="#fff" opacity=".85"/></svg>`;
+  if(id==='pickle')return `<svg viewBox="0 0 40 40" aria-hidden="true"><circle cx="14" cy="16" r="10" fill="#8DAA3C" stroke="#5F7A22" stroke-width="2"/><circle cx="14" cy="16" r="6" fill="#B9CF6A"/><circle cx="26" cy="25" r="10" fill="#8DAA3C" stroke="#5F7A22" stroke-width="2"/><circle cx="26" cy="25" r="6" fill="#B9CF6A"/></svg>`;
+  if(id==='lettuce')return `<svg viewBox="0 0 40 40" aria-hidden="true"><path d="M6,26 Q8,10 20,8 Q32,10 34,26 Q27,32 20,30 Q13,33 6,26Z" fill="#8CC84B" stroke="#4F8E26" stroke-width="1.5"/><path d="M20,10 L20,29 M20,18 L13,14 M20,22 L28,17" stroke="#C6E58F" stroke-width="1.6" fill="none"/></svg>`;
+  if(id==='patty'||id==='kpatty'){const k=id==='kpatty';return `<svg viewBox="-20 -20 40 40" aria-hidden="true"><path d="${blobPath(16,k?31:7,k?2.4:1,k?30:22)}" fill="${k?'#E57633':'#E5A23C'}" stroke="${k?'#9A3A14':'#A85E18'}" stroke-width="1.5"/><circle cx="-5" cy="-4" r="2.5" fill="${k?'#FBC07A':'#F8D488'}"/><circle cx="5" cy="3" r="3" fill="${k?'#FBC07A':'#F8D488'}"/><circle cx="-2" cy="7" r="2" fill="${k?'#B9481C':'#C67822'}"/></svg>`;}
+  if(id==='seasoning')return `<svg viewBox="0 0 40 40" aria-hidden="true"><rect x="12" y="10" width="16" height="26" rx="4" fill="#F7D25E" stroke="rgba(0,0,0,.4)"/><rect x="11" y="5" width="18" height="7" rx="2" fill="#E4E4E4" stroke="#8E8A82"/><rect x="12" y="19" width="16" height="7" fill="#fff" opacity=".85"/></svg>`;
+  return '';}
+function buildTools(){
+  const mk=(id)=>`<button class="tool" data-tool="${id}" aria-pressed="false">${toolIcon(id)}<span>${ING[id].short}</span><span class="spec" hidden>${specOf(id)}</span></button>`;
+  $('#tools-sauce').innerHTML=SAUCE_TOOLS.map(mk).join('');$('#tools-top').innerHTML=TOP_TOOLS.map(mk).join('');
+  $$('.tool').forEach(b=>b.addEventListener('click',()=>{ac();selectTool(b.dataset.tool);}));
+}
+function guideNext(){if(!G.build)return null;const B=BURGERS[G.build.key];const seq=[['crown',0],['heel',0]];for(let i=1;i<B.heel.length;i++)seq.push(['heel',i]);for(let i=1;i<B.crown.length;i++)seq.push(['crown',i]);
+  for(const [side,i] of seq){if(G.build[side].i<=i)return{side,id:B[side][i]};}return null;}
+function renderTools(){const gn=isGuide()&&G.phase==='build'?guideNext():null;
+  $$('.tool').forEach(b=>{const id=b.dataset.tool;b.classList.toggle('sel',G.tool===id);b.setAttribute('aria-pressed',G.tool===id);b.classList.toggle('guide',!!gn&&gn.id===id&&G.tool!==id);b.querySelector('.spec').hidden=G.mode!=='practice';});}
+function renderTargets(){['crown','heel'].forEach(s=>ringG[s]&&ringG[s].setAttribute('class','ring'));if(G.phase!=='build'||!G.build)return;
+  if(G.disp&&!G.disp.locked){ringG[G.disp.side].setAttribute('class','ring active');return;}
+  if(!G.tool)return;const B=BURGERS[G.build.key];
+  if(isGuide()){['crown','heel'].forEach(s=>{if(B[s][G.build[s].i]===G.tool)ringG[s].setAttribute('class','ring on');});}
+  else ['crown','heel'].forEach(s=>ringG[s].setAttribute('class','ring neutral'));}
+function renderGauge(){
+  const g=$('#gauge'),d=G.disp,sq=$('#squeeze'),blind=G.mode==='tycoon'&&G.day&&G.day.blind;
+  const zones=[$('#g-good'),$('#g-perfect'),$('#g-target')];
+  if(!d||d.locked){g.className='gauge idle';$('#g-name').textContent=G.phase==='wrap'||G.phase==='wrapped'?'랩핑 중':'저울';
+    $('#g-val').textContent=G.phase==='build'?(G.tool?`${ING[G.tool].short} 선택 → 번 터치`:'재료 선택 → 번 터치'):'';
+    $('#g-fill').style.width='0';zones.forEach(z=>z.style.display='none');sq.disabled=true;sq.innerHTML='꾹 눌러<br>짜기';return;}
+  const ing=ING[d.id];g.className='gauge';
+  if(ing.kind==='count'){$('#g-name').textContent='오이피클 — 힐을 터치할 때마다 1개';zones.forEach(z=>z.style.display='none');sq.disabled=true;sq.innerHTML='힐 터치<br>×4';updateGaugeValue();return;}
+  const max=ing.target*1.6,pc=v=>clamp(v/max,0,1)*100+'%';
+  $('#g-name').textContent=ing.name;
+  if(blind){zones.forEach(z=>z.style.display='none');}
+  else{zones.forEach(z=>z.style.display='block');
+    $('#g-good').style.left=pc(ing.target-ing.tolG);$('#g-good').style.width=(2*ing.tolG/max*100)+'%';
+    $('#g-perfect').style.left=pc(ing.target-ing.tolP);$('#g-perfect').style.width=(2*ing.tolP/max*100)+'%';
+    $('#g-target').style.left=`calc(${pc(ing.target)} - 1px)`;}
+  sq.disabled=false;sq.innerHTML=ing.kind==='shake'?'꾹 눌러<br>흔들기':ing.kind==='pile'?'꾹 눌러<br>올리기':'꾹 눌러<br>짜기';
+  $('#g-fill').style.background=ing.color;updateGaugeValue();}
+function updateGaugeValue(){const d=G.disp;if(!d)return;const ing=ING[d.id],g=$('#gauge'),blind=G.mode==='tycoon'&&G.day&&G.day.blind;
+  if(ing.kind==='count'){$('#g-val').innerHTML=`<b>${d.count}</b> / 4개 · ${f1(d.grams)}g`;$('#g-fill').style.width=(d.count/4*100)+'%';$('#g-fill').style.background='#8DAA3C';return;}
+  const max=ing.target*1.6;$('#g-fill').style.width=clamp(d.grams/max,0,1)*100+'%';
+  $('#g-val').innerHTML=`<b>${f1(d.grams)}</b> g${blind?'':` <small>/ 목표 ${ing.target}g</small>`}`;
+  const diff=d.grams-ing.target;g.classList.toggle('inzone',!blind&&Math.abs(diff)<=ing.tolP);g.classList.toggle('over',!blind&&diff>ing.tolG);}
+function renderChecklist(){
+  const el=$('#checklist');if(!isGuide()||!G.build){el.hidden=true;return;}el.hidden=false;const B=BURGERS[G.build.key];
+  if(G.phase==='wrap'||G.phase==='wrapped'){const exp=wrapExpected();
+    el.innerHTML=`<h3>랩핑 순서</h3><ol class="wsteps">${wrapStepsHTML(id=>G.wrap&&G.wrap.done[id]?'done':exp.includes(id)?'next':'',G.phase==='wrapped')}</ol>`;return;}
+  const gn=guideNext();
+  const col=(side,title)=>{const st=G.build[side];return `<div class="ck-col"><h4>${title}</h4><ol>${B[side].map((id,i)=>`<li class="${i<st.i?'done':(gn&&gn.side===side&&i===st.i)?'next':''}">${stepText(id)}</li>`).join('')}</ol></div>`;};
+  const done=isBuildComplete();
+  el.innerHTML=`<h3>빌드 순서 · ${B.name}</h3><div class="ck-grid">${col('crown','크라운 (윗번)')}${col('heel','힐 (아랫번)')}</div><p class="ck-end">${done?'<b style="color:#F2B632">▶ 크라운 덮기</b>':'다 쌓으면'} → 랩핑 → 서빙</p>`;}
+function updateActions(){const inBuild=G.phase==='build';$('#btn-close').hidden=!inBuild;$('#btn-close').classList.toggle('guide',inBuild&&isBuildComplete());
+  $('#btn-reset').hidden=G.mode!=='practice';$('#btn-card').hidden=false;}
+function showPanel(which){$('#panel-tools').hidden=which!=='tools';$('#panel-wrap').hidden=which!=='wrap';}
+function updateHud(){
+  if(G.mode==='practice'){$('#hud-day').textContent='연습 모드';$('#hud-sub').textContent=G.build?BURGERS[G.build.key].name:'';$('#hud-served').hidden=true;$('#hud-score').hidden=true;$('#btn-guide').hidden=false;
+    $('#btn-guide').textContent=G.guide?'가이드 ON':'가이드 OFF';$('#btn-guide').classList.toggle('on',G.guide);return;}
+  $('#btn-guide').hidden=true;$('#hud-served').hidden=false;$('#hud-score').hidden=false;
+  $('#hud-day').textContent='DAY '+G.day.n;$('#hud-sub').textContent=G.day.title;
+  $('#hud-served').textContent=`서빙 ${G.dayLog.length}/${G.dayTotal}`;$('#hud-score').textContent=`${G.score}점`;}
+function moodFor(c){const f=c.pat/c.max;return f>.5?'🙂':f>.25?'😐':'😠';}
+function renderRail(newC){const rail=$('#rail');rail.innerHTML='';
+  if(G.mode==='practice'){const B=BURGERS[G.build.key];rail.innerHTML=`<div class="ticket active"><div class="tk-top"><span>연습 주문</span><span class="tk-stamp">조리중</span></div><div class="tk-who">🎓</div><div class="tk-menu">${B.name}</div><div class="tk-note">천천히, 정확하게!</div></div>`;return;}
+  if(!G.queue.length){rail.innerHTML=`<div class="rail-empty">${G.pending.length?'다음 손님을 기다리는 중…':'오늘 주문 마감!'}</div>`;return;}
+  G.queue.forEach((c,i)=>{const el=document.createElement('div');el.className='ticket'+(i===0?' active':'')+(c===newC?' enter':'');
+    el.innerHTML=`<div class="tk-top"><span>#${String(c.no).padStart(3,'0')}</span>${i===0?'<span class="tk-stamp">조리중</span>':'<span>대기</span>'}</div><div class="tk-who">${c.face}<span class="mood">${moodFor(c)}</span></div><div class="tk-menu">${BURGERS[c.key].name}</div><div class="pbar"><i></i></div>`;
+    c.bar=el.querySelector('.pbar i');c.moodEl=el.querySelector('.mood');rail.appendChild(el);});updateRailBars();}
+function updateRailBars(){G.queue.forEach(c=>{if(!c.bar)return;const f=clamp(c.pat/c.max,0,1);c.bar.style.width=(f*100)+'%';c.bar.style.background=f>.5?'#2F9E57':f>.25?'#E39B19':'#D2382B';const m=moodFor(c);if(c.moodEl.textContent!==m)c.moodEl.textContent=m;});}
+
+/* ================= build logic ================= */
+function newBuild(key){return{key,crown:{i:0,partial:null},heel:{i:0,partial:null},results:[],mistakes:[],hints:0};}
+function isBuildComplete(){if(!G.build)return false;const B=BURGERS[G.build.key];return G.build.crown.i>=B.crown.length&&G.build.heel.i>=B.heel.length;}
+function sideName(s){return s==='crown'?'크라운':'힐';}
+function resetStationForBuild(){
+  gWrap.setAttribute('display','none');gWrap.innerHTML='';gBuild.removeAttribute('display');resetBuns();hideHand();
+  G.tool=null;G.disp=null;G.holding=false;G.wrap=null;G.phase=G.build?'build':'idle';$('#btn-serve').hidden=true;showPanel('tools');
+  renderTools();renderTargets();renderGauge();renderChecklist();updateActions();}
+function selectTool(id){if(G.phase!=='build')return;
+  if(G.disp&&!G.disp.locked&&G.disp.id!==id){endHold(true);hideHand();G.disp=null;}
+  G.tool=id;SFX.tick();renderTools();renderTargets();renderGauge();
+  if(isGuide()){const gn=guideNext();const B=BURGERS[G.build.key];const sides=['crown','heel'].filter(s=>B[s][G.build[s].i]===id);
+    if(sides.length)say(`${ING[id].name} 선택! 노란 테두리의 ${sides.map(sideName).join('·')}을(를) 터치하세요.`);
+    else say(`${josa(ING[id].name,'은','는')} 지금 올릴 차례가 아니에요. 다음: ${gn?sideName(gn.side)+' — '+stepText(gn.id):'크라운 덮기'}`,'warn');}
+  else say(`${ING[id].name} 선택 → 올릴 번을 터치하세요.`);}
+function onStationDown(e){
+  ac();if(G.modalOpen)return;
+  if(G.phase==='wrap'){const h=e.target.closest('[data-w]');if(h){e.preventDefault();wrapAction(h.dataset.w);}return;}
+  if(G.phase!=='build')return;const s=e.target.closest('[data-side]');if(!s)return;e.preventDefault();const side=s.dataset.side;const d=G.disp;
+  if(d&&!d.locked&&d.side===side&&G.tool===d.id){if(d.kind==='count')addPickle();else beginHold();return;}
+  onBunTap(side);}
+function onBunTap(side){
+  if(!G.tool){say('먼저 아래에서 재료를 골라주세요.','warn');SFX.low();return;}
+  const id=G.tool,B=BURGERS[G.build.key],track=B[side],st=G.build[side];
+  if(st.i>=track.length){mistake('order',`${sideName(side)} 빌드는 이미 끝났어요. ${josa(ING[id].name,'은','는')} 여기에 올리지 않아요.`);return;}
+  const expected=track[st.i];
+  if(id!==expected){wrongIngredient(id,side,expected);return;}
+  const ing=ING[id];
+  if(ing.kind==='place'){drawPatty(side,id);SFX.pop();completeStep(side,id,{grade:'P'});return;}
+  let d=st.partial&&st.partial.id===id?st.partial:null;
+  if(!d){d={id,side,kind:ing.kind,grams:0,count:0,locked:false};
+    if(ing.kind==='sauce'){const g=S('g',{},layerG[side]);const wide=ing.pattern==='spiral';d.under=S('path',{fill:'none',stroke:ing.edge,'stroke-width':wide?11:10,'stroke-linecap':'round','stroke-linejoin':'round',opacity:.85},g);d.top=S('path',{fill:'none',stroke:ing.color,'stroke-width':wide?8:7,'stroke-linecap':'round','stroke-linejoin':'round'},g);d.hl=S('path',{fill:'none',stroke:'#fff','stroke-opacity':id==='matcho'?.3:.55,'stroke-width':2,'stroke-linecap':'round',transform:'translate(-1,-1.5)'},g);
+      Object.assign(d,ing.pattern==='spiral'?spiralPts():zigzagPts());d.baseW=wide?8:7;}
+    else if(ing.kind==='pile'||ing.kind==='shake'){d.g=S('g',{},layerG[side]);d.r=rng(ing.kind==='pile'?77:55);}
+    st.partial=d;}
+  G.disp=d;
+  if(ing.kind==='count'){hideHand();renderTargets();renderGauge();addPickle();return;}
+  showHand(d);renderTargets();renderGauge();
+  const verb=ing.kind==='shake'?'흔들고':ing.kind==='pile'?'올리고':'짜고';
+  say(G.mode==='tycoon'&&G.day&&G.day.blind?`${ing.name} — 번을 꾹 누르거나 [꾹 눌러] 버튼으로 ${verb}, 기억한 그램에서 손을 떼세요!`:`${ing.name} — 번을 꾹 누르거나 [꾹 눌러] 버튼으로 ${verb}, ${ing.target}g에서 손을 떼세요!`);}
+function addPickle(){const d=G.disp;if(!d||d.locked)return;drawPickle(d.side,PICKLE_POS[d.count]);d.count++;d.grams=d.count*6.25;SFX.pop();updateGaugeValue();
+  if(d.count>=4){d.locked=true;G.build[d.side].partial=null;completeStep(d.side,'pickle',{grams:25,grade:'P'});}
+  else say(`오이피클 ${d.count}/4개 (${f1(d.grams)}g) — 힐을 ${4-d.count}번 더 터치!`);}
+function wrongIngredient(id,side,expected){
+  const B=BURGERS[G.build.key],inThis=B.crown.includes(id)||B.heel.includes(id);let text;const nm=ING[id].name;
+  if(!inThis){
+    if(id==='lettuce'&&G.build.key==='kwasak')text='콰삭 치킨버거엔 양상추가 없어요! 크라운엔 마요네즈만.';
+    else if(id==='patty'||id==='kpatty'){const p=B.heel.find(x=>x==='patty'||x==='kpatty');text=`${B.name} 패티는 ${josa(ING[p].name,'이에요','예요')}!`;}
+    else if(ING[id].kind==='sauce'&&id!=='mayo'){const s=B.heel.find(x=>ING[x].kind==='sauce'&&x!=='mayo');text=`${B.name} 소스는 ${josa(ING[s].name,'이에요','예요')}. ${josa(nm,'은','는')} 다른 버거용!`;}
+    else if(id==='seasoning')text='뿌링클 시즈닝은 뿌링클 치킨버거에만 들어가요!';
+    else text=`${B.name}에는 ${josa(nm,'이','가')} 들어가지 않아요!`;}
+  else if(!B[side].includes(id)){text=`${josa(nm,'은','는')} ${sideName(side==='crown'?'heel':'crown')}에 올라가요!`;}
+  else text=`순서가 달라요! ${sideName(side)}: ${B[side].map(i=>ING[i].short).join(' → ')}`;
+  mistake('wrong',text);}
+function mistake(type,text){G.build.mistakes.push({type,text});say('✕ '+text,'err');SFX.bad();shake();
+  if(G.mode==='tycoon'&&G.queue[0]){G.queue[0].pat=Math.max(1,G.queue[0].pat-5);floatText(300,128,'인내심 -5초','#FF8A7A');updateRailBars();}}
+function beginHold(){const d=G.disp;if(!d||d.locked||d.kind==='count'||G.holding)return;G.holding=true;G.holdStart=performance.now();if(handEl)handEl.classList.add('squeeze');$('#squeeze').classList.add('holding');}
+function endHold(silent){if(!G.holding)return;G.holding=false;if(handEl)handEl.classList.remove('squeeze');$('#squeeze').classList.remove('holding');if(!silent&&G.disp&&!G.disp.locked&&G.disp.kind!=='count')evaluateDispense(G.disp);}
+function updateDispense(d){const ing=ING[d.id],[cx,cy]=CENTER[d.side],f=d.grams/ing.target;
+  if(ing.kind==='sauce'){if(d.grams<=0){d.under.setAttribute('d','');d.top.setAttribute('d','');d.hl.setAttribute('d','');moveHand(cx+d.pts[0][0],cy+d.pts[0][1]);return;}
+    const i=Math.min(d.pts.length-1,Math.max(1,Math.floor(f*d.N)));const ds=pathD(d.pts.slice(0,i+1));d.under.setAttribute('d',ds);d.top.setAttribute('d',ds);d.hl.setAttribute('d',ds);
+    const extra=f>1.15?(f-1.15)*10:0;d.top.setAttribute('stroke-width',f1(d.baseW+extra));d.under.setAttribute('stroke-width',f1(d.baseW+3+extra));moveHand(cx+d.pts[i][0],cy+d.pts[i][1]);}
+  else if(ing.kind==='pile'){while((d.count||0)<LEAF_AT.length&&d.grams>=LEAF_AT[d.count||0]){lettuceLeaf(d.g,d.count||0);d.count=(d.count||0)+1;if(d.count>1)SFX.pop();}
+    const np=LEAF_POS[Math.min(d.count||0,LEAF_POS.length-1)];moveHand(cx+np[0]*.8,cy+np[1]*.8);}
+  else if(ing.kind==='shake'){const want=Math.floor(d.grams*48);while((d.count||0)<want){seasonDot(d.g,d.r);d.count=(d.count||0)+1;}moveHand(cx+Math.sin(d.grams*4)*30,cy-6+Math.cos(d.grams*3)*18);}}
+function evaluateDispense(d){const ing=ING[d.id],g=d.grams,diff=g-ing.target,blind=G.mode==='tycoon'&&G.day&&G.day.blind;
+  if(diff<-ing.tolG){say(blind?`조금 부족해요! 지금 ${f1(g)}g — 더 짜주세요.`:`부족해요! 지금 ${f1(g)}g — 목표 ${ing.target}g까지 조금 더.`,'warn');SFX.low();return;}
+  const grade=Math.abs(diff)<=ing.tolP?'P':diff<=ing.tolG?'G':'O';d.locked=true;G.build[d.side].partial=null;hideHand();completeStep(d.side,d.id,{grams:g,grade});}
+function completeStep(side,id,res){const b=G.build;b.results.push({side,id,...res});b[side].i++;G.disp=null;
+  const[cx,cy]=CENTER[side],ing=ING[id],gtxt=res.grams!=null?` ${f1(res.grams)}g`:'';
+  if(res.grade==='P'){floatText(cx,cy-20,(ing.kind==='place'||ing.kind==='count'?'OK!':'PERFECT')+gtxt,'#7CF0A8');SFX.perfect();}
+  else if(res.grade==='G'){floatText(cx,cy-20,'GOOD'+gtxt,'#FFD15C');SFX.good();}
+  else{floatText(cx,cy-20,'과다!'+gtxt,'#FF8A7A');SFX.bad();}
+  renderTools();renderTargets();renderGauge();renderChecklist();updateActions();
+  const B=BURGERS[b.key];
+  if(res.grade==='O')say(`✕ ${ing.name} 과다 ${f1(res.grams)}g (기준 ${ing.target}g) — 원가 손실, 맛 균형도 무너져요.`,'err');
+  else if(isBuildComplete())say('빌드 완료! [크라운 덮기]를 눌러 크라운을 힐 위에 덮으세요.','ok');
+  else if(isGuide()){const gn=guideNext();say(`${res.grade==='G'?'GOOD! ':'좋아요! '}다음 ▶ ${sideName(gn.side)}: ${stepText(gn.id)}`,'ok');}
+  else say(res.grade==='P'?`${ing.name} ${ing.kind==='place'?'올림':'완벽'}!${gtxt}`:`${ing.name} 괜찮아요${gtxt} — 기준은 ${ing.target}g`,'ok');
+  if(G.tool===id&&!(B.crown.slice(b.crown.i).includes(id)||B.heel.slice(b.heel.i).includes(id))){G.tool=null;renderTools();renderTargets();renderGauge();}}
+function closeBurger(){if(G.phase!=='build')return;ac();const B=BURGERS[G.build.key],b=G.build;const crownLeft=B.crown.length-b.crown.i,heelLeft=B.heel.length-b.heel.i;
+  if(crownLeft||heelLeft){const parts=[];if(heelLeft)parts.push('힐');if(crownLeft)parts.push('크라운');let t=`아직 ${parts.join('·')} 빌드가 남았어요!`;if(isGuide()){const gn=guideNext();t+=` 다음: ${sideName(gn.side)} — ${stepText(gn.id)}`;}mistake('early',t);return;}
+  endHold(true);hideHand();G.phase='closing';G.tool=null;renderTools();renderTargets();renderGauge();updateActions();
+  const ref=G.build,cg=bunG.crown;gBuild.appendChild(cg);const[x0,y0]=CENTER.crown,[x1,y1]=CENTER.heel;let swapped=false;const top=S('g',{display:'none'},cg);drawTopBun(top,R);
+  say('크라운을 뒤집어 힐 위에 덮는 중…');
+  tween(720,t=>{const e=easeInOut(t);const x=lerp(x0,x1,e),y=lerp(y0,y1,e)-Math.sin(Math.PI*e)*40;const sx=Math.cos(Math.PI*e);
+    if(!swapped&&e>=.5){swapped=true;[...cg.children].forEach(ch=>{if(ch!==top)ch.setAttribute('display','none');});top.removeAttribute('display');}
+    cg.setAttribute('transform',`translate(${f1(x)},${f1(y)}) scale(${f1(Math.max(.02,Math.abs(sx)))},1)`);},
+  ()=>{if(G.build!==ref)return;cg.setAttribute('transform',`translate(${x1},${y1})`);SFX.pop();setTimeout(()=>{if(G.build===ref)showCompleteModal();},350);});}
+
+/* ================= wrapping ================= */
+function wrapExpected(){if(!G.wrap)return[];const w=G.wrap.done;if(!w.insert)return['insert'];const lr=['left','right'].filter(k=>!w[k]);if(lr.length)return lr;if(!w.tuck)return['tuck'];if(!w.flip)return['flip'];return[];}
+function setPaperTransform(ref,sx){ref.paperG.setAttribute('transform',`translate(300,${f1(ref.ty)}) rotate(${f1(ref.rot)})${sx!=null?` scale(${f1(Math.max(.01,sx))},1)`:''}`);}
+function toAbs(ref,p){const a=ref.rot*Math.PI/180,c=Math.cos(a),s=Math.sin(a);return[300+p[0]*c-p[1]*s,ref.ty+p[0]*s+p[1]*c];}
+function startWrap(){G.phase='wrap';gBuild.setAttribute('display','none');gWrap.removeAttribute('display');gWrap.innerHTML='';
+  const labels=[['랩지: 2장이 붙은 봉투형',28],['열린 쪽으로 버거 넣기',48]].map(([t,y])=>{const tx=S('text',{x:18,y,class:'svg-label'},gWrap);tx.textContent=t;return tx;});
+  const ref=G.wrap={done:{},busy:false,items:initialPaper(),burgerPos:BURGER_START.slice(),ty:222,rot:45,labels};
+  ref.paperG=S('g',{},gWrap);setPaperTransform(ref);
+  const bEl=S('g',{});S('ellipse',{cx:3,cy:7,rx:BURGER_R+4,ry:BURGER_R,fill:'#000',opacity:.2},bEl);drawTopBun(bEl,BURGER_R);ref.burgerEl=bEl;
+  ref.handles=S('g',{},gWrap);ref.finalG=S('g',{transform:'translate(300,190)',display:'none'},gWrap);ref.finalG.innerHTML=wrappedSVG(1);
+  renderPaper(ref);renderHandles();showPanel('wrap');renderWrapPanel();renderGauge();renderChecklist();updateActions();
+  say(isGuide()?'랩지는 2장이 하나로 붙어 있고 위쪽만 열려 있어요. 1단계 ▶ 열린 쪽으로 버거를 넣어요 (버거 터치).':'랩핑 시작! 랩지의 열린 쪽을 확인하고 순서대로 진행하세요.');}
+function renderPaper(ref,moving){const pg=ref.paperG;pg.innerHTML='';
+  ref.items.forEach(it=>{if(it.type==='burger'){const[x,y]=ref.burgerPos;ref.burgerEl.setAttribute('transform',`translate(${f1(x)},${f1(y)})`);pg.appendChild(ref.burgerEl);return;}
+    const side=it.flipped?flipSide(it.side):it.side;S('path',{d:pathD(it.pts)+'Z',fill:PAPER_FILL[side],'fill-opacity':PAPER_OP[side],stroke:'#BDB49F','stroke-width':1.4,'stroke-linejoin':'round',filter:moving&&moving.includes(it)?'url(#fShadow)':'url(#fSoft)'},pg);});}
+function animateFold(ref,F,done){const{order,move}=splitFold(ref.items,F);ref.items=order;
+  tween(540,t=>{const s=Math.cos(Math.PI*easeInOut(t));move.forEach(m=>{m.pts=m.orig.map(p=>foldPoint(p,F,s));m.flipped=s<0;});renderPaper(ref,move);},
+  ()=>{move.forEach(m=>{m.pts=m.orig.map(p=>foldPoint(p,F,-1));m.side=flipSide(m.side);m.flipped=false;delete m.orig;});renderPaper(ref);if(done)done();});}
+const HANDLE_POS={left:[-WD,0],right:[WD,0],tuck:[0,-WD],flip:[0,30]};
+const HANDLE_TXT={left:'→',right:'←',tuck:'↓',flip:'⟲'};
+function renderHandles(){const ref=G.wrap;if(!ref)return;const hg=ref.handles;hg.innerHTML='';if(G.phase!=='wrap'||ref.busy)return;const exp=wrapExpected(),guide=isGuide();
+  if(!ref.done.insert){const[ax,ay]=toAbs(ref,ref.burgerPos);const h=S('g',{class:'whandle','data-w':'insert',transform:`translate(${f1(ax)},${f1(ay)})`},hg);
+    S('circle',{r:BURGER_R+12,class:guide?'ring on':'ring neutral'},h);S('circle',{r:BURGER_R+12,fill:'transparent'},h);return;}
+  (ref.done.tuck?['flip']:['left','right','tuck']).forEach(k=>{if(ref.done[k])return;const[ax,ay]=toAbs(ref,HANDLE_POS[k]);const on=guide&&exp.includes(k);const h=S('g',{class:'whandle'+(on?' on':''),'data-w':k,transform:`translate(${f1(ax)},${f1(ay)})`},hg);
+    S('circle',{r:k==='flip'?26:21,class:'hc'},h);const t=S('text',{y:7,'text-anchor':'middle',class:'ht'},h);t.textContent=HANDLE_TXT[k];});}
+function renderWrapPanel(){const exp=wrapExpected(),guide=isGuide();$$('.dp').forEach(b=>{const k=b.dataset.w;const done=!!(G.wrap&&G.wrap.done[k]);b.classList.toggle('done',done);b.disabled=done;b.classList.toggle('next',guide&&exp.includes(k));});}
+function wrapAction(k){const ref=G.wrap;if(G.phase!=='wrap'||!ref||ref.busy||ref.done[k])return;const exp=wrapExpected();
+  if(!exp.includes(k)){let t;if(exp[0]==='insert')t='먼저 랩지의 열린 쪽으로 버거를 넣어야 해요!';else if(k==='flip')t='뒤집기는 위 끝까지 사이에 넣은 다음이에요!';else if(k==='tuck')t='위 끝은 왼쪽·오른쪽을 먼저 접어야 그 사이에 넣을 수 있어요!';else{const st=WRAP_STEPS.find(s=>s.id===exp[0]);t=`지금은 「${st.label}」 — ${st.desc}`;}
+    mistake('wrap','랩핑 순서가 달라요! '+t);return;}
+  ref.busy=true;ref.handles.innerHTML='';SFX.fold();
+  const finish=()=>{if(G.wrap!==ref)return;ref.done[k]=true;ref.busy=false;renderHandles();renderWrapPanel();renderChecklist();afterWrapStep();};
+  if(k==='insert'){const[sx,sy]=ref.burgerPos;
+    tween(620,t=>{const e=easeInOut(t);ref.burgerPos=[lerp(sx,0,e),lerp(sy,BURGER_Y,e)];renderPaper(ref);},()=>{if(G.wrap!==ref)return;SFX.pop();say('버거가 랩지 안으로 쏙! ◇ 다이아몬드 방향으로 돌려 놓는 중…','ok');
+      tween(640,t=>{const e=easeInOut(t);ref.rot=lerp(45,0,e);ref.ty=lerp(222,190,e);setPaperTransform(ref);},()=>{ref.labels[0].textContent='◇ 다이아몬드 방향';ref.labels[1].textContent='좌·우 접고 위 끝 넣기';finish();});});}
+  else if(k==='flip'){const fg=ref.finalG;tween(240,t=>setPaperTransform(ref,1-t),()=>{ref.paperG.setAttribute('display','none');fg.removeAttribute('display');
+    tween(320,t=>fg.setAttribute('transform',`translate(300,190) scale(${(Math.max(.01,easeOut(t))).toFixed(2)},1)`),()=>{SFX.pop();finish();});});}
+  else animateFold(ref,FOLDS[k],finish);}
+function afterWrapStep(){const ref=G.wrap,exp=wrapExpected();
+  if(!exp.length){G.phase='wrapped';$('#btn-serve').hidden=false;SFX.good();say('랩핑 완료! 꼬리는 아래, bhc 로고는 위로. [서빙하기]를 눌러 내보내세요.','ok');floatText(300,60,'WRAPPED!','#7CF0A8');renderWrapPanel();renderChecklist();return;}
+  const st=WRAP_STEPS.find(s=>s.id===exp[0]);
+  if(isGuide()&&ref.done.insert&&!ref.done.left&&!ref.done.right)say('◇ 다이아몬드 방향 완성! 다음 ▶ 왼쪽·오른쪽 끝을 안쪽으로 접어요.','ok');
+  else if(isGuide())say(`좋아요! 다음 ▶ ${st.label}: ${st.desc}`,'ok');else say('좋아요! 다음은?','ok');}
+
+/* ================= scoring / results ================= */
+function scoreBuild(b,patFrac){let P=0,Gd=0,bad=0;b.results.forEach(r=>{if(r.grade==='P')P++;else if(r.grade==='G')Gd++;else bad++;});
+  const m=b.mistakes.length,measured=b.results.filter(r=>ING[r.id].kind==='sauce'||ING[r.id].kind==='pile'||ING[r.id].kind==='shake'),mP=measured.filter(r=>r.grade==='P').length;
+  let pts=100+P*12+Gd*6-bad*20-m*12-(b.hints?10:0);const speed=patFrac!=null?Math.round(40*patFrac):0;pts+=speed;pts=Math.max(10,pts);
+  let stars=1;if(bad===0&&m===0&&!b.hints&&mP>=Math.ceil(measured.length*.6))stars=3;else if(bad<=1&&m<=2)stars=2;
+  return{pts,stars,P,G:Gd,bad,m,speed,measured};}
+function starsHTML(n){return `<div class="stars" aria-label="별 ${n}개">${[1,2,3].map(i=>i<=n?'★':'<span class="off">★</span>').join('')}</div>`;}
+function measureTable(b){const rows=b.results.filter(r=>r.grams!=null&&ING[r.id].kind!=='count').map(r=>{const ing=ING[r.id];const lbl={P:'PERFECT',G:'GOOD',O:'과다',U:'부족'}[r.grade];return `<tr><td>${sideName(r.side)} · ${ing.name}</td><td class="n">${ing.target}g</td><td class="n">${f1(r.grams)}g</td><td><span class="badge ${r.grade}">${lbl}</span></td></tr>`;}).join('');
+  return rows?`<table class="mtable"><thead><tr><th>재료</th><th class="n">기준</th><th class="n">내 계량</th><th>판정</th></tr></thead><tbody>${rows}</tbody></table>`:'';}
+function mistakesHTML(b){if(!b.mistakes.length)return '<p style="color:#23864A;font-weight:800">실수 없이 매뉴얼대로 완성!</p>';const uniq=[...new Set(b.mistakes.map(m=>m.text))];return `<p style="font-weight:800;margin-bottom:0">이번 버거에서 놓친 부분</p><ul class="mlist">${uniq.map(t=>`<li>${t}</li>`).join('')}</ul>`;}
+
+/* ================= modals ================= */
+function openModal(html){G.modalOpen=true;endHold(true);const sh=$('#sheet');sh.innerHTML=html;$('#modal').hidden=false;$('#modal').scrollTop=0;const f=sh.querySelector('[data-focus]')||sh.querySelector('button');if(f)f.focus({preventScroll:true});}
+function closeModal(){$('#modal').hidden=true;G.modalOpen=false;}
+function showCompleteModal(){const b=G.build,B=BURGERS[b.key];
+  openModal(`<div class="m-eyebrow">BUILD CHECK</div><h2>${B.name} 빌드 완성!</h2><p>크라운을 덮은 버거의 단면이에요. 아래에서 위로 쌓인 순서를 다시 확인해요.</p>
+  <div class="m-box">${stackSVG(b.key,{grades:b.results})}<p class="legend"><i>●</i> 이 버거만의 포인트 재료</p></div>
+  ${measureTable(b)}
+  <div class="m-btns"><button class="btn btn-primary" data-act="go-wrap" data-focus>랩핑하러 가기 →</button></div>`);}
+function showBuildCard(){const b=G.build;if(!b)return;const B=BURGERS[b.key];let note='';
+  if(G.mode==='tycoon'){if(!b.hints){b.hints=1;note='<p style="color:#C9302C;font-weight:800">힌트 사용 — 이번 주문은 ★3을 받을 수 없어요. (빌드카드를 보는 동안 시간은 멈춰요)</p>';}else note='<p style="color:#5D554E">이번 주문에서 이미 힌트를 사용했어요.</p>';}
+  openModal(`<div class="m-eyebrow">BUILD CARD</div><h2>${B.name}</h2>${note}<div class="m-box">${stackSVG(b.key)}</div>
+  <ul class="tips">${B.tips.map(t=>`<li>${t}</li>`).join('')}</ul>
+  <div class="m-box"><b>랩핑 순서</b><ol class="wsteps" style="margin-top:8px">${wrapStepsHTML()}</ol></div>
+  <div class="m-btns"><button class="btn btn-primary" data-act="close" data-focus>계속 만들기</button></div>`);}
+function dayIntro(){const D=G.day;const nm=D.newMenu?BURGERS[D.newMenu]:null;
+  const how=D.n===1?`<div class="m-box"><b>조작법</b><ul class="tips"><li>아래에서 <b>재료</b>를 고르고 → 올릴 <b>번(크라운/힐)</b>을 터치</li><li>소스·양상추·시즈닝은 번이나 버튼을 <b>꾹 누르고</b> 있다가 목표 그램에서 떼기</li><li>오이피클은 힐을 4번 터치, 패티는 1번 터치</li><li>다 쌓으면 <b>크라운 덮기</b> → 랩핑 → <b>서빙</b></li><li>순서·재료를 틀리면 손님 인내심이 5초 줄어요</li></ul></div>`:'';
+  openModal(`<div class="m-eyebrow">DAY ${D.n} / 5</div><h2>${D.title}</h2><p>${D.story}</p>${how}
+  ${nm?`<div class="m-box"><span class="m-tag">NEW MENU</span><h3>${nm.name}</h3>${stackSVG(D.newMenu)}<ul class="tips">${nm.tips.map(t=>`<li>${t}</li>`).join('')}</ul></div>`:
+   `<div class="m-box"><span class="m-tag">FINAL</span><h3>그램 수 최종 점검</h3><ul class="tips"><li>마요네즈 12.5g (크라운·힐 각각)</li><li>화이트·스윗하바네로·뿌링뿌링·맛초킹버거소스 20g</li><li>양상추 15g · 오이피클 4개 25g · 뿌링클 시즈닝 3g</li></ul></div>`}
+  <div class="m-meta">주문 ${G.dayTotal}건 · 손님 인내심 ${D.patience}초${D.gap?' · 손님이 겹쳐서 와요':' · 한 분씩 차례로'}</div>
+  <div class="m-btns"><button class="btn btn-primary" data-act="start-day" data-focus>영업 시작</button><button class="btn btn-ghost" data-act="to-title">처음 화면</button></div>`);}
+function showOrderResult(c,sc){const b=G.build,B=BURGERS[b.key];
+  openModal(`<div class="m-eyebrow">ORDER #${String(c.no).padStart(3,'0')} · ${B.name}</div>${starsHTML(sc.stars)}<h2>+${sc.pts}점</h2><p style="font-size:16px">${c.face} ${pick(REACT[sc.stars])}</p>
+  <div class="kpis"><div class="kpi"><b>${sc.P}</b><span>PERFECT</span></div><div class="kpi"><b>${sc.G}</b><span>GOOD</span></div><div class="kpi"><b>${sc.bad}</b><span>과다/부족</span></div><div class="kpi"><b>${sc.m}</b><span>실수</span></div></div>
+  ${mistakesHTML(b)}${measureTable(b)}<p class="m-meta">속도 보너스 +${sc.speed}점${b.hints?' · 힌트 -10점':''}</p>
+  <div class="m-btns"><button class="btn btn-primary" data-act="next-order" data-focus>${G.queue.length||G.pending.length?'다음 주문 받기 →':'영업 마감 보고 →'}</button></div>`);}
+function showPracticeResult(sc){const b=G.build,B=BURGERS[b.key];const title=sc.stars===3?'완벽한 빌드!':sc.stars===2?'좋아요, 거의 다 왔어요!':'한 번 더 연습해봐요';
+  openModal(`<div class="m-eyebrow">PRACTICE · ${B.name}</div>${starsHTML(sc.stars)}<h2>${title}</h2>
+  <div class="kpis"><div class="kpi"><b>${sc.P}</b><span>PERFECT</span></div><div class="kpi"><b>${sc.G}</b><span>GOOD</span></div><div class="kpi"><b>${sc.bad}</b><span>과다/부족</span></div><div class="kpi"><b>${sc.m}</b><span>실수</span></div></div>
+  ${mistakesHTML(b)}<div class="m-box">${stackSVG(b.key,{grades:b.results})}</div>${measureTable(b)}
+  <div class="m-btns"><button class="btn btn-primary" data-act="practice-retry" data-focus>같은 버거 다시</button><button class="btn btn-ghost" data-act="practice-other">다른 버거 연습</button><button class="btn btn-ghost" data-act="to-title">처음 화면</button></div>`);}
+function gradeOf(avg,lost){if(avg>=2.7&&lost===0)return'S';if(avg>=2.2&&lost<=1)return'A';if(avg>=1.6)return'B';return'C';}
+const GRADE_RANK={S:4,A:3,B:2,C:1};
+function endDay(){if(!G.running)return;G.running=false;G.build=null;resetStationForBuild();renderRail();const D=G.day,log=G.dayLog,served=log.length,lost=G.lost.length;
+  const avg=served?log.reduce((s,r)=>s+r.stars,0)/(served+lost):0;const gr=gradeOf(avg,lost);
+  const allRes=log.flatMap(r=>r.results).filter(r=>r.grams!=null&&ING[r.id].kind!=='count');const pRate=allRes.length?Math.round(allRes.filter(r=>r.grade==='P').length/allRes.length*100):0;
+  const counts={};log.forEach(r=>{r.mistakes.forEach(m=>{counts[m.text]=(counts[m.text]||0)+1;});r.results.forEach(x=>{if(x.grade==='O'){const k=`${ING[x.id].name} 과다 (기준 ${ING[x.id].target}g)`;counts[k]=(counts[k]||0)+1;}});});
+  const top=Object.entries(counts).sort((a,b)=>b[1]-a[1]).slice(0,4);
+  const prev=G.save.best[D.n];if(!prev||GRADE_RANK[gr]>GRADE_RANK[prev])G.save.best[D.n]=gr;G.save.unlocked=Math.max(G.save.unlocked,Math.min(5,D.n+1));if(D.n===5)G.save.cleared=true;persist();
+  openModal(`<div class="m-eyebrow">DAY ${D.n} 영업 마감</div><div style="display:flex;align-items:center;gap:16px"><div class="grade">${gr}</div><div><h2 style="margin:0">${D.title} 마감!</h2><p style="margin:2px 0">총 ${G.score}점</p></div></div>
+  <div class="kpis"><div class="kpi"><b>${served}</b><span>서빙</span></div><div class="kpi"><b>${lost}</b><span>놓친 손님</span></div><div class="kpi"><b>${avg.toFixed(1)}</b><span>평균 ★</span></div><div class="kpi"><b>${pRate}%</b><span>계량 PERFECT</span></div></div>
+  ${top.length?`<p style="font-weight:800;margin-bottom:0">오늘의 복습 포인트</p><ul class="mlist">${top.map(([t,n])=>`<li>${t}${n>1?` <b>×${n}</b>`:''}</li>`).join('')}</ul>`:'<p style="color:#23864A;font-weight:800">실수 없는 완벽한 영업이었어요!</p>'}
+  <div class="m-btns">${D.n<5?`<button class="btn btn-primary" data-act="next-day" data-focus>DAY ${D.n+1} 영업 →</button>`:`<button class="btn btn-primary" data-act="cert" data-focus>수료증 받기</button>`}<button class="btn btn-ghost" data-act="retry-day">DAY ${D.n} 다시 하기</button><button class="btn btn-ghost" data-act="to-title">처음 화면</button></div>`);}
+function showCert(){const d=new Date();openModal(`<div class="cert"><div class="m-eyebrow">bhc 가맹교육</div><h2>버거 빌드 마스터</h2><p>클래식 · 콰삭 · 뿌링클 · 맛초킹<br>4종 치킨버거의 빌드와 랩핑을 모두 마쳤습니다.</p>
+  <div style="display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:6px;margin:10px 0">${BKEYS.map(k=>`<div>${stackSVG(k,{labels:false})}<div style="font-size:12px;font-weight:800">${BURGERS[k].short}</div></div>`).join('')}</div>
+  <p class="m-meta">${d.getFullYear()}. ${d.getMonth()+1}. ${d.getDate()} · DAY별 최고 등급 ${[1,2,3,4,5].map(n=>G.save.best[n]||'-').join(' / ')}</p></div>
+  <div class="m-btns"><button class="btn btn-primary" data-act="to-title" data-focus>처음 화면으로</button></div>`);}
+
+/* ================= game flow ================= */
+function startPractice(key){G.mode='practice';G.running=false;G.day=null;G.queue=[];G.build=newBuild(key);showScreen('game');updateHud();renderRail();resetStationForBuild();
+  const gn=guideNext();say(G.guide?`${BURGERS[key].name} 연습! 첫 단계 ▶ ${sideName(gn.side)}: ${stepText(gn.id)} — 노랗게 깜빡이는 재료를 눌러보세요.`:`${BURGERS[key].name} 연습 — 가이드 없이 만들어 보세요.`);}
+function startDay(n){const D=DAYS[n-1];G.mode='tycoon';G.day=D;G.queue=[];G.lost=[];G.dayLog=[];G.score=0;G.arrT=0;G.waitT=0;G.running=false;G.build=null;
+  let orders=D.orders;if(!orders){const base=BKEYS.slice();orders=shuffle(base.concat([pick(BKEYS),pick(BKEYS)]));}
+  G.pending=orders.slice();G.dayTotal=orders.length;showScreen('game');updateHud();renderRail();resetStationForBuild();say('영업 준비 중…');dayIntro();}
+function spawnCustomer(){if(!G.pending.length)return;const key=G.pending.shift();const c={no:++G.orderNo,key,face:pick(FACES),pat:G.day.patience,max:G.day.patience};
+  G.arrT=0;G.queue.push(c);SFX.bell();renderRail(c);updateHud();if(G.queue.length===1&&G.phase==='idle')beginOrder(c);else floatText(300,80,'새 주문 들어옴!','#FFD15C');}
+function beginOrder(c){G.build=newBuild(c.key);G.build.cust=c;resetStationForBuild();renderRail();say(`주문 #${String(c.no).padStart(3,'0')} ${BURGERS[c.key].name}! 재료를 골라 시작하세요.`);}
+function advance(){if(G.queue.length)beginOrder(G.queue[0]);else if(G.pending.length){G.build=null;resetStationForBuild();renderRail();say('다음 손님을 기다리는 중…');}else endDay();}
+function customerLeaves(c){const idx=G.queue.indexOf(c);if(idx<0)return;G.queue.splice(idx,1);G.lost.push(c);G.score-=30;SFX.bad();updateHud();
+  if(idx===0){G.build=null;G.holding=false;hideHand();G.disp=null;G.phase='idle';advance();if(G.running)say(`${c.face} 손님이 기다리다 떠났어요… 만들던 ${BURGERS[c.key].short} 버거는 폐기 (-30점)`,'err');}
+  else{renderRail();say(`${c.face} 대기하던 손님이 떠났어요 (-30점)`,'err');}}
+function serve(){if(G.phase!=='wrapped')return;ac();const b=G.build;
+  if(G.mode==='practice'){G.phase='done';SFX.cash();showPracticeResult(scoreBuild(b,null));return;}
+  const c=G.queue[0];const sc=scoreBuild(b,clamp(c.pat/c.max,0,1));G.queue.shift();G.score+=sc.pts;G.dayLog.push({key:b.key,stars:sc.stars,pts:sc.pts,results:b.results,mistakes:b.mistakes});
+  G.phase='done';SFX.cash();updateHud();renderRail();showOrderResult(c,sc);}
+function tick(dt){const D=G.day;G.arrT+=dt;
+  for(const c of [...G.queue]){c.pat-=dt;if(c.pat<=0)customerLeaves(c);if(!G.running)return;}
+  if(G.pending.length){if(!G.queue.length){G.waitT+=dt;if(G.waitT>1.3){G.waitT=0;spawnCustomer();}}else if(D.gap&&G.arrT>=D.gap&&G.queue.length<3)spawnCustomer();}
+  updateRailBars();}
+let last=performance.now();
+function loop(now){const dt=Math.min(.05,(now-last)/1000);last=now;
+  if(G.holding&&G.disp&&!G.disp.locked){const ing=ING[G.disp.id];const ramp=clamp((now-G.holdStart)/200,0,1);const mult=G.mode==='tycoon'&&G.day?G.day.rate:1;
+    G.disp.grams+=ing.rate*dt*(.35+.65*ramp)*mult;updateDispense(G.disp);updateGaugeValue();
+    if(now-G.lastSquish>110){G.lastSquish=now;(G.disp.kind==='shake'?SFX.shake:SFX.squish)();}
+    if(G.disp.grams>=ing.target*1.6)endHold();}
+  if(G.mode==='tycoon'&&G.running&&!G.modalOpen)tick(dt);
+  requestAnimationFrame(loop);}
+
+/* ================= screens content ================= */
+function renderTitle(){$('#hero-stack').innerHTML=stackSVG('classic',{anim:true});const u=G.save.unlocked;$('#tycoon-day').textContent='DAY '+u;
+  $('#day-chips').innerHTML=DAYS.map(D=>{const lk=D.n>u;return `<button class="daychip${lk?' locked':''}${D.n===u?' cur':''}" data-day="${D.n}" ${lk?'disabled aria-disabled="true"':''}><b>DAY ${D.n}</b><span>${lk?'잠김':(G.save.best[D.n]?'최고 '+G.save.best[D.n]:D.title)}</span></button>`;}).join('');
+  $$('.daychip').forEach(b=>b.addEventListener('click',()=>{ac();startDay(+b.dataset.day);}));
+  renderSoundBtns();}
+function renderSelect(){$('#burger-grid').innerHTML=BKEYS.map(k=>{const B=BURGERS[k];return `<button class="pick" data-pick="${k}">${stackSVG(k,{labels:false})}<h3>${B.name}</h3><p>${B.blurb}</p><span class="go">연습 시작 →</span></button>`;}).join('');
+  $$('.pick').forEach(b=>b.addEventListener('click',()=>{ac();startPractice(b.dataset.pick);}));}
+function renderCards(){$('#cards-grid').innerHTML=BKEYS.map(k=>{const B=BURGERS[k];return `<article class="card"><div class="sub">BUILD CARD</div><h3>${B.name}</h3>${stackSVG(k)}<p class="legend"><i>●</i> 이 버거만의 포인트</p><ul class="tips">${B.tips.map(t=>`<li>${t}</li>`).join('')}</ul></article>`;}).join('');
+  $('#wrap-guide').innerHTML=wrapStepsHTML();}
+
+/* ================= events ================= */
+const ACT={
+  'go-wrap':()=>{closeModal();startWrap();},
+  'close':()=>closeModal(),
+  'start-day':()=>{closeModal();G.running=true;G.waitT=1.3;say('영업 시작! 첫 손님이 들어와요.');},
+  'next-order':()=>{closeModal();advance();},
+  'next-day':()=>{closeModal();startDay(G.day.n+1);},
+  'retry-day':()=>{closeModal();startDay(G.day.n);},
+  'cert':()=>showCert(),
+  'to-title':()=>{closeModal();G.running=false;G.mode=null;hideHand();renderTitle();showScreen('title');},
+  'practice-retry':()=>{closeModal();startPractice(G.build.key);},
+  'practice-other':()=>{closeModal();renderSelect();showScreen('select');},
+  'resume':()=>closeModal(),
+  'restart-practice':()=>{closeModal();startPractice(G.build.key);},
+};
+$('#sheet').addEventListener('click',e=>{const b=e.target.closest('[data-act]');if(b&&ACT[b.dataset.act])ACT[b.dataset.act](b);});
+$('#btn-tycoon').addEventListener('click',()=>{ac();startDay(G.save.unlocked);});
+$('#btn-practice').addEventListener('click',()=>{ac();renderSelect();showScreen('select');});
+$('#btn-cards').addEventListener('click',()=>{renderCards();showScreen('cards');});
+$$('[data-go="title"]').forEach(b=>b.addEventListener('click',()=>{renderTitle();showScreen('title');}));
+$('#btn-mute').addEventListener('click',()=>{G.save.muted=!G.save.muted;persist();renderSoundBtns();});
+$('#btn-bgm').addEventListener('click',toggleBgm);
+$('#btn-bgm2').addEventListener('click',toggleBgm);
+/* 첫 터치에서 오디오를 깨우고 배경음 시작(모바일 자동재생 정책) · 화면을 벗어나면 소리 정지 */
+document.addEventListener('pointerdown',()=>{ac();bgmStart();},true);
+document.addEventListener('keydown',()=>{ac();bgmStart();},true);
+document.addEventListener('visibilitychange',()=>{if(!AC)return;if(document.hidden)AC.suspend();else AC.resume();});
+$('#btn-close').addEventListener('click',closeBurger);
+$('#btn-card').addEventListener('click',showBuildCard);
+$('#btn-reset').addEventListener('click',()=>{if(G.mode==='practice')startPractice(G.build.key);});
+$('#btn-serve').addEventListener('click',serve);
+$('#btn-guide').addEventListener('click',()=>{G.guide=!G.guide;updateHud();renderTools();renderTargets();renderChecklist();updateActions();if(G.phase==='wrap'){renderHandles();renderWrapPanel();}say(G.guide?'가이드를 켰어요. 다음 재료가 노랗게 깜빡여요.':'가이드를 껐어요. 기억만으로 만들어 보세요!');});
+$('#btn-pause').addEventListener('click',()=>{
+  if(G.mode==='practice'){openModal(`<h2>잠깐 멈춤</h2><div class="m-btns"><button class="btn btn-primary" data-act="resume" data-focus>계속하기</button><button class="btn btn-ghost" data-act="restart-practice">이 버거 처음부터</button><button class="btn btn-ghost" data-act="practice-other">다른 버거 고르기</button><button class="btn btn-ghost" data-act="to-title">처음 화면</button></div>`);return;}
+  openModal(`<div class="m-eyebrow">DAY ${G.day.n} · 일시정지</div><h2>잠깐 멈춤</h2><p>손님 시계가 멈춰 있어요.</p><div class="m-btns"><button class="btn btn-primary" data-act="resume" data-focus>계속하기</button><button class="btn btn-ghost" data-act="retry-day">DAY ${G.day.n} 처음부터</button><button class="btn btn-ghost" data-act="to-title">처음 화면</button></div>`);});
+$$('.dp').forEach(b=>b.addEventListener('click',()=>{ac();wrapAction(b.dataset.w);}));
+const sq=$('#squeeze');
+sq.addEventListener('pointerdown',e=>{e.preventDefault();ac();if(sq.setPointerCapture)try{sq.setPointerCapture(e.pointerId);}catch(_){}beginHold();});
+sq.addEventListener('contextmenu',e=>e.preventDefault());
+window.addEventListener('pointerup',()=>endHold());
+window.addEventListener('pointercancel',()=>endHold());
+window.addEventListener('blur',()=>endHold());
+window.addEventListener('keydown',e=>{if((e.code==='Space'||e.key===' ')&&G.disp&&!G.disp.locked&&!G.modalOpen&&G.disp.kind!=='count'){e.preventDefault();if(!e.repeat)beginHold();}});
+window.addEventListener('keyup',e=>{if(e.code==='Space'||e.key===' ')endHold();});
+$('#modal').addEventListener('keydown',e=>{if(e.key==='Escape'&&$('#sheet').querySelector('[data-act="close"],[data-act="resume"]')){closeModal();}});
+
+/* boot */
+initStation();buildTools();resetBuns();renderTitle();showScreen('title');requestAnimationFrame(loop);bgmLoad();
+window.__G=G;window.__BGM=BGM;
+})();
+</script>
+
+</body>
+</html>
