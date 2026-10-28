@@ -45,6 +45,8 @@ body{
 button{font-family:inherit;cursor:pointer;color:inherit;touch-action:manipulation}
 #app{-webkit-user-select:none;user-select:none}
 .btn-ghost.install{border-color:var(--mustard);color:var(--mustard)}
+.btn-ghost.install.ready{background:var(--mustard);color:var(--ink)}
+.btn-ghost.install.ready small{color:#4A3A10}
 .install-icon{display:flex;align-items:center;gap:12px;background:var(--paper-2);border-radius:14px;padding:10px 12px;margin:10px 0}
 .install-icon img{width:64px;height:64px;border-radius:14px;box-shadow:0 2px 6px rgba(0,0,0,.2)}
 .install-icon b{font-size:16px}
@@ -1067,7 +1069,7 @@ function mistakesHTML(b){if(!b.mistakes.length)return '<p style="color:#23864A;f
 
 /* ================= modals ================= */
 function openModal(html){G.modalOpen=true;endHold(true);const sh=$('#sheet');sh.innerHTML=html;$('#modal').hidden=false;$('#modal').scrollTop=0;const f=sh.querySelector('[data-focus]')||sh.querySelector('button');if(f)f.focus({preventScroll:true});}
-function closeModal(){$('#modal').hidden=true;G.modalOpen=false;}
+function closeModal(){$('#modal').hidden=true;G.modalOpen=false;G.installOpen=false;}
 function showCompleteModal(){const b=G.build,B=BURGERS[b.key];
   openModal(`<div class="m-eyebrow">BUILD CHECK</div><h2>${B.name} 빌드 완성!</h2>${photoHTML(B)}<p>실제 완성 제품은 이렇게 나와야 해요. 아래 단면에서 쌓인 순서와 내가 넣은 정량을 다시 확인해요.</p>
   <div class="m-box">${stackSVG(b.key,{grades:b.results})}<p class="legend"><i>●</i> 이 버거만의 포인트 재료</p></div>
@@ -1210,26 +1212,44 @@ $('#modal').addEventListener('keydown',e=>{if(e.key==='Escape'&&$('#sheet').quer
 
 /* 홈 화면에 아이콘 추가 (GitHub Pages 버전에서만: window.__PWA) */
 let installEvt=null;
+const UA=navigator.userAgent;
+const ENV={ios:/iPhone|iPad|iPod/i.test(UA)||(navigator.platform==='MacIntel'&&navigator.maxTouchPoints>1),android:/Android/i.test(UA),kakao:/KAKAOTALK/i.test(UA),
+  samsung:/SamsungBrowser/i.test(UA),inapp:/; wv\)|NAVER\(|Instagram|FBAN|FBAV|Line\/|DaumApps|everytimeApp|BAND\//i.test(UA)};
 const isStandalone=()=>matchMedia('(display-mode: standalone)').matches||navigator.standalone===true;
-function renderInstallBtn(){const b=$('#btn-install');if(b)b.hidden=!window.__PWA||isStandalone();}
-window.addEventListener('beforeinstallprompt',e=>{e.preventDefault();installEvt=e;renderInstallBtn();});
-window.addEventListener('appinstalled',()=>{installEvt=null;renderInstallBtn();});
-async function onInstall(){
-  if(installEvt){const ev=installEvt;installEvt=null;try{await ev.prompt();await ev.userChoice;}catch(e){}renderInstallBtn();return;}
-  const ua=navigator.userAgent,ios=/iPhone|iPad|iPod/i.test(ua)||(navigator.platform==='MacIntel'&&navigator.maxTouchPoints>1),kakao=/KAKAOTALK/i.test(ua),inapp=kakao||/NAVER\(|Instagram|FBAN|FBAV|Line\//i.test(ua);
-  let steps;
-  if(inapp)steps=ios?['카카오톡 화면 오른쪽 아래 [⋯] 또는 [공유] 버튼을 눌러요','[Safari로 열기]를 눌러요','Safari 아래쪽 [공유 □↑] → [홈 화면에 추가] → [추가]']
-    :['카카오톡 화면 오른쪽 위 [⋮] 버튼을 눌러요','[다른 브라우저로 열기] → Chrome을 골라요','Chrome에서 이 버튼을 다시 누르면 [설치] 창이 떠요'];
-  else if(ios)steps=['Safari 아래쪽 [공유] 버튼(□↑)을 눌러요','목록에서 [홈 화면에 추가]를 눌러요','오른쪽 위 [추가]를 누르면 홈 화면에 아이콘이 생겨요'];
-  else steps=['Chrome 오른쪽 위 [⋮] 메뉴를 눌러요','[홈 화면에 추가] 또는 [앱 설치]를 눌러요','[설치]·[추가]를 누르면 홈 화면에 아이콘이 생겨요'];
-  openModal(`<div class="m-eyebrow">홈 화면에 추가</div><h2>아이콘으로 바로 열기</h2>
-  <div class="install-icon"><img src="icons/apple-touch-icon.png" alt="bhc 버거게임 아이콘" width="64" height="64"><b>bhc 버거게임</b></div>
-  ${inapp?'<p><b>카카오톡 같은 앱 안의 브라우저에서는 홈 화면에 추가할 수 없어요.</b> 먼저 핸드폰 기본 브라우저로 열어 주세요.</p>':''}
+function renderInstallBtn(){const b=$('#btn-install');if(!b)return;b.hidden=!window.__PWA||isStandalone();
+  b.innerHTML=installEvt?'앱 바로 설치하기 <small>탭 한 번으로 설치</small>':'홈 화면에 아이콘 추가 <small>핸드폰 바로가기</small>';b.classList.toggle('ready',!!installEvt);}
+window.addEventListener('beforeinstallprompt',e=>{e.preventDefault();installEvt=e;renderInstallBtn();if(G.installOpen)showInstallReady();});
+window.addEventListener('appinstalled',()=>{installEvt=null;renderInstallBtn();if(G.installOpen)closeModal();});
+function chromeIntentURL(){const u=new URL(location.href);u.searchParams.set('install','1');return `intent://${u.host}${u.pathname}${u.search}#Intent;scheme=https;package=com.android.chrome;S.browser_fallback_url=${encodeURIComponent(u.href)};end`;}
+async function doInstall(){const ev=installEvt;if(!ev){showInstallGuide();return;}installEvt=null;try{await ev.prompt();await ev.userChoice;}catch(e){}closeModal();renderInstallBtn();}
+const iconBox='<div class="install-icon"><img src="icons/apple-touch-icon.png" alt="bhc 버거게임 아이콘" width="64" height="64"><b>bhc 버거게임</b></div>';
+function showInstallReady(){openModal(`<div class="m-eyebrow">홈 화면에 추가</div><h2>지금 바로 설치할 수 있어요</h2>${iconBox}<p>[설치하기]를 누르고, 뜨는 창에서 [설치]를 누르면 홈 화면에 아이콘이 생겨요.</p>
+  <div class="m-btns"><button class="btn btn-primary" data-act="do-install" data-focus>설치하기</button><button class="btn btn-ghost" data-act="close">나중에</button></div>`);G.installOpen=true;}
+function showInstallGuide(){let warn='',steps,btns='<button class="btn btn-primary" data-act="close" data-focus>확인</button>';
+  const chromeBtn=(primary)=>`<button class="btn ${primary?'btn-primary':'btn-ghost'}" data-act="open-chrome"${primary?' data-focus':''}>Chrome에서 열기</button>`;
+  if(ENV.kakao){warn='카카오톡 안의 화면에서는 설치할 수 없어요. 먼저 Chrome이나 Safari로 열어 주세요.';
+    steps=ENV.ios?['오른쪽 아래 [⋯] 또는 [공유] → [Safari로 열기]','Safari 아래쪽 [공유 □↑] → [홈 화면에 추가] → [추가]']:['아래 [Chrome에서 열기]를 눌러요 (안 되면 오른쪽 위 ⋮ → [다른 브라우저로 열기])','Chrome에서 [앱 바로 설치하기] 또는 ⋮ → [홈 화면에 추가] → [설치]'];
+    btns=ENV.ios?'<button class="btn btn-primary" data-act="open-external" data-focus>Safari로 열기</button><button class="btn btn-ghost" data-act="close">닫기</button>':chromeBtn(true)+'<button class="btn btn-ghost" data-act="close">닫기</button>';}
+  else if(ENV.ios){if(ENV.inapp||/CriOS|FxiOS|EdgiOS/i.test(UA))warn='아이폰은 Safari에서만 홈 화면에 추가할 수 있어요. 이 주소를 Safari로 열어 주세요.';
+    steps=['Safari 아래쪽 [공유] 버튼(□↑)을 눌러요','목록에서 [홈 화면에 추가]를 눌러요','오른쪽 위 [추가]를 누르면 홈 화면에 아이콘이 생겨요'];}
+  else if(ENV.android&&ENV.inapp){warn='지금은 다른 앱 안의 화면이라 설치할 수 없어요. [Chrome에서 열기]를 눌러 주세요.';
+    steps=['아래 [Chrome에서 열기]를 눌러요','Chrome에서 [앱 바로 설치하기] 또는 ⋮ → [홈 화면에 추가] → [설치]'];btns=chromeBtn(true)+'<button class="btn btn-ghost" data-act="close">닫기</button>';}
+  else if(ENV.android&&ENV.samsung){steps=['아래쪽 메뉴 [≡]를 눌러요','[현재 페이지 추가] → [홈 화면]을 눌러요','[추가]를 누르면 홈 화면에 아이콘이 생겨요'];
+    warn='삼성 인터넷에서 추가가 안 되면 [Chrome에서 열기]로 설치해 보세요.';btns='<button class="btn btn-primary" data-act="close" data-focus>확인</button>'+chromeBtn(false);}
+  else if(ENV.android){steps=['오른쪽 위 [⋮] 메뉴를 눌러요','[홈 화면에 추가] 또는 [앱 설치]를 눌러요','뜨는 창에서 [설치]를 누르면 홈 화면에 아이콘이 생겨요'];
+    warn='메뉴에 없거나 설치가 안 되면 [Chrome에서 열기]를 눌러 Chrome 앱에서 다시 시도해 주세요. 화면을 조금 둘러보면 이 버튼이 [앱 바로 설치하기]로 바뀌기도 해요.';
+    btns='<button class="btn btn-primary" data-act="close" data-focus>확인</button>'+chromeBtn(false);}
+  else steps=['주소창 오른쪽의 [설치] 아이콘을 누르거나','브라우저 메뉴 → [앱 설치] / [홈 화면에 추가]를 눌러요'];
+  openModal(`<div class="m-eyebrow">홈 화면에 추가</div><h2>아이콘으로 바로 열기</h2>${iconBox}${warn?`<p><b>${warn}</b></p>`:''}
   <ol class="mlist" style="padding-left:20px">${steps.map(s=>`<li>${s}</li>`).join('')}</ol>
-  <p class="legend">한 번만 추가하면 다음부터는 홈 화면의 아이콘을 눌러 바로 시작해요.</p>
-  <div class="m-btns">${kakao?'<button class="btn btn-primary" data-act="open-external" data-focus>기본 브라우저로 열기</button><button class="btn btn-ghost" data-act="close">닫기</button>':'<button class="btn btn-primary" data-act="close" data-focus>확인</button>'}</div>`);}
+  <p class="legend">한 번만 추가하면 다음부터는 홈 화면의 아이콘을 눌러 바로 시작해요.</p><div class="m-btns">${btns}</div>`);G.installOpen=true;}
+async function onInstall(){if(installEvt){await doInstall();return;}showInstallGuide();}
 ACT['open-external']=()=>{location.href='kakaotalk://web/openExternal?url='+encodeURIComponent(location.href);};
+ACT['open-chrome']=()=>{location.href=chromeIntentURL();};
+ACT['do-install']=()=>doInstall();
 $('#btn-install').addEventListener('click',onInstall);
+/* Chrome에서 열기로 들어온 경우(?install=1) 설치 안내를 바로 보여줌 */
+if(window.__PWA&&!isStandalone()&&new URLSearchParams(location.search).get('install')==='1')setTimeout(()=>{if(G.modalOpen)return;if(installEvt)showInstallReady();else showInstallGuide();},1200);
 
 /* boot */
 initStation();buildTools();resetBuns();renderTitle();renderInstallBtn();showScreen('title');requestAnimationFrame(loop);bgmLoad();

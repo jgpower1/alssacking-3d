@@ -1,5 +1,5 @@
 /* bhc 버거게임 — 홈 화면 앱용 서비스 워커: 화면(HTML)은 항상 최신을 먼저, 그림·소리는 저장해 두고 빠르게 */
-const CACHE='bhc-burger-v2';
+const CACHE='bhc-burger-v3';
 const CORE=['./','./manifest.json','./audio/bgm.mp3','./images/bhc-burger-game.webp','./images/burger-classic.webp','./images/burger-bburinkle.webp','./images/burger-matcho.webp','./images/burger-kwasak.webp','./icons/icon-192.png','./icons/icon-512.png','./icons/apple-touch-icon.png'];
 self.addEventListener('install',e=>{e.waitUntil(caches.open(CACHE).then(c=>c.addAll(CORE)).catch(()=>{}).then(()=>self.skipWaiting()));});
 self.addEventListener('activate',e=>{e.waitUntil(caches.keys().then(ks=>Promise.all(ks.filter(k=>k!==CACHE).map(k=>caches.delete(k)))).then(()=>self.clients.claim()));});
