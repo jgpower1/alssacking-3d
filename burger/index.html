@@ -235,6 +235,10 @@ h1.logo .accent{color:var(--mustard);display:inline-block;transform:rotate(-2deg
 .bowl-steps li.done{opacity:.5}
 .bowl-steps li.next{border-color:var(--mustard);background:#3B301C}
 .bowl-btns{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:8px}
+.photo{margin:10px 0;background:#fff;border-radius:14px;padding:10px 10px 8px;display:flex;flex-direction:column;align-items:center;gap:4px;box-shadow:inset 0 0 0 1px #E6DED0}
+.photo img{width:100%;max-width:230px;height:auto;display:block}
+.photo figcaption{font-size:12.5px;font-weight:700;color:#5D554E}
+.photo.sm img{max-width:170px}
 .gt{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:8px;margin-top:10px}
 .gt-col{background:#fff;border-radius:10px;padding:8px 10px;min-width:0}
 .gt-col h5{margin:0 0 4px;font-size:12.5px;color:#7A7068;letter-spacing:.04em}
@@ -481,7 +485,8 @@ const BURGERS={
     blurb:'클래식 빌드에 맛초킹버거소스 20g.'},
 };
 const BKEYS=['classic','bburinkle','matcho','kwasak'];
-for(const k in BURGERS)BURGERS[k].key=k;
+for(const k in BURGERS){BURGERS[k].key=k;BURGERS[k].photo=`images/burger-${k}.webp`;}
+function photoHTML(B,small){return `<figure class="photo${small?' sm':''}"><img src="${B.photo}" alt="${B.name} 완성 제품 사진" width="190" height="130"><figcaption>${B.name} · 완성 제품</figcaption></figure>`;}
 function stepText(id){
   switch(id){
     case 'mayo':return '마요네즈 12.5g · 가장자리→안쪽 동그랗게';
@@ -1058,7 +1063,7 @@ function mistakesHTML(b){if(!b.mistakes.length)return '<p style="color:#23864A;f
 function openModal(html){G.modalOpen=true;endHold(true);const sh=$('#sheet');sh.innerHTML=html;$('#modal').hidden=false;$('#modal').scrollTop=0;const f=sh.querySelector('[data-focus]')||sh.querySelector('button');if(f)f.focus({preventScroll:true});}
 function closeModal(){$('#modal').hidden=true;G.modalOpen=false;}
 function showCompleteModal(){const b=G.build,B=BURGERS[b.key];
-  openModal(`<div class="m-eyebrow">BUILD CHECK</div><h2>${B.name} 빌드 완성!</h2><p>크라운을 덮은 버거의 단면이에요. 아래에서 위로 쌓인 순서를 다시 확인해요.</p>
+  openModal(`<div class="m-eyebrow">BUILD CHECK</div><h2>${B.name} 빌드 완성!</h2>${photoHTML(B)}<p>실제 완성 제품은 이렇게 나와야 해요. 아래 단면에서 쌓인 순서와 내가 넣은 정량을 다시 확인해요.</p>
   <div class="m-box">${stackSVG(b.key,{grades:b.results})}<p class="legend"><i>●</i> 이 버거만의 포인트 재료</p></div>
   ${measureTable(b)}
   <div class="m-btns"><button class="btn btn-primary" data-act="go-wrap" data-focus>랩핑하러 가기 →</button></div>`);}
@@ -1077,12 +1082,12 @@ function dayIntro(){const D=G.day;
   <div class="m-meta">주문 ${G.dayTotal}건 · 손님 인내심 ${D.patience}초${D.gap?' · 손님이 겹쳐서 와요':' · 한 분씩 차례로'}</div>
   <div class="m-btns"><button class="btn btn-primary" data-act="start-day" data-focus>영업 시작</button><button class="btn btn-ghost" data-act="to-title">처음 화면</button></div>`);}
 function showOrderResult(c,sc){const b=G.build,B=BURGERS[b.key];
-  openModal(`<div class="m-eyebrow">ORDER #${String(c.no).padStart(3,'0')} · ${B.name}</div>${starsHTML(sc.stars)}<h2>+${sc.pts}점</h2><p style="font-size:16px">${c.face} ${pick(REACT[sc.stars])}</p>
+  openModal(`<div class="m-eyebrow">ORDER #${String(c.no).padStart(3,'0')} · ${B.name}</div>${starsHTML(sc.stars)}<h2>+${sc.pts}점</h2><p style="font-size:16px">${c.face} ${pick(REACT[sc.stars])}</p>${photoHTML(B,true)}
   <div class="kpis"><div class="kpi"><b>${sc.P}</b><span>PERFECT</span></div><div class="kpi"><b>${sc.G}</b><span>GOOD</span></div><div class="kpi"><b>${sc.bad}</b><span>과다/부족</span></div><div class="kpi"><b>${sc.m}</b><span>실수</span></div></div>
   ${mistakesHTML(b)}${measureTable(b)}<p class="m-meta">속도 보너스 +${sc.speed}점${b.hints?' · 힌트 -10점':''}</p>
   <div class="m-btns"><button class="btn btn-primary" data-act="next-order" data-focus>${G.queue.length||G.pending.length?'다음 주문 받기 →':'영업 마감 보고 →'}</button></div>`);}
 function showPracticeResult(sc){const b=G.build,B=BURGERS[b.key];const title=sc.stars===3?'완벽한 빌드!':sc.stars===2?'좋아요, 거의 다 왔어요!':'한 번 더 연습해봐요';
-  openModal(`<div class="m-eyebrow">PRACTICE · ${B.name}</div>${starsHTML(sc.stars)}<h2>${title}</h2>
+  openModal(`<div class="m-eyebrow">PRACTICE · ${B.name}</div>${starsHTML(sc.stars)}<h2>${title}</h2>${photoHTML(B,true)}
   <div class="kpis"><div class="kpi"><b>${sc.P}</b><span>PERFECT</span></div><div class="kpi"><b>${sc.G}</b><span>GOOD</span></div><div class="kpi"><b>${sc.bad}</b><span>과다/부족</span></div><div class="kpi"><b>${sc.m}</b><span>실수</span></div></div>
   ${mistakesHTML(b)}<div class="m-box">${stackSVG(b.key,{grades:b.results})}</div>${measureTable(b)}
   <div class="m-btns"><button class="btn btn-primary" data-act="practice-retry" data-focus>같은 버거 다시</button><button class="btn btn-ghost" data-act="practice-other">다른 버거 연습</button><button class="btn btn-ghost" data-act="to-title">처음 화면</button></div>`);}
