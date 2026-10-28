@@ -44,6 +44,9 @@ body{
 button{font-family:inherit;cursor:pointer;color:inherit;touch-action:manipulation}
 #app{-webkit-user-select:none;user-select:none}
 .day-note{font-size:12.5px;color:var(--muted);margin:10px 0 0;line-height:1.5}
+.mini4{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:6px;margin-top:8px;text-align:center}
+.mini4>div{display:flex;flex-direction:column;justify-content:flex-end;gap:4px}
+.mini4 b{font-size:12.5px}
 button:focus-visible,[tabindex]:focus-visible{outline:3px solid var(--mustard);outline-offset:2px}
 #app{max-width:1120px;margin:0 auto}
 small{font-weight:600}
@@ -312,7 +315,7 @@ h1.logo .accent{color:var(--mustard);display:inline-block;transform:rotate(-2deg
           <button class="btn btn-ghost" id="btn-cards">빌드 카드 보기 <small>4종 단면 · 랩핑 순서</small></button>
         </div>
         <div class="days" id="day-chips"></div>
-        <p class="day-note">DAY 1~4 · 버거 종류별로 4개씩 차례로 → DAY 5 · 4종이 섞인 피크타임</p>
+        <p class="day-note">DAY 1 · 4종 공부(클래식→콰삭→뿌링클→맛초킹) → DAY 2 · 복습 → DAY 3~5 · 랜덤 주문·러시·피크타임</p>
       </div>
       <div class="hero-card">
         <div class="hero-head"><span>BUILD CARD</span><b>클래식 치킨버거</b></div>
@@ -466,16 +469,16 @@ const WRAP_STEPS=[
   {id:'flip',label:'뒤집기',desc:'뒤집어서 bhc 로고가 위로 보이게'},
 ];
 const DAYS=[
-  {n:1,title:'클래식 4개',newMenu:'classic',orders:['classic','classic','classic','classic'],gap:0,patience:200,rate:1,
-   story:'첫 출근! 오늘은 클래식 치킨버거만 4개를 차례로 만들어요. 손님이 한 분씩 오니까 빌드 순서를 손에 익혀봐요.'},
-  {n:2,title:'콰삭 4개',newMenu:'kwasak',orders:['kwasak','kwasak','kwasak','kwasak'],gap:0,patience:190,rate:1,
-   story:'오늘은 콰삭 치킨버거 4개! 크라운엔 마요네즈만, 패티는 콰삭킹 패티, 소스는 스윗하바네로소스.'},
-  {n:3,title:'뿌링클 4개',newMenu:'bburinkle',orders:['bburinkle','bburinkle','bburinkle','bburinkle'],gap:0,patience:190,rate:1,
-   story:'오늘은 뿌링클 치킨버거 4개! 패티 위 시즈닝 3g, 소스는 뿌링뿌링소스.'},
-  {n:4,title:'맛초킹 4개',newMenu:'matcho',orders:['matcho','matcho','matcho','matcho'],gap:0,patience:185,rate:1,
-   story:'오늘은 맛초킹 치킨버거 4개! 클래식과 같은 빌드에 소스만 맛초킹버거소스.'},
-  {n:5,title:'주말 피크타임',newMenu:null,orders:null,gap:46,patience:140,rate:1.1,blind:true,
-   story:'4종을 모두 4개씩 만들어 봤어요. 이제 진짜 타이쿤! 4종이 섞여서 몰려오고, 저울의 목표 눈금도 보이지 않아요 — 그램 수를 기억해서 짜세요.'},
+  {n:1,title:'4종 공부하기',study:true,guide:true,orders:['classic','kwasak','bburinkle','matcho'],gap:0,patience:260,rate:1,
+   story:'첫 출근! 오늘은 클래식 → 콰삭 → 뿌링클 → 맛초킹, 4종을 하나씩 공부하며 만들어요. 주문마다 빌드 카드를 먼저 보여주고, 만드는 동안 가이드가 다음 재료를 알려줘요.'},
+  {n:2,title:'4종 복습',orders:['classic','kwasak','bburinkle','matcho'],gap:0,patience:210,rate:1,
+   story:'어제 공부한 4종을 같은 순서로 다시 만들어요. 오늘은 가이드가 없어요. 막히면 [빌드카드]를 볼 수 있지만, 그 주문은 ★3을 받을 수 없어요.'},
+  {n:3,title:'랜덤 주문',orders:'mix5',gap:0,patience:180,rate:1,
+   story:'이제 주문 순서가 섞여서 들어와요. 주문표를 잘 보고 버거에 맞는 패티와 소스를 고르세요.'},
+  {n:4,title:'점심 러시',orders:'mix6',gap:58,patience:160,rate:1.05,
+   story:'점심시간! 손님이 겹쳐서 들어와요. 대기 중인 손님의 인내심 바도 함께 확인하세요.'},
+  {n:5,title:'주말 피크타임',orders:'mix6',gap:46,patience:140,rate:1.1,blind:true,
+   story:'진짜 타이쿤! 4종이 섞여서 몰려오고, 저울의 목표 눈금도 보이지 않아요. 그램 수를 기억해서 짜세요.'},
 ];
 const FACES=['🧑‍💼','👩‍🎓','👨‍🔧','👵','🧑‍🎤','👷','👩‍💻','🧔','🙋‍♀️','👴','🧑‍🏫','👩‍🦰'];
 const REACT={3:['😋 완벽해요! 매뉴얼 그대로네요','🤩 바로 이 맛이죠!','😍 포장까지 깔끔해요'],2:['🙂 맛있게 먹을게요','😊 잘 받았어요!'],1:['😕 뭔가 평소랑 다른데…','🤔 소스가 좀 이상해요']};
@@ -507,7 +510,7 @@ const SFX={
   cash:()=>{tone(1046,.08,'square',.035);tone(1318,.1,'square',.035,0,.08);tone(1568,.22,'square',.035,0,.16);},
 };
 /* background music: audio/bgm.mp3 — decoded once, looped through a quiet gain (works on iPhone, where <audio>.volume is ignored) */
-const BGM={url:'audio/bgm.mp3',vol:.14,buf:null,src:null,gain:null,loading:null,starting:false,a:0,b:0};
+const BGM={url:'audio/bgm.mp3',vol:.055,buf:null,src:null,gain:null,loading:null,starting:false,a:0,b:0};
 function bgmLoad(){if(!BGM.loading)BGM.loading=fetch(BGM.url).then(r=>{if(!r.ok)throw new Error(r.status);return r.arrayBuffer();}).catch(()=>null);return BGM.loading;}
 function trimBounds(buf){const ch=buf.getChannelData(0),n=ch.length,th=1e-3;let a=0,b=n-1;while(a<n&&Math.abs(ch[a])<th)a++;while(b>a&&Math.abs(ch[b])<th)b--;return[a/buf.sampleRate,(b+1)/buf.sampleRate];}
 async function bgmStart(){if(G.save.bgmOff||BGM.src||BGM.starting)return;const a=ac();if(!a)return;BGM.starting=true;
@@ -693,7 +696,7 @@ function shake(){const w=$('#station-wrap');w.classList.remove('shake');void w.o
 /* ================= messages / UI ================= */
 function say(text,type){const m=$('#msg');m.className='msg'+(type?' '+type:'');m.textContent=text;void m.offsetWidth;m.classList.add('flash');}
 function showScreen(name){['title','select','cards','game'].forEach(n=>$('#scr-'+n).hidden=n!==name);window.scrollTo(0,0);}
-function isGuide(){return G.mode==='practice'&&G.guide;}
+function isGuide(){return (G.mode==='practice'&&G.guide)||(G.mode==='tycoon'&&!!G.day&&!!G.day.guide);}
 function toolIcon(id){const i=ING[id];
   if(i.kind==='sauce')return `<svg viewBox="0 0 40 40" aria-hidden="true"><path d="M18.5,2 L21.5,2 L21,8 L19,8Z" fill="#DDD"/><rect x="14" y="7" width="12" height="6" rx="2" fill="#E9E6DF"/><rect x="11" y="12" width="18" height="26" rx="5" fill="${i.bottle}" stroke="rgba(0,0,0,.45)"/><rect x="11" y="24" width="18" height="7" fill="#fff" opacity=".85"/></svg>`;
   if(id==='pickle')return `<svg viewBox="0 0 40 40" aria-hidden="true"><circle cx="14" cy="16" r="10" fill="#8DAA3C" stroke="#5F7A22" stroke-width="2"/><circle cx="14" cy="16" r="6" fill="#B9CF6A"/><circle cx="26" cy="25" r="10" fill="#8DAA3C" stroke="#5F7A22" stroke-width="2"/><circle cx="26" cy="25" r="6" fill="#B9CF6A"/></svg>`;
@@ -709,7 +712,7 @@ function buildTools(){
 function guideNext(){if(!G.build)return null;const B=BURGERS[G.build.key];const seq=[['crown',0],['heel',0]];for(let i=1;i<B.heel.length;i++)seq.push(['heel',i]);for(let i=1;i<B.crown.length;i++)seq.push(['crown',i]);
   for(const [side,i] of seq){if(G.build[side].i<=i)return{side,id:B[side][i]};}return null;}
 function renderTools(){const gn=isGuide()&&G.phase==='build'?guideNext():null;
-  $$('.tool').forEach(b=>{const id=b.dataset.tool;b.classList.toggle('sel',G.tool===id);b.setAttribute('aria-pressed',G.tool===id);b.classList.toggle('guide',!!gn&&gn.id===id&&G.tool!==id);b.querySelector('.spec').hidden=G.mode!=='practice';});}
+  $$('.tool').forEach(b=>{const id=b.dataset.tool;b.classList.toggle('sel',G.tool===id);b.setAttribute('aria-pressed',G.tool===id);b.classList.toggle('guide',!!gn&&gn.id===id&&G.tool!==id);b.querySelector('.spec').hidden=!(G.mode==='practice'||(G.mode==='tycoon'&&G.day&&G.day.guide));});}
 function renderTargets(){['crown','heel'].forEach(s=>ringG[s]&&ringG[s].setAttribute('class','ring'));if(G.phase!=='build'||!G.build)return;
   if(G.disp&&!G.disp.locked){ringG[G.disp.side].setAttribute('class','ring active');return;}
   if(!G.tool)return;const B=BURGERS[G.build.key];
@@ -916,16 +919,17 @@ function showCompleteModal(){const b=G.build,B=BURGERS[b.key];
   ${measureTable(b)}
   <div class="m-btns"><button class="btn btn-primary" data-act="go-wrap" data-focus>랩핑하러 가기 →</button></div>`);}
 function showBuildCard(){const b=G.build;if(!b)return;const B=BURGERS[b.key];let note='';
-  if(G.mode==='tycoon'){if(!b.hints){b.hints=1;note='<p style="color:#C9302C;font-weight:800">힌트 사용 — 이번 주문은 ★3을 받을 수 없어요. (빌드카드를 보는 동안 시간은 멈춰요)</p>';}else note='<p style="color:#5D554E">이번 주문에서 이미 힌트를 사용했어요.</p>';}
+  if(G.mode==='tycoon'&&!(G.day&&G.day.guide)){if(!b.hints){b.hints=1;note='<p style="color:#C9302C;font-weight:800">힌트 사용 — 이번 주문은 ★3을 받을 수 없어요. (빌드카드를 보는 동안 시간은 멈춰요)</p>';}else note='<p style="color:#5D554E">이번 주문에서 이미 힌트를 사용했어요.</p>';}
   openModal(`<div class="m-eyebrow">BUILD CARD</div><h2>${B.name}</h2>${note}<div class="m-box">${stackSVG(b.key)}</div>
   <ul class="tips">${B.tips.map(t=>`<li>${t}</li>`).join('')}</ul>
   <div class="m-box"><b>랩핑 순서</b><ol class="wsteps" style="margin-top:8px">${wrapStepsHTML()}</ol></div>
   <div class="m-btns"><button class="btn btn-primary" data-act="close" data-focus>계속 만들기</button></div>`);}
-function dayIntro(){const D=G.day;const nm=D.newMenu?BURGERS[D.newMenu]:null;
+function dayIntro(){const D=G.day;
   const how=D.n===1?`<div class="m-box"><b>조작법</b><ul class="tips"><li>아래에서 <b>재료</b>를 고르고 → 올릴 <b>번(크라운/힐)</b>을 터치</li><li>소스·양상추·시즈닝은 번이나 버튼을 <b>꾹 누르고</b> 있다가 목표 그램에서 떼기</li><li>오이피클은 힐을 4번 터치, 패티는 1번 터치</li><li>다 쌓으면 <b>크라운 덮기</b> → 랩핑 → <b>서빙</b></li><li>순서·재료를 틀리면 손님 인내심이 5초 줄어요</li></ul></div>`:'';
   openModal(`<div class="m-eyebrow">DAY ${D.n} / 5</div><h2>${D.title}</h2><p>${D.story}</p>${how}
-  ${nm?`<div class="m-box"><span class="m-tag">NEW MENU</span><h3>${nm.name}</h3>${stackSVG(D.newMenu)}<ul class="tips">${nm.tips.map(t=>`<li>${t}</li>`).join('')}</ul></div>`:
-   `<div class="m-box"><span class="m-tag">FINAL</span><h3>그램 수 최종 점검</h3><ul class="tips"><li>마요네즈 12.5g (크라운·힐 각각)</li><li>화이트·스윗하바네로·뿌링뿌링·맛초킹버거소스 20g</li><li>양상추 15g · 오이피클 4개 25g · 뿌링클 시즈닝 3g</li></ul></div>`}
+  ${D.study?`<div class="m-box"><span class="m-tag">STUDY</span><h3>오늘 공부할 4종</h3><div class="mini4">${BKEYS.map((k,i)=>`<div>${stackSVG(k,{labels:false})}<b>${i+1}. ${BURGERS[k].short}</b></div>`).join('')}</div><p class="legend">한 개씩 만들 때마다 그 버거의 빌드 카드를 먼저 보여드려요.</p></div>`:
+   D.blind?`<div class="m-box"><span class="m-tag">FINAL</span><h3>그램 수 최종 점검</h3><ul class="tips"><li>마요네즈 12.5g (크라운·힐 각각)</li><li>화이트·스윗하바네로·뿌링뿌링·맛초킹버거소스 20g</li><li>양상추 15g(큰 잎 3~4장) · 오이피클 4개 25g · 뿌링클 시즈닝 3g</li></ul></div>`:
+   `<div class="m-box"><span class="m-tag">CHECK</span><h3>4종 핵심 비교</h3><ul class="tips"><li><b>클래식</b> · 치킨패티 + 화이트소스 20g + 양상추</li><li><b>콰삭</b> · 콰삭킹 패티 + 스윗하바네로소스 20g · 양상추 없음</li><li><b>뿌링클</b> · 치킨패티 + 시즈닝 3g + 뿌링뿌링소스 20g + 양상추</li><li><b>맛초킹</b> · 치킨패티 + 맛초킹버거소스 20g + 양상추</li></ul></div>`}
   <div class="m-meta">주문 ${G.dayTotal}건 · 손님 인내심 ${D.patience}초${D.gap?' · 손님이 겹쳐서 와요':' · 한 분씩 차례로'}</div>
   <div class="m-btns"><button class="btn btn-primary" data-act="start-day" data-focus>영업 시작</button><button class="btn btn-ghost" data-act="to-title">처음 화면</button></div>`);}
 function showOrderResult(c,sc){const b=G.build,B=BURGERS[b.key];
@@ -959,11 +963,17 @@ function showCert(){const d=new Date();openModal(`<div class="cert"><div class="
 function startPractice(key){G.mode='practice';G.running=false;G.day=null;G.queue=[];G.build=newBuild(key);showScreen('game');updateHud();renderRail();resetStationForBuild();
   const gn=guideNext();say(G.guide?`${BURGERS[key].name} 연습! 첫 단계 ▶ ${sideName(gn.side)}: ${stepText(gn.id)} — 노랗게 깜빡이는 재료를 눌러보세요.`:`${BURGERS[key].name} 연습 — 가이드 없이 만들어 보세요.`);}
 function startDay(n){const D=DAYS[n-1];G.mode='tycoon';G.day=D;G.queue=[];G.lost=[];G.dayLog=[];G.score=0;G.arrT=0;G.waitT=0;G.running=false;G.build=null;
-  let orders=D.orders;if(!orders){const base=BKEYS.slice();orders=shuffle(base.concat([pick(BKEYS),pick(BKEYS)]));}
+  const orders=Array.isArray(D.orders)?D.orders.slice():shuffle(BKEYS.concat(D.orders==='mix6'?[pick(BKEYS),pick(BKEYS)]:[pick(BKEYS)]));
   G.pending=orders.slice();G.dayTotal=orders.length;showScreen('game');updateHud();renderRail();resetStationForBuild();say('영업 준비 중…');dayIntro();}
 function spawnCustomer(){if(!G.pending.length)return;const key=G.pending.shift();const c={no:++G.orderNo,key,face:pick(FACES),pat:G.day.patience,max:G.day.patience};
   G.arrT=0;G.queue.push(c);SFX.bell();renderRail(c);updateHud();if(G.queue.length===1&&G.phase==='idle')beginOrder(c);else floatText(300,80,'새 주문 들어옴!','#FFD15C');}
-function beginOrder(c){G.build=newBuild(c.key);G.build.cust=c;resetStationForBuild();renderRail();say(`주문 #${String(c.no).padStart(3,'0')} ${BURGERS[c.key].name}! 재료를 골라 시작하세요.`);}
+function beginOrder(c){G.build=newBuild(c.key);G.build.cust=c;resetStationForBuild();renderRail();say(`주문 #${String(c.no).padStart(3,'0')} ${BURGERS[c.key].name}! 재료를 골라 시작하세요.`);
+  if(G.day&&G.day.study)showStudyCard(c.key,G.dayLog.length+G.lost.length+1);}
+function showStudyCard(key,i){const B=BURGERS[key];
+  openModal(`<div class="m-eyebrow">STUDY ${i} / 4 · 빌드 공부</div><h2>${B.name}</h2><p>${B.blurb}</p>
+  <div class="m-box">${stackSVG(key)}<p class="legend"><i>●</i> 이 버거만의 포인트 재료</p></div>
+  <ul class="tips">${B.tips.map(t=>`<li>${t}</li>`).join('')}</ul>
+  <div class="m-btns"><button class="btn btn-primary" data-act="study-go" data-focus>가이드 따라 만들어 보기 →</button></div>`);}
 function advance(){if(G.queue.length)beginOrder(G.queue[0]);else if(G.pending.length){G.build=null;resetStationForBuild();renderRail();say('다음 손님을 기다리는 중…');}else endDay();}
 function customerLeaves(c){const idx=G.queue.indexOf(c);if(idx<0)return;G.queue.splice(idx,1);G.lost.push(c);G.score-=30;SFX.bad();updateHud();
   if(idx===0){G.build=null;G.holding=false;hideHand();G.disp=null;G.phase='idle';advance();if(G.running)say(`${c.face} 손님이 기다리다 떠났어요… 만들던 ${BURGERS[c.key].short} 버거는 폐기 (-30점)`,'err');}
@@ -1000,6 +1010,7 @@ const ACT={
   'go-wrap':()=>{closeModal();startWrap();},
   'close':()=>closeModal(),
   'start-day':()=>{closeModal();G.running=true;G.waitT=1.3;say('영업 시작! 첫 손님이 들어와요.');},
+  'study-go':()=>{closeModal();const gn=guideNext();if(gn)say(`노랗게 깜빡이는 재료를 눌러요. 첫 단계 ▶ ${sideName(gn.side)}: ${stepText(gn.id)}`);},
   'next-order':()=>{closeModal();advance();},
   'next-day':()=>{closeModal();startDay(G.day.n+1);},
   'retry-day':()=>{closeModal();startDay(G.day.n);},
