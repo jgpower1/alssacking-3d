@@ -516,21 +516,53 @@ const BEST = (() => { try { return JSON.parse(localStorage.getItem('bhc3d_best')
 function saveBest() { try { localStorage.setItem('bhc3d_best', JSON.stringify(BEST)); } catch (e) { /* ignore */ } }
 const vibrate = ms => { try { if (navigator.vibrate) navigator.vibrate(ms); } catch (e) { /* ignore */ } };
 
-/* ---------------- audio (WebAudio, no files) ---------------- */
+/* ---------------- audio (WebAudio synth effects + the training song) ---------------- */
 const Aud = (() => {
   let ctx = null, master, sfxG, bgmG, noiseBuf, szSrc = null, szG = null, bgmTimer = null, bgmStep = 0, bgmNext = 0;
   const A = { sfxOn: true, bgmOn: true, ok: false };
   const mtof = m => 440 * Math.pow(2, (m - 69) / 12);
+  /* ---- training song: audio/bgm.mp3 ----
+     <audio> -> MediaElementSource -> bgmG -> master. It never touches the effects bus (sfxG): no ducking, no shared compressor or limiter,
+     so every effect sounds exactly as before. The soft generative loop further down only runs as a fallback when the file can't be loaded. */
+  const SONG = { url: 'audio/bgm.mp3', vol: .22, el: null, node: null, state: 'idle' };   // state: idle | failed
+  const bgmLevel = () => (!A.bgmOn ? 0 : SONG.state === 'failed' ? .5 : SONG.vol);
+  const applyBgm = tc => { if (ctx && bgmG) bgmG.gain.setTargetAtTime(bgmLevel(), ctx.currentTime, tc); };
+  function songFail() {
+    if (SONG.state === 'failed') return; SONG.state = 'failed';
+    try { if (SONG.el) SONG.el.pause(); } catch (e) { /* ignore */ }
+    if (ctx) { applyBgm(.1); if (A.bgmOn) genStart(); }
+  }
+  function songLoad() {
+    if (SONG.el) return;
+    if (location.protocol === 'file:') { SONG.state = 'failed'; return; }   // opened as a lone file: no audio/ folder next to it
+    try {
+      const el = new Audio(); el.preload = 'auto'; el.loop = true; el.setAttribute('playsinline', '');
+      el.addEventListener('error', songFail); el.src = SONG.url; SONG.el = el;
+    } catch (e) { SONG.state = 'failed'; }
+  }
+  function songAttach() {
+    if (!SONG.el || SONG.node || SONG.state === 'failed') return;
+    try { SONG.node = ctx.createMediaElementSource(SONG.el); SONG.node.connect(bgmG); } catch (e) { songFail(); }
+  }
+  function songPlay() {
+    const el = SONG.el; if (!el || !ctx || SONG.state === 'failed') return;
+    const p = el.play(); if (p && p.catch) p.catch(err => { if (err && err.name === 'NotSupportedError') songFail(); /* NotAllowedError: the next tap retries from init() */ });
+  }
   function init() {
-    if (ctx) { if (ctx.state === 'suspended') ctx.resume(); return; }
+    if (ctx) {
+      if (ctx.state === 'suspended') ctx.resume();
+      if (A.bgmOn && SONG.el && SONG.state !== 'failed' && SONG.el.paused) songPlay();   // self-heal after a call / app switch
+      return;
+    }
     try {
       const C = window.AudioContext || window.webkitAudioContext; if (!C) return;
       ctx = new C(); master = ctx.createGain(); master.gain.value = .9; master.connect(ctx.destination);
       sfxG = ctx.createGain(); sfxG.gain.value = 1; sfxG.connect(master);
-      bgmG = ctx.createGain(); bgmG.gain.value = A.bgmOn ? .5 : 0; bgmG.connect(master);
+      bgmG = ctx.createGain(); bgmG.gain.value = 0; bgmG.connect(master);
       noiseBuf = ctx.createBuffer(1, ctx.sampleRate * 2, ctx.sampleRate);
       const d = noiseBuf.getChannelData(0); for (let i = 0; i < d.length; i++) d[i] = Math.random() * 2 - 1;
-      A.ok = true; if (A.bgmOn) startBgm();
+      songAttach();
+      A.ok = true; if (A.bgmOn) { applyBgm(.5); startBgm(); }
     } catch (e) { ctx = null; A.ok = false; }
   }
   function tone(f, d = .12, type = 'sine', v = .2, to = null, when = 0, dest) {
@@ -577,10 +609,19 @@ const Aud = (() => {
       bgmNext += eighth; bgmStep++;
     }
   }
-  function startBgm() { if (!ctx || bgmTimer) return; bgmNext = 0; bgmTimer = setInterval(bgmTick, 120); }
-  function setBgm(on) { A.bgmOn = on; if (!ctx) return; bgmG.gain.setTargetAtTime(on ? .5 : 0, ctx.currentTime, .1); if (on) startBgm(); }
+  function genStart() { if (!ctx || bgmTimer) return; bgmNext = 0; bgmTimer = setInterval(bgmTick, 120); }
+  function startBgm() { if (!ctx) return; if (SONG.state === 'failed' || !SONG.el) genStart(); else songPlay(); }
+  function setBgm(on) {
+    A.bgmOn = on; if (!ctx) return;
+    applyBgm(on ? .3 : .08);
+    if (on) startBgm(); else if (SONG.el) setTimeout(() => { if (!A.bgmOn) SONG.el.pause(); }, 500);
+  }
   function setSfx(on) { A.sfxOn = on; if (!on && szG && ctx) szG.gain.setTargetAtTime(0, ctx.currentTime, .05); }
-  document.addEventListener('visibilitychange', () => { if (!ctx) return; if (document.hidden) ctx.suspend(); else ctx.resume(); });
+  document.addEventListener('visibilitychange', () => {
+    if (!ctx) return;
+    if (document.hidden) { ctx.suspend(); if (SONG.el) SONG.el.pause(); }
+    else { ctx.resume(); if (A.bgmOn && SONG.state !== 'failed') songPlay(); }
+  });
   const sfx = {
     tap() { tone(520, .06, 'triangle', .12, 760); },
     pin() { tone(660, .07, 'sine', .14, 990); },
@@ -601,7 +642,8 @@ const Aud = (() => {
     rev(d = 1.2, f0 = 70, f1 = 190) { tone(f0, d, 'sawtooth', .08, f1); tone(f0 * 2, d, 'square', .025, f1 * 2); noise(d, { f: 520, type: 'lowpass', v: .07 }); },
     bell() { tone(1319, .5, 'sine', .1); tone(1760, .6, 'sine', .07, null, .12); }
   };
-  return { A, init, tone, noise, sizzle, sfx, setBgm, setSfx };
+  songLoad();   // start buffering the song while the scene loads (browsers that allow it); playback itself waits for the Start tap
+  return { A, init, tone, noise, sizzle, sfx, setBgm, setSfx, song: SONG };
 })();
 const sfx = Aud.sfx;
 
