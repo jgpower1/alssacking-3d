@@ -496,7 +496,7 @@ const STEPS = [
   { nm: '흔들기', ico: '🌀', title: '흔들기 (투입 30초 후)', guide: '후라잉 시작 30초 뒤에 치킨이 달라붙지 않게 흔들어 준다.', why: '초반에 흔들지 않으면 조각끼리 붙어버려 고르게 튀겨지지 않습니다.', photos: [['a5_shake', '흔들기']] },
   { nm: '혈작업·크래킹', ico: '🔪', title: '혈작업 및 크래킹 (5분 후)', guide: '후라잉 5분 경과 후 후라이어 안에서 다리를 한 조각씩 건져 혈작업을 진행하고, 나이프로 다리 표면을 앞뒤로 3~4회 찔러 크래킹한 뒤 다시 넣는다.', why: '혈작업으로 잡내를 없애고, 크래킹으로 속까지 고르게 익도록 돕습니다.', photos: [['a6_blood', '혈작업'], ['a7_crack', '크래킹']] },
   { nm: '기름떨이', ico: '💧', title: '기름떨이 (1분 30초)', guide: '치킨을 1분 30초간 기름떨이 진행한다.', why: '여분의 기름을 빼야 바삭한 식감이 오래 유지됩니다.', photos: [['a8_oil', '기름떨이']] },
-  { nm: '포장', ico: '📦', title: '포장 · 라이더 전달', guide: '치킨을 박스에 담고 뚜껑을 닫은 뒤, 안심스티커를 박스 입구에 붙인다. 박스를 포장지에 넣고 치킨무 1ea, 맵싹소스 1ea, 파싹소스 1ea를 함께 담아 라이더에게 전달한다.', why: '안심스티커로 박스 입구를 봉인하면 배달 중 개봉 여부를 확인할 수 있어 고객이 안심하고 받을 수 있어요. 정해진 구성품을 빠짐없이 담아야 매장마다 동일한 고객 경험을 제공할 수 있습니다.', note: '친환경치킨박스(대) / 친환경트레이(대) · ※ 안심스티커는 박스 입구에 붙이고, 소스 2종 + 치킨무는 포장지에 함께 담아요', photos: [['a9_pack', '포장']] }
+  { nm: '포장', ico: '📦', title: '포장 · 라이더 전달', guide: '치킨을 박스에 담고 뚜껑을 닫은 뒤, 안심스티커를 박스 입구에 붙인다. 박스를 포장지에 넣고 치킨무 1ea, 맵싸\u00a0소스 1ea, 파싹소스 1ea를 함께 담아 라이더에게 전달한다.', why: '안심스티커로 박스 입구를 봉인하면 배달 중 개봉 여부를 확인할 수 있어 고객이 안심하고 받을 수 있어요. 정해진 구성품을 빠짐없이 담아야 매장마다 동일한 고객 경험을 제공할 수 있습니다.', note: '친환경치킨박스(대) / 친환경트레이(대) · ※ 안심스티커는 박스 입구에 붙이고, 소스 2종 + 치킨무는 포장지에 함께 담아요', photos: [['a9_pack', '포장']] }
 ];
 const GRADES = [
   { g: 'S', max: 1, name: '퍼펙트 셰프', msg: '표준 레시피를 거의 완벽하게 지켰어요. 매장 어디서든 같은 맛을 낼 수 있는 실력입니다!' },
@@ -1422,7 +1422,7 @@ function buildS5() {
     const c = cvs(128, 128), cg = c.getContext('2d'); cg.fillStyle = '#' + col.toString(16).padStart(6, '0'); cg.beginPath(); cg.arc(64, 64, 64, 0, TAU); cg.fill(); cg.fillStyle = '#fff'; cg.font = `900 44px ${FONT}`; cg.textAlign = 'center'; cg.textBaseline = 'middle'; cg.fillText(txt, 64, 66);
     const lt = new THREE.Mesh(new THREE.CircleGeometry(.09, 24), new THREE.MeshBasicMaterial({ map: mkTex(c), toneMapped: false })); lt.rotation.x = -Math.PI / 2; lt.position.y = .1315; g2.add(lt);
     g.add(g2); g2.visible = false; return g2; };
-  s.sauceA = sauce('맵싹', 0xd8332d, .76, .62); s.sauceB = sauce('파싹', 0x2fa56a, 1.12, .62);
+  s.sauceA = sauce('맵싸', 0xd8332d, .76, .62); s.sauceB = sauce('파싹', 0x2fa56a, 1.12, .62);
   // 치킨무 pouch with the real photo on top
   const mu = new THREE.Group(); mu.position.set(1.56, CY + .02, .56); mu.rotation.y = -.2; g.add(mu); s.mu = mu; mu.visible = false;
   mu.add(mk(rbox(.36, .04, .34, .018), new THREE.MeshStandardMaterial({ color: 0xf2c63a, roughness: .45 }), 0, 0, 0));
@@ -2225,9 +2225,9 @@ async function step7() {
   await need('bag', () => [{ id: 'bag', label: '포장지에 넣기', icon: '🛍️', obj: B.g, off: [0, .95, 0] }, { id: 'mu', label: '치킨무', icon: '🥗', obj: s.mu, off: [0, .34, 0], cls: 'alt sm' }], { mu: '먼저 박스를 포장지에 넣어요. 치킨무와 소스는 그 다음에 담아요.' });
   P.fb(''); sfx.whoosh(); const bp = B.g.position;
   await arcMove(C.g, new THREE.Vector3(bp.x, CY + .016, bp.z), .85, 1.0, ease.io); B.g.attach(C.g); sfx.thud(); shake(.2); good(200, { obj: B.g }); dots.set(4); setFrac(.62);
-  // ⑥ 치킨무 · 맵싹소스 1 · 파싹소스 1 -> bag
-  P.phase('⑥ 치킨무 · 맵싹소스 · 파싹소스를 포장지에 담아요');
-  const items = { mu: s.mu, sa: s.sauceA, sb: s.sauceB }, lbl = { mu: '치킨무 1ea', sa: '맵싹소스 1ea', sb: '파싹소스 1ea' }, dst = { mu: [-.3, .357, -.06], sa: [.2, .334, .14], sb: [.42, .334, -.12] }, remain = ['mu', 'sa', 'sb']; let placed = 0;
+  // ⑥ 치킨무 · 맵싸 소스 1 · 파싹소스 1 -> bag
+  P.phase('⑥ 치킨무 · 맵싸\u00a0소스 · 파싹소스를 포장지에 담아요');
+  const items = { mu: s.mu, sa: s.sauceA, sb: s.sauceB }, lbl = { mu: '치킨무 1ea', sa: '맵싸\u00a0소스 1ea', sb: '파싹소스 1ea' }, dst = { mu: [-.3, .357, -.06], sa: [.2, .334, .14], sb: [.42, .334, -.12] }, remain = ['mu', 'sa', 'sb']; let placed = 0;
   while (remain.length) {
     const id = await choosePin(remain.map(k => ({ id: k, label: lbl[k], icon: k === 'mu' ? '🥗' : '🥫', obj: items[k], off: [0, .34, 0] })));
     remain.splice(remain.indexOf(id), 1); sfx.whoosh(); P.fb('');
