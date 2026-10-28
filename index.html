@@ -9,10 +9,11 @@
 <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
 <meta name="apple-mobile-web-app-title" content="알싹킹 교육">
 <meta name="application-name" content="알싹킹 교육">
+<script>window.__PWA=true;window.addEventListener('beforeinstallprompt',function(e){e.preventDefault();window.__bip=e;window.dispatchEvent(new Event('bhc-bip'))});</script>
 <link rel="manifest" href="manifest.json">
-<link rel="apple-touch-icon" sizes="180x180" href="icons/apple-touch-icon.png">
-<link rel="icon" type="image/png" sizes="32x32" href="icons/favicon-32.png">
-<link rel="icon" type="image/png" sizes="192x192" href="icons/icon-192.png">
+<link rel="apple-touch-icon" sizes="180x180" href="icons/bhc-apple-touch-180.png">
+<link rel="icon" type="image/png" sizes="32x32" href="icons/bhc-favicon-32.png">
+<link rel="icon" type="image/png" sizes="192x192" href="icons/bhc-192.png">
 <meta name="robots" content="noindex,nofollow">
 <title>알싹킹 마스터 키친 · 3D 조리 트레이닝</title>
 <style>
@@ -242,6 +243,59 @@ small{font-size:10.5px;letter-spacing:.14em;text-transform:uppercase;color:var(-
   .t-how{max-width:760px;justify-self:center}
 }
 
+/* ---------- "홈 화면에 아이콘 추가" button (first screen) + guide sheet ---------- */
+.t-a2hs{display:inline-flex;align-items:center;gap:11px;max-width:100%;padding:7px 20px 7px 8px;border-radius:99px;text-align:left;background:rgba(255,255,255,.09);
+  border:1px solid rgba(255,255,255,.32);backdrop-filter:blur(6px);-webkit-backdrop-filter:blur(6px);transition:transform .15s,background .2s,border-color .2s}
+.t-a2hs:hover{background:rgba(255,255,255,.16);border-color:rgba(255,210,120,.75)}
+.t-a2hs:active{transform:scale(.97)}
+.t-a2hs img{width:36px;height:36px;border-radius:10px;flex:none;box-shadow:0 2px 8px rgba(0,0,0,.45);-webkit-user-drag:none}
+.t-a2hs span{display:flex;flex-direction:column;min-width:0;line-height:1.28}
+.t-a2hs b{font-size:14.5px;font-weight:800;color:#fff;word-break:keep-all}
+.t-a2hs small{font-size:11.5px;letter-spacing:.02em;text-transform:none;color:var(--mu)}
+.t-a2hs.done{border-color:var(--ok);background:rgba(56,217,150,.18)}
+#a2hs{z-index:50;background:rgba(5,10,16,.8);backdrop-filter:blur(6px);-webkit-backdrop-filter:blur(6px);align-items:flex-end;justify-content:center;
+  padding:16px calc(16px + var(--sar)) calc(16px + var(--sab)) calc(16px + var(--sal))}
+@media (min-width:600px){#a2hs{align-items:center}}
+.a2-card{width:min(430px,100%);max-height:calc(100vh - 32px);max-height:calc(100dvh - 32px);overflow-y:auto;overscroll-behavior:contain;padding:20px 20px 18px;border-radius:24px;background:linear-gradient(170deg,#17303f,#0e1c28);
+  border:1px solid var(--line);box-shadow:0 24px 70px rgba(0,0,0,.6);animation:a2up .35s cubic-bezier(.2,1.1,.3,1) both;-webkit-user-select:text;user-select:text}
+@keyframes a2up{from{opacity:0;transform:translateY(26px)}to{opacity:1;transform:none}}
+.a2-eyebrow{font-size:12px;font-weight:800;letter-spacing:.3em;color:var(--acc2);padding-left:.3em}
+.a2-card h3{margin:2px 0 10px;font-size:22px;font-weight:900;letter-spacing:-.02em}
+.a2-icon{display:flex;align-items:center;gap:12px;padding:8px 12px;border-radius:16px;background:rgba(255,255,255,.07);border:1px solid var(--line);margin-bottom:10px}
+.a2-icon img{width:58px;height:58px;border-radius:14px;box-shadow:0 4px 14px rgba(0,0,0,.45);flex:none}
+.a2-icon span{display:flex;flex-direction:column;min-width:0}
+.a2-icon b{font-size:17px}
+.a2-icon small{text-transform:none;letter-spacing:.02em;font-size:12px}
+.a2-warn{margin:0 0 10px;padding:9px 12px;border-radius:12px;background:rgba(255,194,71,.12);border:1px solid rgba(255,194,71,.45);color:#ffe3a6;font-size:13.5px;font-weight:700;line-height:1.5;word-break:keep-all}
+.a2-steps{list-style:none;margin:0 0 10px;padding:0;display:flex;flex-direction:column;gap:9px;counter-reset:a2s}
+.a2-steps li{counter-increment:a2s;display:flex;gap:11px;align-items:flex-start;font-size:14.5px;line-height:1.45;word-break:keep-all;color:#e8eff4}
+.a2-steps li::before{content:counter(a2s);flex:none;width:24px;height:24px;border-radius:50%;display:grid;place-items:center;background:var(--acc);color:#2b0e00;font-weight:900;font-size:13px;margin-top:1px}
+.a2-steps li>span{min-width:0}
+.a2-steps b{color:var(--acc2)}
+.a2-steps svg{width:1.2em;height:1.2em;vertical-align:-.22em;margin:0 2px;color:var(--sky)}
+.a2-steps em{display:block;margin-top:2px;font-style:normal;font-size:12.5px;color:var(--mu)}
+.a2-note{margin:0 0 12px;font-size:12.5px;color:var(--mu);word-break:keep-all}
+.a2-url{margin:-6px 0 12px;padding:8px 10px;border-radius:10px;background:rgba(0,0,0,.3);border:1px dashed var(--line);font-size:12.5px;color:#dfe9f0;word-break:break-all}
+.a2-btns{display:flex;gap:10px;flex-wrap:wrap}
+.a2-btns button{flex:1 1 110px;padding:12px 14px;border-radius:99px;font-weight:900;font-size:15.5px;border:2px solid transparent}
+.a2-btns .pri:not(:only-child){flex-basis:100%}                       /* main action on its own full-width row, the others share the next one */
+.a2-card.scroll .a2-btns{position:sticky;bottom:0;z-index:1;margin:0 -20px -18px;padding:14px 20px 18px;background:linear-gradient(to top,#0e1c28 68%,rgba(14,28,40,0))}   /* tall sheet on a short screen: steps scroll, the buttons stay in view */
+.a2-btns .pri{background:linear-gradient(180deg,#ff8a3d,var(--acc));border-color:#ffd2b8;color:#2b0e00;box-shadow:0 8px 24px rgba(255,106,43,.4)}
+.a2-btns .sec{background:rgba(255,255,255,.08);border-color:var(--line);color:#fff}
+.a2-btns button:active{transform:scale(.97)}
+@media (max-height:520px) and (min-width:560px){                   /* landscape phone: two columns, so the sheet is not taller than the screen */
+  #a2hs{align-items:center}
+  .a2-card{width:min(780px,100%);display:grid;grid-template-columns:minmax(0,.9fr) minmax(0,1.1fr);column-gap:26px;align-items:start;padding:16px 22px 14px}
+  .a2-card h3{font-size:20px;margin-bottom:8px}
+  .a2-icon img{width:48px;height:48px;border-radius:12px}
+  .a2-icon b{font-size:16px}
+  .a2-steps{gap:7px;margin-bottom:10px}
+  .a2-steps li{font-size:13.5px;line-height:1.4}
+  .a2-note{display:none}
+  .a2-btns button{padding:9px 12px;font-size:14.5px}
+  .a2-card.scroll .a2-btns{margin:0 -22px -14px;padding:10px 22px 14px}
+}
+
 #end{z-index:25;background:radial-gradient(ellipse at 50% 20%,rgba(255,150,60,.22),rgba(7,14,22,.94) 60%);overflow-y:auto;padding:calc(20px + var(--sat)) 16px calc(28px + var(--sab));justify-content:center}
 .e-wrap{width:min(760px,100%);margin:auto;display:flex;flex-direction:column;gap:14px;animation:pop .6s cubic-bezier(.2,1.2,.4,1)}
 .e-top{display:flex;gap:18px;align-items:center;padding:18px;border-radius:24px;background:linear-gradient(160deg,rgba(255,255,255,.12),rgba(255,255,255,.04));border:1px solid var(--line)}
@@ -335,7 +389,7 @@ small{font-size:10.5px;letter-spacing:.14em;text-transform:uppercase;color:var(-
   .sh-photos{display:none}
 }
 @media (prefers-reduced-motion:reduce){
-  .t-hero{animation:none}
+  .t-hero,.a2-card{animation:none}
   .pin .dot,.pin .ring{animation:none}
 }
 #hud,#hud2{transition:opacity .6s}
@@ -441,6 +495,7 @@ body.intro #sheet{visibility:hidden;padding:0;overflow:hidden;border:0}
         <p class="t-sub">bhc 알싹킹 한마리 · 8스테이션 조리 트레이닝<br>신선육 입고부터 포장까지, 표준 레시피대로 완성하세요.</p>
         <div class="t-load" id="tLoad"><div class="b"><i id="tLoadBar"></i></div><small id="tLoadTxt">주방 준비 중…</small></div>
         <button id="startBtn" disabled>조리 시작하기 ↗</button>
+        <button id="a2hsBtn" class="t-a2hs" type="button" hidden><img id="a2hsIco" alt="" width="34" height="34" draggable="false"><span><b>홈 화면에 아이콘 추가</b><small>핸드폰 바로가기</small></span></button>
         <div class="t-best" id="tBest"></div>
       </div>
       <div class="t-how">
@@ -454,6 +509,23 @@ body.intro #sheet{visibility:hidden;padding:0;overflow:hidden;border:0}
   </div>
 
   <div id="end" class="ovl"></div>
+
+  <div id="a2hs" class="ovl" role="dialog" aria-modal="true" aria-labelledby="a2hsT">
+    <div class="a2-card">
+      <div class="a2-l">
+        <div class="a2-eyebrow">홈 화면에 추가</div>
+        <h3 id="a2hsT">아이콘으로 바로 열기</h3>
+        <div class="a2-icon"><img id="a2hsImg" alt="알싹킹 교육 아이콘" width="64" height="64" draggable="false"><span><b>알싹킹 교육</b><small>홈 화면에 이렇게 생겨요</small></span></div>
+        <p class="a2-warn" id="a2hsWarn" hidden></p>
+      </div>
+      <div class="a2-r">
+        <ol class="a2-steps" id="a2hsSteps"></ol>
+        <p class="a2-note">한 번만 추가하면 다음부터는 홈 화면의 아이콘을 눌러 바로 시작해요.</p>
+        <p class="a2-url" id="a2hsUrl" hidden></p>
+        <div class="a2-btns" id="a2hsBtns"></div>
+      </div>
+    </div>
+  </div>
 
   <div id="lightbox" class="ovl"><button class="x" id="lbX" aria-label="닫기">✕</button><img id="lbImg" alt=""><div class="cap" id="lbCap"></div></div>
   <div id="nogl"><div>이 기기/브라우저에서는 3D(WebGL)를 사용할 수 없어요.<br>크롬·사파리 최신 버전에서 열어 주세요.<br><small style="text-transform:none;letter-spacing:0">(기본 2D 버전: bhc-alssacking-training.html)</small></div></div>
@@ -2292,6 +2364,109 @@ function debugPrepFryer(t) {
 }
 const STEP_FNS = [step0, step1, step2, step3, step4, step5, step6, step7];
 
+/* ---------------- "홈 화면에 아이콘 추가" (first screen) ----------------
+   Only on the GitHub Pages build: its <head> sets window.__PWA and keeps the browser's install offer in window.__bip.
+   • Android Chrome / Edge / Samsung Internet: the button opens the browser's own install dialog (one tap).
+   • iPhone / iPad: a page cannot trigger Safari's "Add to Home Screen", so the button shows a 3-step guide with the real icon.
+   • KakaoTalk / Naver / Instagram ... in-app browsers cannot add to the home screen at all: guide the person to the phone's browser first.
+   Hidden when the game already runs from the home screen, and on desktop browsers that cannot install it. */
+const A2 = (() => {
+  const ICON = 'icons/bhc-apple-touch-180.png';
+  const btn = $('a2hsBtn'), ovl = $('a2hs'), card = ovl.querySelector('.a2-card'), box = $('a2hsBtns'), ua = navigator.userAgent;
+  const ios = /iPhone|iPad|iPod/i.test(ua) || (navigator.platform === 'MacIntel' && navigator.maxTouchPoints > 1);   // iPadOS pretends to be a Mac
+  const kakao = /KAKAOTALK/i.test(ua);
+  const iosOther = ios && /CriOS|FxiOS|EdgiOS|OPiOS/i.test(ua);   // Chrome / Firefox / Edge on iPhone can add to the home screen too (iOS 16.4+), but their share button sits in the address bar
+  const inapp = kakao || /NAVER\(inapp|NAVER\/|Instagram|FBAN|FBAV|FB_IAB|Line\/|DaumApps|BAND\/|everytimeApp/i.test(ua);
+  const mobile = ios || /Android|Mobile/i.test(ua) || matchMedia('(pointer:coarse)').matches;
+  const standalone = () => ['standalone', 'fullscreen', 'minimal-ui'].some(m => matchMedia('(display-mode: ' + m + ')').matches) || navigator.standalone === true;
+  const svg = d => '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">' + d + '</svg>';
+  const SHARE = svg('<path d="M12 15V3M8 7l4-4 4 4M6 10H5a1 1 0 0 0-1 1v9a1 1 0 0 0 1 1h14a1 1 0 0 0 1-1v-9a1 1 0 0 0-1-1h-1"/>');
+  const PLUS = svg('<rect x="4" y="4" width="16" height="16" rx="3"/><path d="M12 8v8M8 12h8"/>');
+  const pageUrl = () => location.origin + location.pathname;
+  const api = { ios, kakao, inapp, mobile, last: '', get offer() { return !!evt; }, show, openSheet, closeSheet, steps };
+  let evt = window.__bip || null, lastFocus = null, finished = false;
+
+  function show() {
+    const ok = !!window.__PWA && !finished && !standalone() && (mobile || !!evt);
+    if (ok && !btn.dataset.ready) { $('a2hsIco').src = ICON; btn.dataset.ready = '1'; }
+    btn.hidden = !ok;
+  }
+  function done() {
+    if (finished) return; finished = true; closeSheet();
+    btn.classList.add('done'); btn.hidden = false;
+    btn.querySelector('b').textContent = '✓ 홈 화면에 추가됐어요!'; btn.querySelector('small').textContent = '홈 화면에서 아이콘을 확인해 보세요';
+    setTimeout(() => { btn.hidden = true; }, 4500);
+  }
+  async function onBtn() {
+    if (evt) {                                                    // Android & co: the browser's own dialog
+      const e = evt; evt = null; window.__bip = null;
+      try { await e.prompt(); const r = await e.userChoice; if (r && r.outcome === 'accepted') { done(); return; } } catch (_) { }
+      show(); return;                                             // dismissed: the next tap shows the manual steps
+    }
+    openSheet();
+  }
+  function steps() {
+    if (inapp) return ios
+      ? ['앱 화면 모서리의 <b>⋯</b> 또는 <b>공유</b> ' + SHARE + ' 버튼을 눌러요', '<b>Safari로 열기</b>를 눌러요', 'Safari에서 이 화면의 <b>홈 화면에 아이콘 추가</b> 버튼을 다시 눌러 안내를 따라 주세요']
+      : ['앱 화면 오른쪽 위 <b>⋮</b> 버튼을 눌러요', '<b>다른 브라우저로 열기</b> → <b>Chrome</b>을 골라요', 'Chrome에서 이 화면의 <b>홈 화면에 아이콘 추가</b> 버튼을 다시 누르면 <b>설치</b> 창이 떠요'];
+    if (ios) return [
+      iosOther ? '주소창 옆 <b>공유</b> 버튼 ' + SHARE + ' 을 눌러요<em>안 보이면 <b>⋯</b> 메뉴 안에 있어요.</em>'
+        : 'Safari의 <b>공유</b> 버튼 ' + SHARE + ' 을 눌러요<em>아이폰은 화면 아래, 아이패드는 위쪽에 있어요. 안 보이면 <b>⋯</b> 메뉴 안에 있어요.</em>',
+      '목록을 위로 올려 <b>홈 화면에 추가</b> ' + PLUS + ' 를 눌러요',
+      '오른쪽 위 <b>추가</b>를 누르면 홈 화면에 아이콘이 생겨요'];
+    return ['브라우저 오른쪽 위 <b>⋮</b> 메뉴(또는 아래쪽 <b>≡</b>)를 눌러요', '<b>홈 화면에 추가</b> 또는 <b>앱 설치</b>를 눌러요', '<b>설치</b>·<b>추가</b>를 누르면 홈 화면에 아이콘이 생겨요'];
+  }
+  function openSheet() {
+    lastFocus = document.activeElement;
+    $('a2hsImg').src = ICON;
+    const w = $('a2hsWarn'); w.hidden = !inapp;
+    if (inapp) w.textContent = '카카오톡 같은 앱 안의 브라우저에서는 홈 화면에 추가할 수 없어요. 먼저 핸드폰 기본 브라우저로 열어 주세요.';
+    $('a2hsSteps').innerHTML = steps().map(s => '<li><span>' + s + '</span></li>').join('');
+    $('a2hsUrl').hidden = true;
+    box.innerHTML = kakao ? '<button type="button" class="pri" data-act="ext">기본 브라우저로 열기</button><button type="button" class="sec" data-act="copy">링크 복사</button><button type="button" class="sec" data-act="close">닫기</button>'
+      : inapp ? '<button type="button" class="pri" data-act="copy">링크 복사</button><button type="button" class="sec" data-act="close">닫기</button>'
+      : '<button type="button" class="pri" data-act="close">확인</button>';
+    ovl.classList.add('show'); fit();
+    const f = box.querySelector('button'); if (f) f.focus({ preventScroll: true });
+  }
+  function fit() { card.classList.remove('scroll'); card.classList.toggle('scroll', card.scrollHeight > card.clientHeight + 1); }   // taller than the screen -> keep the buttons pinned
+  function closeSheet() {
+    if (!ovl.classList.contains('show')) return;
+    ovl.classList.remove('show');
+    if (lastFocus && lastFocus.focus && document.contains(lastFocus)) lastFocus.focus({ preventScroll: true });
+  }
+  function openExternal() { api.last = 'kakaotalk://web/openExternal?url=' + encodeURIComponent(pageUrl()); location.href = api.last; }   // KakaoTalk -> the phone's default browser
+  async function copyLink() {
+    const url = pageUrl(); let ok = false;
+    try { await navigator.clipboard.writeText(url); ok = true; } catch (_) { }
+    if (!ok) {
+      const t = document.createElement('textarea'); t.value = url; t.setAttribute('readonly', '');
+      t.style.cssText = 'position:fixed;left:-999px;top:0;opacity:0;-webkit-user-select:text;user-select:text'; document.body.appendChild(t); t.select();
+      try { ok = document.execCommand('copy'); } catch (_) { } t.remove();
+    }
+    const b = box.querySelector('[data-act="copy"]');
+    if (ok) { if (b) b.textContent = '복사됐어요 ✓'; const u = $('a2hsUrl'); u.hidden = false; u.textContent = '주소를 복사했어요. 핸드폰 브라우저 주소창에 붙여 넣어 주세요.'; }
+    else { const u = $('a2hsUrl'); u.hidden = false; u.textContent = url; }                 // last resort: show the address so it can be copied by hand
+  }
+
+  btn.addEventListener('click', onBtn);
+  ovl.addEventListener('click', e => { if (e.target === ovl) closeSheet(); });
+  box.addEventListener('click', e => { const b = e.target.closest('button'); if (!b) return; const a = b.dataset.act; if (a === 'close') closeSheet(); else if (a === 'ext') openExternal(); else if (a === 'copy') copyLink(); });
+  window.addEventListener('keydown', e => {
+    if (!ovl.classList.contains('show')) return;
+    if (e.key === 'Escape') { e.preventDefault(); closeSheet(); }
+    else if (e.key === 'Tab') { const bs = [...box.querySelectorAll('button')], n = bs.length, i = bs.indexOf(document.activeElement); if (!n) return; e.preventDefault(); bs[i < 0 ? (e.shiftKey ? n - 1 : 0) : (i + (e.shiftKey ? n - 1 : 1)) % n].focus(); }
+  });
+  window.addEventListener('resize', () => { if (ovl.classList.contains('show')) fit(); });
+  window.addEventListener('beforeinstallprompt', e => { e.preventDefault(); evt = e; show(); });
+  window.addEventListener('bhc-bip', () => { evt = window.__bip || evt; show(); });
+  window.addEventListener('appinstalled', () => { evt = null; done(); });
+  try { matchMedia('(display-mode: standalone)').addEventListener('change', show); } catch (_) { }
+  show();
+  return api;
+})();
+window.__a2 = A2;
+
 /* =====================================================================
    main: boot · render loop · input · title / restart
    ===================================================================== */
@@ -2401,7 +2576,7 @@ function bindInput() {
   window.addEventListener('keydown', e => {
     if (e.key === 'Escape') closeLightbox();
     if (e.key === 'm' || e.key === 'M') $('btnSfx').click();
-    if ((e.key === ' ' || e.key === 'Enter') && document.activeElement && document.activeElement.tagName === 'BODY') {
+    if ((e.key === ' ' || e.key === 'Enter') && document.activeElement && document.activeElement.tagName === 'BODY' && !$('a2hs').classList.contains('show')) {   // not while the "add to home screen" sheet is open
       if ($('title').classList.contains('show')) { if (!$('startBtn').disabled) { e.preventDefault(); startGame(); } return; }
       const b = document.querySelector('#sClear:not([hidden]) .btn, #sCtrl .btn:not([disabled])') || document.querySelector('#end .btn');
       if (b) { e.preventDefault(); b.click(); } else if (Pins.list[0]) { e.preventDefault(); Pins.fire(Pins.list[0]); }

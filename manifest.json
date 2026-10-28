@@ -4,6 +4,7 @@
   "description": "알싹킹 3D 조리 트레이닝",
   "lang": "ko",
   "dir": "ltr",
+  "id": "./",
   "start_url": "./",
   "scope": "./",
   "display": "standalone",
@@ -16,19 +17,19 @@
   ],
   "icons": [
     {
-      "src": "icons/icon-192.png",
+      "src": "icons/bhc-192.png",
       "sizes": "192x192",
       "type": "image/png",
       "purpose": "any"
     },
     {
-      "src": "icons/icon-512.png",
+      "src": "icons/bhc-512.png",
       "sizes": "512x512",
       "type": "image/png",
       "purpose": "any"
     },
     {
-      "src": "icons/icon-maskable-512.png",
+      "src": "icons/bhc-maskable-512.png",
       "sizes": "512x512",
       "type": "image/png",
       "purpose": "maskable"
