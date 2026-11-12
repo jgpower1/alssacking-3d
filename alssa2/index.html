@@ -622,6 +622,13 @@ body.intro #hud,body.intro #hudb,body.intro #react{opacity:0;pointer-events:none
 .rubpad.on .rp-h{animation:none}
 @keyframes rub{0%,100%{transform:translateX(-26px) rotate(-12deg)}50%{transform:translateX(26px) rotate(12deg)}}
 
+.e-hero{align-items:center}
+.e-pt{display:grid;grid-template-columns:auto auto;align-items:baseline;justify-content:center;column-gap:2px;padding:8px 14px 9px;border-radius:20px;background:#fff;border:3px solid var(--ink);box-shadow:0 5px 0 var(--ink);color:var(--ink)}
+.e-pt b{font-size:46px;line-height:1;font-weight:900;font-variant-numeric:tabular-nums}
+.e-pt span{font-size:20px;font-weight:900}
+.e-pt small{grid-column:1 / -1;text-align:center;letter-spacing:0;font-size:11px;margin-top:3px}
+@media (max-width:380px){.e-pt b{font-size:36px}.e-pt{padding:6px 10px 7px}.e-av{width:84px}}
+
 </style>
 <style id="bhc-gate-css">
 /* BHC 교육 게임 입장 양식 — 이름·점포 입력 후 입장. 굵은 외곽선 + 하드 그림자(네오브루탈리즘), 색·마스코트는 게임별로 다릅니다. */
@@ -2301,7 +2308,7 @@ function showResult() {
   const rows = STEPS.map((s, i) => '<div class="e-row ' + (S.stepMis[i] === 0 ? 'perfect' : '') + '"><div class="n">' + (i + 1) + '</div><div class="t">' + s.ico + ' ' + s.nm + '</div><div class="m">' + (S.stepMis[i] === 0 ? '실수 없음' : '실수 ' + S.stepMis[i] + '회') + '</div><div class="s">' + (S.stepMis[i] === 0 ? '⭐⭐⭐' : S.stepMis[i] === 1 ? '⭐⭐' : '⭐') + '</div></div>').join('');
   const wrong = STEPS.map((s, i) => S.stepMis[i] ? '<li><b>' + s.nm + '</b> — ' + s.why + '</li>' : '').join('');
   const say = gr.g === 'S' || gr.g === 'A' ? esc(chefCall()) + ', 정말 수고했어요! 🎉' : gr.g === 'B' ? esc(chefCall()) + ', 수고했어요! 한 번 더 하면 더 잘할 수 있어요 💪' : esc(chefCall()) + ', 끝까지 해냈어요! 틀린 기준만 다시 보고 도전해요 💪';
-  $('end').innerHTML = '<div class="e-wrap"><div class="e-top"><div class="e-hero"><div class="e-av">' + COACH_SVG[gr.g === 'C' ? 'think' : 'cheer'] + '</div><div class="e-grade g-' + gr.g + '">' + gr.g + '</div></div>' +
+  $('end').innerHTML = '<div class="e-wrap"><div class="e-top"><div class="e-hero"><div class="e-av">' + COACH_SVG[gr.g === 'C' ? 'think' : 'cheer'] + '</div><div class="e-grade g-' + gr.g + '">' + gr.g + '</div><div class="e-pt"><b>' + q + '</b><span>점</span><small>100점 만점</small></div></div>' +
     '<div class="e-t"><small>' + (newBest ? '최고 점수!' : 'MISSION COMPLETE') + '</small><h2>' + (PRO ? '실전 ' : '') + '알싹킹 조리 완료! ' + gr.name + '</h2><p class="e-say">' + say + '</p><p>' + gr.msg + '</p></div></div>' +
     '<div class="e-stats"><div><small>점수</small><b>' + q + '<i>/100</i></b></div><div><small>실수</small><b>' + S.mistakes + '회</b></div><div><small>힌트</small><b>' + S.hints + '회</b></div><div><small>최고 콤보</small><b>×' + S.bestCombo + '</b></div></div>' +
     '<div class="e-card e-key"><h3>📌 알싹킹 핵심 기준</h3><ol>' + KEY.map((k, i) => '<li><span>' + STEPS[i].ico + ' ' + STEPS[i].nm + '</span><em>' + k + '</em></li>').join('') + '</ol></div>' +
