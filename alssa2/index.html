@@ -2632,12 +2632,22 @@ async function step2() {
   await Promise.all(s.pcs.map((p, i) => wait(i * .08).then(() => arcMove(p, tg[i], .5, .5, ease.io, { x: (r() - .5) * .8, y: r() * TAU, z: (r() - .5) * .8 }))));
   sfx.thud(); good(150, { obj: s.bowl }); setFrac(.55); await wait(.25);
   // --- mix
-  P.phase('④ 치킨을 잡고 <b>문질러</b> 배터액 묻히기'); const met = P.meter('버무림'); const mitt = s.mitt; mitt.visible = true;
+  P.phase('④ 부위별로 들었다 놓으며 <b>배터액 묻히기</b>'); const met = P.meter('버무림'); const mitt = s.mitt; mitt.visible = true;
   let ang = 0;
-  await rubSeries({
-    n: 10, per: 70, key: 's2mix', label: '누른 채 문질러요', hint: ['화면을 누른 채 좌우로 문질러 치킨에 배터액을 골고루 묻혀요!'],
-    onMove: d => { ang += d * .03; mitt.position.set(Math.cos(ang) * .15, .4 + Math.sin(ang * 2) * .03, Math.sin(ang) * .15); mitt.rotation.set(0, -ang, Math.sin(ang * 3) * .12); s.pcs.forEach((p, i) => { p.rotation.y += d * .012 * (i % 2 ? 1 : -1); }); },
-    onStep: (k, n) => { sfx.whoosh(); const wp1 = wpos(s.bowl); fx.flakes(wp1.x, CY + .5, wp1.z, 10); setLook({ batter: k / n }); met.set(k / n); award(40, { obj: s.bowl, sm: true }); setFrac(.55 + .4 * k / n); }
+  await tapSeries({
+    n: 7, label: '🥣 버무리기 탭!', hold: true, key: 's2mix', hint: ['버튼을 톡톡 눌러요. 부위별로 들었다가 다시 배터액에 묻혀요!'],
+    onTap: (k, n) => {
+      /* 한 번 누를 때마다 한 부위(2조각)를 손으로 들어 올렸다가 배터액에 다시 묻힌다 */
+      sfx.tap(); sfx.whoosh(); const kind = TYPES[(k - 1) % TYPES.length]; let grp = s.pcs.filter(p => p.userData.kind === kind); if (!grp.length) grp = [s.pcs[(k - 1) % s.pcs.length]];
+      grp.forEach(p => { if (p.userData.by === undefined) { p.userData.by = p.position.y; p.userData.rx = p.rotation.x; } });
+      const cx = grp.reduce((a, p) => a + p.position.x, 0) / grp.length, cz = grp.reduce((a, p) => a + p.position.z, 0) / grp.length;
+      anim(.62, (e, r) => {
+        const up = Math.sin(r * Math.PI);                                   // 0 → 1 → 0 : 들었다가 내려놓기
+        grp.forEach((p, i) => { p.position.y = p.userData.by + up * .3; p.rotation.x = p.userData.rx + r * TAU * (i ? -1 : 1); });
+        mitt.position.set(cx, .43 + up * .3, cz); mitt.rotation.set(0, k * .9, up * .25);
+      }, ease.lin).then(() => { grp.forEach(p => { p.position.y = p.userData.by; p.rotation.x = p.userData.rx; }); const wp1 = wpos(s.bowl); fx.flakes(wp1.x, CY + .5, wp1.z, 12); sfx.thud(); });
+      setLook({ batter: k / n }); met.set(k / n); award(40, { obj: s.bowl, sm: true }); setFrac(.55 + .4 * k / n);
+    }
   });
   anim(.5, k => { mitt.position.y = .43 + .5 * k; }).then(() => { mitt.visible = false; });
   sfx.ding(); P.fb('후레이크가 표면에 골고루 묻었어요! 배터링 완료.', 'ok'); const bw = wpos(s.bowl); fx.sparkle(bw.x, CY + .5, bw.z, 20); await wait(.8);
