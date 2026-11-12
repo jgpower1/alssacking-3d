@@ -576,6 +576,25 @@ body.intro #hud,body.intro #hudb,body.intro #react{opacity:0;pointer-events:none
   .hand.down{animation:none}.hand.tl{animation:none}
 }
 
+/* ===== 업그레이드: 간결한 화면 · 겹침 없는 배치 · 핵심 기준 학습 ===== */
+#hudb{flex-wrap:wrap-reverse}
+#mission[data-mode="intro"] .ms-man,#mission[data-mode="intro"] .ms-note{display:none}
+#mission[data-mode="intro"] .ms-say p{font-size:20px;line-height:1.45;text-align:center}
+#mission[data-pro="1"] .ms-ph{display:none}
+.e-key ol{list-style:none;margin:0;padding:0;display:grid;gap:6px}
+.e-key li{display:flex;flex-wrap:wrap;align-items:baseline;gap:2px 10px;padding:7px 11px;border-radius:12px;background:var(--paper);border:2.5px solid var(--ink);font-size:15px;font-weight:800;line-height:1.4}
+.e-key li span{flex:none;min-width:6.2em;font-size:12.5px;color:var(--ink3);font-weight:900}
+.e-key li em{font-style:normal;flex:1 1 60%;min-width:0}
+.e-key li b{color:var(--orange3)}
+.e-btns{display:flex;flex-direction:column;gap:10px}.e-btns .btn{flex:none}
+@media (max-width:880px){
+  #pins.many .pin.tw{display:none}
+}
+@media (max-width:480px){
+  .q-pips{display:none}
+  .hu-q .q-l{display:inline}
+}
+
 </style>
 <style id="bhc-gate-css">
 /* BHC 교육 게임 입장 양식 — 이름·점포 입력 후 입장. 굵은 외곽선 + 하드 그림자(네오브루탈리즘), 색·마스코트는 게임별로 다릅니다. */
@@ -2006,10 +2025,10 @@ const Pins = {
     if (spec.panel !== false && matchMedia('(max-width:880px)').matches) {
       let row = $('sCtrl').querySelector('.pickrow'); if (!row) { row = document.createElement('div'); row.className = 'pickrow'; $('sCtrl').appendChild(row); }
       const b = document.createElement('button'); b.type = 'button'; b.className = 'chip pick' + (/alt/.test(spec.cls || '') ? ' alt' : ''); b.dataset.id = spec.id;
-      b.innerHTML = '<span class="pi">' + (spec.icon || '👆') + '</span><span class="tx">' + spec.label + '</span>'; b.addEventListener('click', () => Pins.fire(spec)); row.appendChild(b); spec.btn = b;
+      b.innerHTML = '<span class="pi">' + (spec.icon || '👆') + '</span><span class="tx">' + spec.label + '</span>'; b.addEventListener('click', () => Pins.fire(spec)); row.appendChild(b); spec.btn = b; el.classList.add('tw');
       if (row.children.length > 5) row.classList.add('dense');            // 버튼이 6개 이상이면 3열로 촘촘히
     }
-    $('pins').classList.toggle('many', this.list.length >= 5);           // 핀이 많으면 3D 핀의 글자를 숨긴다(아래 버튼에 이름이 있다)
+    $('pins').classList.toggle('many', this.list.length >= 4);           // 폰에서 핀이 4개 이상이면 3D 핀을 숨기고 아래 버튼만 쓴다(겹침 방지)
     this.update(); return spec;
   },
   fire(spec) { if (!this.list.includes(spec)) return; Aud.init(); if (spec.onTap) spec.onTap(spec); },
@@ -2024,9 +2043,17 @@ const Pins = {
       if (s.obj) s.obj.getWorldPosition(this.tmp); else this.tmp.copy(s.pos);
       this.tmp.x += s.off[0]; this.tmp.y += s.off[1]; this.tmp.z += s.off[2]; this.tmp.project(camera);
       const vis = this.tmp.z < 1 && Math.abs(this.tmp.x) < 1.15 && Math.abs(this.tmp.y) < 1.15;
-      s.el.style.visibility = vis ? 'visible' : 'hidden';
-      s.el.style.transform = 'translate(' + ((this.tmp.x * .5 + .5) * W).toFixed(1) + 'px,' + ((-this.tmp.y * .5 + .5) * H).toFixed(1) + 'px) translate(-50%,-27px)';
+      s.el.style.visibility = vis ? 'visible' : 'hidden'; s._v = vis;
+      s._x = (this.tmp.x * .5 + .5) * W; s._y = (-this.tmp.y * .5 + .5) * H;
     }
+    /* 핀이 상단 HUD · 화면 가장자리 · 서로와 겹치지 않게 화면 좌표에서 살짝 밀어 준다 */
+    const top = Math.min(matchMedia('(max-width:880px)').matches ? 168 : 130, H * .34), vs = this.list.filter(s => s._v);
+    for (const s of vs) { s._x = Math.max(48, Math.min(W - 48, s._x)); s._y = Math.max(top, Math.min(H - 70, s._y)); }
+    for (let k = 0; k < 3; k++) for (let i = 0; i < vs.length; i++) for (let j = i + 1; j < vs.length; j++) {
+      const a = vs[i], b = vs[j], dx = b._x - a._x, dy = b._y - a._y;
+      if (Math.abs(dx) < 100 && Math.abs(dy) < 92) { const push = (100 - Math.abs(dx)) / 2 + 1, sg = dx >= 0 ? 1 : -1; a._x -= push * sg; b._x += push * sg; }
+    }
+    for (const s of this.list) s.el.style.transform = 'translate(' + s._x.toFixed(1) + 'px,' + s._y.toFixed(1) + 'px) translate(-50%,-27px)';
   },
   pickAt(cx, cy) {
     const r = glCanvas.getBoundingClientRect(); this.ndc.set(((cx - r.left) / r.width) * 2 - 1, -((cy - r.top) / r.height) * 2 + 1); this.ray.setFromCamera(this.ndc, camera);
@@ -2225,16 +2252,18 @@ function showResult() {
   const wrong = STEPS.map((s, i) => S.stepMis[i] ? '<li><b>' + s.nm + '</b> — ' + s.why + '</li>' : '').join('');
   const say = gr.g === 'S' || gr.g === 'A' ? esc(chefCall()) + ', 정말 수고했어요! 🎉' : gr.g === 'B' ? esc(chefCall()) + ', 수고했어요! 한 번 더 하면 더 잘할 수 있어요 💪' : esc(chefCall()) + ', 끝까지 해냈어요! 틀린 기준만 다시 보고 도전해요 💪';
   $('end').innerHTML = '<div class="e-wrap"><div class="e-top"><div class="e-hero"><div class="e-av">' + COACH_SVG[gr.g === 'C' ? 'think' : 'cheer'] + '</div><div class="e-grade g-' + gr.g + '">' + gr.g + '</div></div>' +
-    '<div class="e-t"><small>' + (newBest ? 'NEW BEST SCORE' : 'MISSION COMPLETE') + '</small><h2>알싹킹 조리 완료! ' + gr.name + '</h2><p class="e-say">' + say + '</p><p>' + gr.msg + '</p></div></div>' +
+    '<div class="e-t"><small>' + (newBest ? 'NEW BEST SCORE' : 'MISSION COMPLETE') + '</small><h2>' + (PRO ? '실전 ' : '') + '알싹킹 조리 완료! ' + gr.name + '</h2><p class="e-say">' + say + '</p><p>' + gr.msg + '</p></div></div>' +
     '<div class="e-stats"><div><small>SCORE</small><b>' + fmtNum(S.score) + '</b></div><div><small>실수</small><b>' + S.mistakes + '회</b></div><div><small>품질</small><b>' + q + '%</b></div><div><small>최고 콤보</small><b>×' + S.bestCombo + '</b></div></div>' +
+    '<div class="e-card e-key"><h3>📌 알싹킹 핵심 기준</h3><ol>' + KEY.map((k, i) => '<li><span>' + STEPS[i].ico + ' ' + STEPS[i].nm + '</span><em>' + k + '</em></li>').join('') + '</ol></div>' +
     (S.hints ? '<div class="e-hint">💡 힌트를 ' + S.hints + '번 썼어요</div>' : '') +
     '<div class="e-card"><h3>📋 스테이션별 리포트</h3><div class="e-rows">' + rows + '</div></div>' +
     (wrong ? '<div class="e-card"><h3>🔁 다시 확인할 기준</h3><ul class="e-why">' + wrong + '</ul></div>' : '') +
     '<div class="e-card"><h3>🍗 완성된 알싹킹</h3><div class="e-imgs"><div class="im"><img src="' + PHOTOS.a10_final + '" alt="완성된 알싹킹"></div></div></div>' +
     '<div class="e-card"><h3>알싹킹 전체 메뉴 용량</h3><div class="e-imgs"><div class="im"><img src="' + PHOTOS.a11_menu_table + '" alt="알싹킹 전체 메뉴 용량"></div></div></div>' +
-    '<div class="e-btns"><button class="btn primary" id="again">🔁 다시 도전</button></div></div>';
+    '<div class="e-btns"><button class="btn primary" id="again">🔁 다시 도전</button><button class="btn good" id="againPro">🎓 실전 모드 · 안내 없이 도전</button></div></div>';
   $('end').classList.add('show'); sfx.fanfare(); fx.confetti(camS.x, camS.y + .6, camS.z + .4, 90);
-  $('again').addEventListener('click', () => { Aud.init(); sfx.tap(); restartGame(); });
+  $('again').addEventListener('click', () => { Aud.init(); sfx.tap(); PRO = false; restartGame(); });
+  $('againPro').addEventListener('click', () => { Aud.init(); sfx.tap(); PRO = true; restartGame(); });
 }
 
 /* =====================================================================
@@ -2259,6 +2288,18 @@ const EASY = [
   '5분이 지나면 다리를 한 조각씩 건져 혈작업을 하고, 나이프로 앞뒤 3~4회 찔러 크래킹한 뒤 다시 넣어요.',
   '튀긴 치킨을 1분 30초 동안 기름떨이해서 여분의 기름을 빼 줘요.',
   '박스에 치킨을 담고 뚜껑을 닫은 뒤 안심스티커를 붙여요. 포장지에 박스와 치킨무 · 소스 2종을 담아 라이더에게 전달해요!'
+];
+let PRO = false;                                               // 실전 모드: 손가락 · 자동 힌트 없이 기억으로 조리한다
+/* 스테이션마다 꼭 기억할 기준 한 줄 — 매뉴얼(STEPS) 수치 그대로 */
+const KEY = [
+  '<b>체</b>로 물기 제거',
+  '<b>가슴 · 어깨 · 날개</b> 절각',
+  '배터믹스 <b>110</b> : 냉정수 <b>75</b>',
+  '<b>163℃ / 10분</b> · 14조각 <b>다리부터</b>',
+  '투입 <b>30초</b> 후 흔들기',
+  '<b>5분</b> 후 다리 혈작업 · 크래킹 <b>앞뒤 3~4회</b>',
+  '기름떨이 <b>1분 30초</b>',
+  '<b>안심스티커</b> · 치킨무 1 · 맵싸 소스 1 · 파싹소스 1'
 ];
 const PRAISE = [['좋아요!', '잘했어요!', '굿!', '그렇죠!'], ['콤보 이어가요! 🔥', '대단해요!', '감 잡았네요!'], ['완벽해요! 🔥🔥', '손이 엄청 빨라요!', '셰프 같아요!']];
 
@@ -2295,10 +2336,12 @@ const Coach = (() => {
   };
   C.unhand = () => { C.hands.forEach(el => { const h = el.querySelector(':scope > .hand'); if (h) h.remove(); el.classList.remove('hot'); }); C.hands.length = 0; };
   C.pointPins = ids => {
-    Pins.list.forEach(s => {
-      if (ids !== 'all' && (!ids || ids.indexOf(s.id) < 0)) return;
-      C.hand(s.el, 'down'); if (s.btn) C.hand(s.btn, 'tl');
-    });
+    const hidden = $('pins').classList.contains('many');          // 폰에서 핀이 많으면 3D 핀은 숨고 아래 버튼만 남는다
+    for (const s of Pins.list) {                                   // 손가락은 한 번에 한 곳만 가리킨다
+      if (ids !== 'all' && (!ids || ids.indexOf(s.id) < 0)) continue;
+      if (hidden && s.btn) C.hand(s.btn, 'tl'); else C.hand(s.el, 'down');
+      break;
+    }
   };
   C.showPoint = (cfg, which) => {
     const t = which === 'ans' ? (cfg.ans || cfg.point) : cfg.point;
@@ -2314,7 +2357,7 @@ const Coach = (() => {
     const prev = C.last, same = prev && cfg.key && prev.key === cfg.key;
     C.disarm(); cfg.fails = same ? (prev.fails || 0) : 0; cfg.level = same ? (prev.level || 0) : 0;
     C.cfg = C.last = cfg; C.touch();
-    const show = () => { if (C.cfg !== cfg) return; if (cfg.fails >= 2 && cfg.ans) { cfg.level = 2; C.showPoint(cfg, 'ans'); } else if (cfg.point || (cfg.els && cfg.els.length)) C.showPoint(cfg, 'point'); };
+    const show = () => { if (C.cfg !== cfg) return; if (PRO && cfg.fails < 2) return; if (cfg.fails >= 2 && cfg.ans) { cfg.level = 2; C.showPoint(cfg, 'ans'); } else if (cfg.point || (cfg.els && cfg.els.length)) C.showPoint(cfg, 'point'); };
     cfg._t = setTimeout(show, SKIPINTRO ? 30 : 800);
   };
   C.fail = () => { if (C.last) C.last.fails = (C.last.fails || 0) + 1; };
@@ -2330,7 +2373,7 @@ const Coach = (() => {
   };
   setInterval(() => {
     const c = C.cfg; if (!c || $('mission').classList.contains('show') || $('lightbox').classList.contains('show') || $('tut').classList.contains('show')) { if (c) C.idleAt = performance.now(); return; }
-    const idle = performance.now() - C.idleAt;
+    const idle = performance.now() - C.idleAt; if (PRO) return;
     if (idle > 8000 && C.nudged < 1) { C.nudged = 1; C.hop(); $('btnHint').classList.add('pulse'); }
     else if (idle > 18000 && C.nudged < 2) { C.nudged = 2; C.useHint(true); }
   }, 1000);
@@ -2340,7 +2383,7 @@ const Coach = (() => {
   C.openMission = (i, mode) => {
     const st = STEPS[i]; C.mode = mode; C.missionNo = i;
     $('mNo').textContent = i + 1; $('mIco').textContent = st.ico; $('mTitle').textContent = st.title;
-    $('mEasy').textContent = EASY[i]; $('mGuide').textContent = st.guide;
+    $('mEasy').innerHTML = mode === 'intro' ? (PRO ? '🎓 실전! 기준을 떠올리며 조리해요' : '📌 ' + KEY[i]) : esc(EASY[i]); $('mGuide').textContent = st.guide; $('mission').dataset.pro = PRO && mode === 'intro' ? '1' : '0';
     const nt = $('mNote'); nt.hidden = !st.note; nt.textContent = st.note ? '📌 ' + st.note : '';
     $('mPhotos').innerHTML = st.photos.map(p => '<button type="button" class="ph" data-k="' + p[0] + '" data-c="' + esc(p[1]) + '" aria-label="' + esc(p[1]) + ' 크게 보기"><img src="' + PHOTOS[p[0]] + '" alt="' + esc(p[1]) + '"></button>').join('') + '<div class="cap">📷 실제 조리 사진 · 탭하면 크게 볼 수 있어요</div>';
     document.querySelectorAll('#mPhotos .ph').forEach(b => b.addEventListener('click', () => openLightbox(b.dataset.k, b.dataset.c)));
@@ -2363,10 +2406,8 @@ const Coach = (() => {
 
   /* ---------- 처음 안내(코치와 인사) ---------- */
   const TUT = () => [
-    { mood: 'cheer', demo: 'order', say: '<b>' + esc(chefCall()) + '</b>, 반가워요! 저는 안내를 맡은 <b>알싹킹 할라피뇨</b>예요 🌶️<br>오늘 들어온 주문은 <b>알싹킹 한마리</b>! 8단계로 같이 만들어 봐요.' },
-    { mood: 'happy', demo: 'pin', say: '화면에 <b>반짝이는 버튼</b>이나 <b>👆 손가락</b>이 보이면 그곳을 눌러요. <b>다음에 눌러야 할 곳</b>은 제가 알려 드릴게요!' },
-    { mood: 'think', demo: 'quiz', say: '용량 · 온도 · 시간은 <b>표준값만 정답</b>이에요. 틀려도 괜찮아요, 이유를 알려 드려요! 막히면 <b>💡 힌트</b>를 눌러요.' },
-    { mood: 'cheer', demo: 'combo', say: '연속으로 맞히면 <b>콤보 ×2 ~ ×5</b>! 실수가 적을수록 <b>S 퍼펙트 셰프</b>에 가까워져요. 준비됐나요?' }
+    { mood: 'happy', demo: 'pin', say: '<b>👆 손가락</b>이 가리키는 곳을 눌러요.' },
+    { mood: 'think', demo: 'quiz', say: '용량 · 온도 · 시간은 <b>표준값</b>만 정답! 막히면 <b>💡 힌트</b>.' }
   ];
   const demoHTML = d => ({
     order: '<div class="dm dm-order"><b>🧾 오늘의 주문</b><span>알싹킹 한마리</span><small>8단계 · 신선육 입고 → 포장 완료</small></div>',
@@ -2421,7 +2462,7 @@ const stationOf = i => ST[i];
 /* ================================================== 0 · 물기제거 */
 async function step0() {
   setLook({ dry: 0, batter: 0, fry: 0, oil: 0 }); const s = buildS0();
-  enter(0, '① <b>신선육 봉지</b>를 가위로 뜯어 볼까요? 반짝이는 <b>✂️ 봉지 뜯기</b>를 눌러요!');
+  enter(0, '① <b>✂️ 봉지 뜯기</b>를 눌러요');
   await flyTo('s0', 0, 2.2);
   await choosePin([{ id: 'bag', label: '봉지 뜯기', icon: '✂️', obj: s.bag, off: [0, .42, 0] }]);
   // --- tear the bag
@@ -2437,7 +2478,7 @@ async function step0() {
   good(100, { obj: s.bag }); fx.sparkle(ST[0] + bx, CY + .35, bz, 14); setFrac(.15);
   await wait(.5);
   // --- choose the tool
-  P.phase('② 봉지를 뜯었어요! 물기를 빼려면 <b>어떤 도구</b>가 필요할까요? 알맞은 것을 눌러요.'); P.fb('');
+  P.phase('② 물기 빼는 <b>도구</b>는?'); P.fb('');
   const colWorld = s.colander;
   for (; ;) {
     const id = await choosePin([
@@ -2455,7 +2496,7 @@ async function step0() {
   await Promise.all(s.bagPieces.map((p, i) => wait(i * .09).then(() => arcMove(p, tg[i], .55, .55, ease.io, { x: (r() - .5) * .6, y: r() * TAU, z: (r() - .5) * .6 }))));
   sfx.thud(); setFrac(.4); await wait(.2);
   // --- shake the water out
-  P.phase('③ <b>체</b>를 톡톡 눌러 물기를 털어요! 꾹 누르고 있어도 돼요.'); const met = P.meter('물기 제거율'); const cw = wpos(s.colander); const cx0 = s.colander.position.x;
+  P.phase('③ <b>체</b>를 톡톡! 물기 털기'); const met = P.meter('물기 제거율'); const cw = wpos(s.colander); const cx0 = s.colander.position.x;
   await tapSeries({
     n: 6, label: '💦 물기 털기 탭!', hold: true, pin: { id: 'shake', label: '물기 털기', icon: '💦', obj: s.colander, off: [0, .52, 0] },
     onTap: (k, n) => {
@@ -2480,7 +2521,7 @@ async function doCut(s, c) {
 }
 async function step1() {
   setLook({ dry: 1, batter: 0, fry: 0, oil: 0 }); const s = buildS1();
-  const cutSay = n => '① 가위로 <b>가슴 · 어깨 · 날개</b>를 잘라요! 빨간 점선을 눌러요. (' + n + '/3)';
+  const cutSay = n => '① 빨간 점선을 눌러 <b>절각</b> (' + n + '/3)';
   enter(1, cutSay(0)); const dots = P.dots(3);
   await flyTo('s1', 1, 1.9);
   let done = 0;
@@ -2498,7 +2539,7 @@ async function step1() {
 /* ================================================== 2 · 배터링 */
 async function step2() {
   setLook({ dry: 1, batter: 0, fry: 0, oil: 0 }); const s = buildS2();
-  enter(2, '① 배터믹스와 냉정수는 <b>각각 몇 g</b>일까요? 표준 양을 골라 주세요!'); P.fb('📌 ' + STEPS[2].note, 'tip note');
+  enter(2, '① <b>배터믹스 · 냉정수</b> 몇 g?'); P.fb('📌 ' + STEPS[2].note, 'tip note');
   await flyTo('s2', 2, 1.9);
   let tries = 0;
   for (; ;) {
@@ -2511,7 +2552,7 @@ async function step2() {
   }
   good(300, { obj: s.scale }); P.fb('');
   // --- measure: powder
-  P.phase('② 저울에 <b>배터믹스 → 냉정수</b> 순서로 담겨요. 잠깐 기다려요!'); setFrac(.15);
+  P.phase('② 계량 중… <b>배터믹스 → 냉정수</b>'); setFrac(.15);
   const pc = s.pouch, pos0 = pc.position.clone(), rot0 = pc.rotation.clone(); s.setScale(0, 'TARE');
   await anim(.8, k => { pc.position.set(lerp(pos0.x, -.62, k), lerp(pos0.y, CY + .7, k), lerp(pos0.z, 0, k)); pc.rotation.z = lerp(rot0.z, -2.0, k); pc.rotation.y = lerp(rot0.y, 0, k); });
   s.powder.visible = true; sfx.pour(); const sp = wpos(pc), pw = new THREE.Vector3(); const spout = new THREE.Vector3(.0, .56, 0);
@@ -2533,7 +2574,7 @@ async function step2() {
   await anim(.7, k => { jg.position.set(lerp(.62, jp.x, k), lerp(CY + .66, jp.y, k), lerp(0, jp.z, k)); jg.rotation.z = lerp(1.85, 0, k); });
   setFrac(.4);
   // --- put the pieces in
-  P.phase('③ <b>물기제거 신선육</b>을 믹싱볼에 넣어요. 반짝이는 <b>🍗 넣기</b>를 눌러요!'); P.fb('');
+  P.phase('③ <b>신선육</b>을 믹싱볼에 넣기'); P.fb('');
   await choosePin([{ id: 'put', label: '물기제거 신선육 넣기', icon: '🍗', obj: s.ptray, off: [0, .3, 0] }]);
   const r = mulberry32(5), tg = [];
   s.pcs.forEach((p, i) => { const a = r() * TAU, d = Math.sqrt(r()) * .24; tg.push(new THREE.Vector3(Math.cos(a) * d, .09 + (i % 4) * .05, Math.sin(a) * d)); s.bowlIn.attach(p); });
@@ -2541,7 +2582,7 @@ async function step2() {
   await Promise.all(s.pcs.map((p, i) => wait(i * .08).then(() => arcMove(p, tg[i], .5, .5, ease.io, { x: (r() - .5) * .8, y: r() * TAU, z: (r() - .5) * .8 }))));
   sfx.thud(); good(150, { obj: s.bowl }); setFrac(.55); await wait(.25);
   // --- mix
-  P.phase('④ <b>믹싱볼</b>을 톡톡 눌러 골고루 버무려요! 꾹 누르고 있어도 돼요.'); const met = P.meter('버무림'); const mitt = s.mitt; mitt.visible = true;
+  P.phase('④ <b>믹싱볼</b>을 톡톡! 골고루 버무리기'); const met = P.meter('버무림'); const mitt = s.mitt; mitt.visible = true;
   let ang = 0;
   await tapSeries({
     n: 8, label: '🥣 버무리기 탭!', hold: true, pin: { id: 'mix', label: '버무리기', icon: '🥣', obj: s.bowl, off: [0, .45, 0] },
@@ -2584,11 +2625,11 @@ async function handDrop(s, p, id) {
 async function step3() {
   setLook({ dry: 1, batter: 1, fry: 0, oil: 0 }); S.fry = { t: 0, target: 0, temp: 163, goal: 600, on: false, show: false, level: 0 };
   const s = buildS3(); const { groups, left } = fillTray(s);
-  enter(3, '① <b>신선육 14조각</b>을 한 조각씩 넣어요. 뭉치지 않게 <b>다리부터!</b> 🍗 (0/14)'); P.fb('📌 뭉치지 않도록 다리부터, 한 조각씩 넣어요 (구성: 다리 · 앞가슴 · 어깨 · 등가슴 · 넙적다리 · 엉치 · 날개 각 2조각)', 'tip note');
+  enter(3, '① <b>다리부터</b> 한 조각씩 투입 (0/14)'); P.fb('📌 뭉치지 않도록 다리부터, 한 조각씩 넣어요 (구성: 다리 · 앞가슴 · 어깨 · 등가슴 · 넙적다리 · 엉치 · 날개 각 2조각)', 'tip note');
   const dots = P.dots(14); s.hand.visible = true; s.hand.position.set(-1.0, CY + 1.05, .55);
   await flyTo('s3load', 3, 1.9);
   const specs = {}; let loaded = 0, busy = false;
-  const loadSay = n => '① <b>신선육 14조각</b>을 한 조각씩 넣어요. 뭉치지 않게 <b>다리부터!</b> 🍗 (' + n + '/14)';
+  const loadSay = n => '① <b>다리부터</b> 한 조각씩 투입 (' + n + '/14)';
   const pointNext = () => { const nx = loaded === 0 ? 'leg' : TYPES.find(t => left[t].length); if (nx) Coach.arm({ key: 's3load', quiz: false, point: [nx], hint: ['손가락이 가리키는 핀을 눌러요. 첫 조각은 다리부터, 그다음은 어떤 순서든 괜찮아요!'] }); };
   await P.ready();
   await new Promise(res => {
@@ -2613,7 +2654,7 @@ async function step3() {
   });
   P.fb('신선육 14조각 투입 완료!', 'ok'); await Promise.all([arcMove(s.hand, new THREE.Vector3(-.2, CY + 1.25, 1.0), 0, .7), flyTo('s3fry', 3, 1.3)]); s.hand.visible = false;
   // --- temperature / time
-  P.phase('② 후라이어의 <b>표준 온도와 조리 시간</b>을 골라요!'); P.fb('');
+  P.phase('② <b>온도 · 시간</b>은?'); P.fb('');
   let tries = 0;
   for (; ;) {
     const a = await P.ask([
@@ -2625,7 +2666,7 @@ async function step3() {
   }
   good(300, { obj: s.oil }); S.fry.show = true; S.fry.on = false; S.fry.temp = 163; setFrac(.7);
   // --- the oil takes over
-  P.phase('③ 지글지글~ <b>후라잉 시작!</b> 🔥'); sfx.splash(); shake(.25);
+  P.phase('③ <b>후라잉 시작!</b> 🔥'); sfx.splash(); shake(.25);
   S.fry.on = true; S.fry.level = .85; Aud.sizzle(.85); const o = wpos(s.oil); fx.bubbles(o.x, o.y + .02, o.z, 1.2, .7, 60, 1.5); fx.steam(o.x, o.y + .2, o.z, 1.0, .5, 10);
   P.fb('🔥 후라잉 시작! 163℃ · 10분', 'ok'); await wait(1.0);
 }
@@ -2635,7 +2676,7 @@ async function waitFry(t) { let guard = 0; while (Math.abs(S.fry.t - t) > 1.2 &&
 async function step4() {
   if (!SX[3] || !S.fry.on) { debugPrepFryer(0); }
   const s = SX[3]; setLook({ dry: 1, batter: 1, oil: 0 });
-  enter(4, '① 후라이어에 넣은 지 <b>몇 초 뒤</b>에 흔들어 줄까요? 알맞은 시점을 골라요!'); P.fb('');
+  enter(4, '① 투입 <b>몇 초 뒤</b>에 흔들까요?'); P.fb('');
   await flyTo('s3shake', 3, 1.5);
   let tries = 0;
   for (; ;) {
@@ -2644,9 +2685,9 @@ async function step4() {
     tries++; mistake(tries >= 2 ? '투입 30초 후에 흔들어 주세요.' : '너무 늦어요! 그 사이 조각끼리 달라붙어요. 다시 선택해 보세요.', { obj: s.oil });
     await P.askWrong();
   }
-  good(300, { obj: s.oil }); S.fry.target = 30; setFrac(.2); P.fb(''); P.phase('⏱ 투입 후 <b>30초</b>가 될 때까지 잠깐 기다려요…'); await waitFry(30); sfx.ding();
+  good(300, { obj: s.oil }); S.fry.target = 30; setFrac(.2); P.fb(''); P.phase('⏱ <b>30초</b>까지 기다리는 중…'); await waitFry(30); sfx.ding();
   // --- shake: the tool glides through the oil and pushes the pieces apart
-  P.phase('② <b>흔들기 도구</b>를 톡톡 눌러 조각을 떼어 줘요! 꾹 누르고 있어도 돼요.'); const met = P.meter('분리'); const sk = s.skimmer; sk.visible = true; sk.scale.setScalar(1);
+  P.phase('② <b>흔들기 도구</b>를 톡톡!'); const met = P.meter('분리'); const sk = s.skimmer; sk.visible = true; sk.scale.setScalar(1);
   const sy = FRY_Y + .1; sk.position.set(-.45, sy + .7, .25); sk.rotation.set(0, -.5, 0);
   await anim(.6, k => { sk.position.set(lerp(-.45, -.3, k), lerp(sy + .7, sy, k), lerp(.25, .12, k)); });
   let side = 1; const o = wpos(s.oil);
@@ -2718,7 +2759,7 @@ async function legWork(s, e, no, total) {
     if (fin) fin.remove();
     good(250, { obj: p }); kn.visible = false; await wait(.3);
     // --- back into the oil
-    P.phase('⑤ 다리를 다시 <b>후라이어에 넣어요</b>…'); P.fb('');
+    P.phase('⑤ 다리를 다시 <b>후라이어</b>에'); P.fb('');
     const back = slotPos(e.id, true), bl = new THREE.Vector3(back.x, FRY_Y + .5, back.z), s1 = T.position.clone();
     sfx.whoosh(); const pq = p.rotation.x;
     await anim(.7, k => { T.position.lerpVectors(s1, bl, k); T.position.y += Math.sin(k * Math.PI) * .06; p.rotation.x = lerp(pq, Math.PI * 2, k); });
@@ -2732,7 +2773,7 @@ async function legWork(s, e, no, total) {
 async function step5() {
   if (!SX[3] || !S.fry.on) debugPrepFryer(30);
   const s = SX[3]; setLook({ dry: 1, batter: 1, oil: 0 });
-  enter(5, '① 조리 중이에요! <b>🔥 조리중</b> 버튼을 눌러 <b>5분</b>이 될 때까지 시간을 보내요.'); P.fb('');
+  enter(5, '① <b>🔥 조리중</b>을 눌러 <b>5분</b>까지'); P.fb('');
   await flyTo('s3fry', 3, 1.4);
   const cookTap = (from, to, id, base) => tapSeries({
     n: 6, label: '🔥 조리중 ▶▶', hold: true, pin: { id, label: '조리중', icon: '🔥', obj: s.oil, off: [0, .5, 0] },
@@ -2743,7 +2784,7 @@ async function step5() {
   await wait(.6);
   // --- which part gets the 혈작업?  (7 kinds — 목 · 발끝은 없어요)
   await flyTo('s3pick', 3, 1.1);
-  P.phase('② <b>혈작업</b>을 할 부위는 어디일까요? 알맞은 부위를 눌러요.'); P.fb('');
+  P.phase('② <b>혈작업</b> 부위는?'); P.fb('');
   const first = {}; s.fryPcs.forEach(e => { if (!first[e.type]) first[e.type] = e; });
   for (; ;) {
     const id = await choosePin(TYPES.map((k, i) => ({ id: k, label: NAME[k], icon: '🩸', obj: first[k].w, off: [0, .22 + (i % 2) * .2, 0], cls: 'sm tiny' })), { key: 's5part', quiz: true, ans: ['leg'], hint: ['매뉴얼을 다시 읽어 봐요 📖 “…다리를 한 조각씩 건져 혈작업을 진행하고…”', '혈작업은 다리에 해요! 손가락이 가리키는 곳을 눌러요.'] });
@@ -2754,14 +2795,14 @@ async function step5() {
   const legs = s.fryPcs.filter(e => e.type === 'leg');
   for (let li = 0; li < legs.length; li++) {
     if (li > 0) {
-      await flyTo('s3pick', 3, .9); P.phase('⑤ 남은 <b>다리</b>도 같은 방법으로! 반짝이는 <b>🥢 다리 건지기</b>를 눌러요.'); P.clear(); P.fb('');
+      await flyTo('s3pick', 3, .9); P.phase('⑤ 남은 <b>다리</b>도 건지기'); P.clear(); P.fb('');
       await choosePin([{ id: 'leg2', label: '다리 건지기', icon: '🥢', obj: legs[li].w, off: [0, .3, 0] }]);
     }
     await legWork(s, legs[li], li + 1, legs.length);
   }
   await wait(.3);
   // --- back to the oil until 10 minutes
-  P.phase('⑥ 다시 조리 중! <b>🔥 조리중</b> 버튼을 눌러 <b>10분</b>까지 가요.'); P.clear(); P.fb(''); await flyTo('s3fry', 3, 1.3);
+  P.phase('⑥ <b>🔥 조리중</b>을 눌러 <b>10분</b>까지'); P.clear(); P.fb(''); await flyTo('s3fry', 3, 1.3);
   S.fry.level = .85; Aud.sizzle(.85);
   await cookTap(300, 600, 'cook2', .4);
   await waitFry(600); sfx.ding(); sfx.ding(); P.fb('⏱ 10분 완료! 노릇노릇 바삭하게 튀겨졌어요. 후라이어에서 건져내요.', 'ok');
@@ -2783,7 +2824,7 @@ async function step6() {
     const p = byId[id], row = i < 5 ? 0 : i < 10 ? 1 : 2, col = row < 2 ? i % 5 : i - 10, n = row < 2 ? 5 : 4;
     p.position.set((col - (n - 1) / 2) * .29 + (r() - .5) * .05, .05, (row - 1) * .27 + (r() - .5) * .04); p.rotation.y = (r() - .5) * (p.userData.kind === 'leg' || p.userData.kind === 'wing' ? .5 : 5); s.rackPcs.add(p); pcs.push(p);
   });
-  enter(6, '① <b>기름떨이</b>는 얼마나 해야 할까요? 알맞은 시간을 골라요!'); P.fb('');
+  enter(6, '① <b>기름떨이</b> 시간은?'); P.fb('');
   await flyTo('s4', 4, 2.2);
   let tries = 0;
   for (; ;) {
@@ -2793,7 +2834,7 @@ async function step6() {
     await P.askWrong();
   }
   good(300, { obj: s.rack }); P.fb(''); s.setTimer(90, '기름떨이'); setFrac(.2);
-  P.phase('② <b>기름떨이망</b>을 톡톡 눌러 기름을 털어요! 꾹 누르고 있어도 돼요.'); const met = P.meter('남은 시간'); met.set(0, '01:30'); let remain = 90; const rw = wpos(s.rackPcs);
+  P.phase('② <b>기름떨이망</b>을 톡톡!'); const met = P.meter('남은 시간'); met.set(0, '01:30'); let remain = 90; const rw = wpos(s.rackPcs);
   await tapSeries({
     n: 6, label: '💧 기름 털기 탭!', hold: true, pin: { id: 'drain', label: '기름 털기', icon: '💧', obj: s.rack, off: [0, .55, 0] },
     onTap: (k, n) => {
@@ -2810,7 +2851,7 @@ async function step6() {
 const BOX_SLOT = i => { const col = i % 5, row = Math.floor(i / 5); return new THREE.Vector3((col - 2) * .2 + (row === 2 ? .1 : 0), .05 + (i % 2) * .04, (row - 1) * .21); };
 async function step7() {
   setLook({ dry: 1, batter: 1, fry: 1, oil: .25 }); const s = buildS5();
-  enter(7, '① <b>한마리</b> 메뉴에는 어떤 포장 용기가 맞을까요? 박스 위의 핀을 눌러요.'); P.fb('📌 ' + STEPS[7].note, 'tip note'); const dots = P.dots(8);
+  enter(7, '① <b>한마리</b> 포장 용기는?'); P.fb('📌 ' + STEPS[7].note, 'tip note'); const dots = P.dots(8);
   // the finished chicken (14 pieces) waits on the plate until the box is chosen
   const pcs = shuffled(fullSet(), 3), rP = mulberry32(3);
   pcs.forEach((p, i) => { const a = rP() * TAU, d = Math.sqrt(rP()); p.position.set(Math.cos(a) * d * .34, .06 + (i % 4) * .045, Math.sin(a) * d * .3); p.rotation.set((rP() - .5) * .5, rP() * TAU, (rP() - .5) * .5); s.platePcs.add(p); });
@@ -2829,29 +2870,29 @@ async function step7() {
   await Promise.all([s.plate, B.g, s.sauceA, s.sauceB, s.mu].map((o, i) => wait(i * .12).then(() => popIn(o, 1, .45)))); sfx.thud();
   const need = async (okId, make, msgs) => { for (; ;) { const sp = make(); const id = await choosePin(sp, { key: 'need_' + okId, point: [okId], ans: [okId], hint: ['손가락이 가리키는 것을 눌러요!'] }); if (id === okId) return; const o = sp.find(x => x.id === id).obj; mistake(msgs[id], { obj: o }); await wiggle(o, .03); } };
   // ② chicken -> box
-  P.phase('② <b>치킨</b>을 박스에 담아요! 반짝이는 <b>🍗 치킨 담기</b>를 눌러요.'); setFrac(.2);
+  P.phase('② <b>🍗 치킨 담기</b>'); setFrac(.2);
   await need('chicken', () => [{ id: 'chicken', label: '치킨 담기', icon: '🍗', obj: s.plate, off: [0, .42, 0] }, { id: 'lid', label: '뚜껑 닫기', icon: '📦', obj: C.g, off: [0, .66, -.12], cls: 'alt sm' }], { lid: '먼저 치킨을 박스에 담아요. 뚜껑은 다 담은 뒤에 닫아요.' });
   P.fb(''); sfx.whoosh(); const rB = mulberry32(41);
   const tg = pcs.map((p, i) => { C.inner.attach(p); return BOX_SLOT(i); });
   await Promise.all(pcs.map((p, i) => wait(i * .07).then(() => arcMove(p, tg[i], .55, .55, ease.io, { x: (rB() - .5) * .3, y: rB() * TAU, z: (rB() - .5) * .3 }))));
   s.plate.visible = false; sfx.thud(); good(150, { obj: C.g }); dots.set(1); setFrac(.3);
   // ③ lid
-  P.phase('③ 박스 <b>뚜껑</b>을 닫아요! 📦 <b>뚜껑 닫기</b>를 눌러요.');
+  P.phase('③ 📦 <b>뚜껑 닫기</b>');
   await need('lid', () => [{ id: 'lid', label: '뚜껑 닫기', icon: '📦', obj: C.g, off: [0, .66, -.12] }, { id: 'seal', label: '안심스티커', icon: '🏷️', obj: C.g, off: [0, .1, .5], cls: 'alt sm' }], { seal: '먼저 뚜껑을 닫아요. 안심스티커는 닫은 뒤 박스 입구에 붙여요.' });
   P.fb(''); sfx.whoosh(); await anim(.8, e => { C.lid.rotation.x = lerp(C.lidOpen, 0, e); }, ease.back); sfx.thud(); shake(.25); good(150, { obj: C.g }); dots.set(2); setFrac(.4);
   // ④ 안심스티커 on the box opening (never inside the box)
-  P.phase('④ <b>안심스티커</b>를 박스 입구에 붙여요! 🏷️ (박스 안에 넣지 않아요)');
+  P.phase('④ 🏷️ <b>안심스티커</b>는 박스 입구에');
   await need('seal', () => [{ id: 'seal', label: '안심스티커 붙이기', icon: '🏷️', obj: C.g, off: [0, .1, .5] }, { id: 'bag', label: '포장지에 넣기', icon: '🛍️', obj: B.g, off: [0, .95, 0], cls: 'alt sm' }], { bag: '먼저 안심스티커로 박스 입구를 봉인해요.' });
   P.fb(''); const sp = C.g.position, sl = s.seal; sl.visible = true; sl.position.set(sp.x, sp.y + .7, sp.z + .32); sl.scale.setScalar(.7);
   await anim(.7, e => { sl.position.set(sp.x, lerp(sp.y + .7, sp.y, e), lerp(sp.z + .32, sp.z, e)); sl.scale.setScalar(lerp(.7, 1, e)); }, ease.bounce); sfx.ding();
   C.g.attach(sl); const swp = wpos(sl); fx.sparkle(swp.x, swp.y + .32, swp.z + .4, 22); good(250, { obj: C.g }); dots.set(3); setFrac(.5);
   // ⑤ box -> paper bag
-  P.phase('⑤ 박스를 <b>포장지</b>에 넣어요! 🛍️ <b>포장지에 넣기</b>를 눌러요.');
+  P.phase('⑤ 🛍️ <b>포장지에 넣기</b>');
   await need('bag', () => [{ id: 'bag', label: '포장지에 넣기', icon: '🛍️', obj: B.g, off: [0, .95, 0] }, { id: 'mu', label: '치킨무', icon: '🥗', obj: s.mu, off: [0, .34, 0], cls: 'alt sm' }], { mu: '먼저 박스를 포장지에 넣어요. 치킨무와 소스는 그 다음에 담아요.' });
   P.fb(''); sfx.whoosh(); const bp = B.g.position;
   await arcMove(C.g, new THREE.Vector3(bp.x, CY + .016, bp.z), .85, 1.0, ease.io); B.g.attach(C.g); sfx.thud(); shake(.2); good(200, { obj: B.g }); dots.set(4); setFrac(.62);
   // ⑥ 치킨무 · 맵싸 소스 1 · 파싹소스 1 -> bag
-  const itemSay = n => '⑥ <b>치킨무 · 맵싸\u00a0소스 · 파싹소스</b>를 포장지에 담아요! 하나씩 눌러요. (' + n + '/3)'; P.phase(itemSay(0));
+  const itemSay = n => '⑥ <b>치킨무 · 맵싸\u00a0소스 · 파싹소스</b> 담기 (' + n + '/3)'; P.phase(itemSay(0));
   const items = { mu: s.mu, sa: s.sauceA, sb: s.sauceB }, lbl = { mu: '치킨무 1ea', sa: '맵싸\u00a0소스 1ea', sb: '파싹소스 1ea' }, dst = { mu: [-.3, .357, -.06], sa: [.2, .334, .14], sb: [.42, .334, -.12] }, remain = ['mu', 'sa', 'sb']; let placed = 0;
   while (remain.length) {
     const id = await choosePin(remain.map(k => ({ id: k, label: lbl[k], icon: k === 'mu' ? '🥗' : '🥫', obj: items[k], off: [0, .34, 0] })), { key: 's7items', point: [remain[0]], hint: ['손가락이 가리키는 것부터 눌러요. 순서는 상관없어요!'] });
@@ -2861,7 +2902,7 @@ async function step7() {
   }
   fx.sparkle(wpos(B.g).x, CY + .6, wpos(B.g).z, 20); await wait(.5);
   // ⑦ call the rider
-  P.phase('⑦ <b>라이더</b>를 불러요! 🛵 <b>라이더 호출</b>을 눌러요.'); P.fb('포장 완료! 이제 배달 라이더를 불러요.', 'ok'); setFrac(.82);
+  P.phase('⑦ 🛵 <b>라이더 호출</b>'); P.fb('포장 완료! 이제 배달 라이더를 불러요.', 'ok'); setFrac(.82);
   await choosePin([{ id: 'call', label: '라이더 호출', icon: '🛵', obj: B.g, off: [0, .95, 0] }]);
   P.fb(''); good(200, { obj: B.g }); sfx.bell(); toast('🛵 라이더 배정 중…', 'ok', 1800);
   const R = s.rider, rg = R.g, spin = d => { R.wF.rotation.z -= d / .17; R.wR.rotation.z -= d / .17; };
@@ -2873,7 +2914,7 @@ async function step7() {
   { let px = 4.5; await anim(1.4, (k, r) => { const x = lerp(4.5, 1.95, k); spin(px - x); px = x; rg.position.x = x; rg.rotation.z = Math.sin(r * Math.PI) * -.02 - (r > .8 ? (r - .8) * .08 : 0); }, ease.out); }
   sfx.horn(); rg.rotation.z = 0; dots.set(7);
   // ⑧ hand it over
-  P.phase('⑧ 라이더에게 <b>포장지를 전달</b>해요! 🤝 <b>라이더에게 전달</b>을 눌러요.');
+  P.phase('⑧ 🤝 <b>라이더에게 전달</b>');
   await choosePin([{ id: 'give', label: '라이더에게 전달', icon: '🤝', obj: B.g, off: [0, .95, 0] }]);
   P.fb(''); good(300, { obj: B.g });
   anim(.45, k => { R.armR.rotation.set(0, -1.1 * k, -.28 + .2 * k); }); anim(.4, k => { R.lid.rotation.z = 1.35 * k; }, ease.back);
