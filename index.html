@@ -424,6 +424,143 @@ body.intro #sheet{visibility:hidden;padding:0;overflow:hidden;border:0}
 }
 
 </style>
+<style id="bhc-gate-css">
+/* BHC 교육 게임 입장 양식 — 이름·점포 입력 후 입장. 굵은 외곽선 + 하드 그림자(네오브루탈리즘), 색·마스코트는 게임별로 다릅니다. */
+#bhcGate{
+  --ink:#10213a;--paper:#fffdf4;--bg:#e4f0c4;--dot:#a9c76a;--bub:#fff7e0;
+  --acc:#ff7a1a;--acc-ink:#10213a;--btn-sh:#10213a;--tag:#43a047;--tag-ink:#fff;--sh:#10213a;
+  --mut:#5b6677;--line:#10213a;--focus:#2f6bff;--err:#c81e33;--back:#10213a;
+  --font:"Pretendard Variable",Pretendard,"Noto Sans KR","Apple SD Gothic Neo","Malgun Gothic",system-ui,-apple-system,"Segoe UI",Roboto,sans-serif;
+  --font-d:var(--font);
+  position:fixed;top:0;right:0;bottom:0;left:0;inset:0;z-index:100;display:none;overflow-x:hidden;overflow-y:auto;-webkit-overflow-scrolling:touch;overscroll-behavior:contain;
+  background-color:var(--bg);background-image:radial-gradient(var(--dot) 1.7px,transparent 2px);background-size:22px 22px;
+  color:var(--ink);font-family:var(--font);font-size:16px;line-height:1.45;text-align:left;letter-spacing:0;
+  -webkit-user-select:text;user-select:text;-webkit-tap-highlight-color:transparent;-webkit-text-size-adjust:100%;
+}
+#bhcGate *,#bhcGate *::before,#bhcGate *::after{box-sizing:border-box}
+#bhcGate [hidden]{display:none!important}
+#bhcGate.on{display:block;animation:bhg-fade .18s ease-out both}
+#bhcGate button,#bhcGate input{font-family:inherit}
+
+/* ----- 테마 ----- */
+#bhcGate.t-alssa{}                                    /* 알싹킹: 할라피뇨 연두 + 칠리 주황 */
+#bhcGate.t-bur{                                       /* 뿌링클: 버터 노랑 + 시즈닝 주황, 남색 잉크 */
+  --ink:#1c1b33;--paper:#fffef5;--bg:#ffefae;--dot:#f6c640;--bub:#fff;
+  --acc:#ffcf1f;--acc-ink:#1c1b33;--btn-sh:#ff6b1a;--tag:#ff7a1a;--tag-ink:#1c1b33;--sh:#1c1b33;--line:#1c1b33;--back:#1c1b33;--mut:#5d5b73;
+}
+#bhcGate.t-burger{                                    /* 버거: 어두운 주방 벽 + 크림색 주문서, 케첩 빨강 + 머스터드 */
+  --ink:#171412;--paper:#fff8e4;--bg:#221e1b;--dot:transparent;--bub:#f2b632;
+  --acc:#a81d2e;--acc-ink:#fff8e4;--btn-sh:#f2b632;--tag:#a81d2e;--tag-ink:#fff8e4;--sh:#f2b632;--line:#171412;--back:#f3eee2;--mut:#6b5f52;--err:#b3132a;
+  --font:var(--f-body,"Gothic A1"),"Malgun Gothic","Apple SD Gothic Neo","Noto Sans KR",system-ui,sans-serif;
+  --font-d:var(--font);
+  background-image:linear-gradient(#2e2824 1px,transparent 1px),linear-gradient(90deg,#2e2824 1px,transparent 1px);background-size:44px 44px;
+}
+
+/* ----- 배치 ----- */
+#bhcGate .bhg-wrap{min-height:100%;min-height:100dvh;display:flex;align-items:center;justify-content:center;
+  padding:calc(22px + env(safe-area-inset-top,0px)) max(16px,env(safe-area-inset-right,0px)) calc(28px + env(safe-area-inset-bottom,0px)) max(16px,env(safe-area-inset-left,0px))}
+#bhcGate .bhg-in{width:min(440px,100%);display:flex;flex-direction:column;gap:20px}
+#bhcGate .bhg-hero{display:flex;align-items:flex-end;gap:12px;min-width:0}
+#bhcGate .bhg-mascot{flex:0 0 auto;width:108px;height:115px;animation:bhg-bob 2.8s ease-in-out infinite;transform-origin:50% 100%}
+#bhcGate .bhg-mascot svg{display:block;width:100%;height:100%;overflow:visible}
+#bhcGate .bhg-bubble{position:relative;flex:1 1 auto;min-width:0;margin-bottom:26px;padding:13px 15px 14px;background:var(--bub);color:var(--ink);
+  border:3px solid var(--line);border-radius:18px 18px 18px 6px;box-shadow:5px 5px 0 var(--sh)}
+#bhcGate .bhg-bubble b{display:block;font-family:var(--font-d);font-size:18px;font-weight:900;line-height:1.3;letter-spacing:-.01em;word-break:keep-all}
+#bhcGate .bhg-bubble span{display:block;margin-top:3px;font-size:15px;font-weight:600;line-height:1.4;word-break:keep-all}
+#bhcGate .bhg-tail{position:absolute;left:-17px;bottom:12px;width:20px;height:22px;overflow:visible;pointer-events:none}
+#bhcGate .bhg-tail path{fill:var(--bub);stroke:var(--line);stroke-width:3;stroke-linejoin:round}
+#bhcGate .bhg-tail rect{fill:var(--bub)}
+
+/* ----- 카드 ----- */
+#bhcGate .bhg-card{position:relative;margin:0;padding:0;background:var(--paper);border:3px solid var(--line);border-radius:20px;box-shadow:8px 8px 0 var(--sh);overflow:hidden;
+  animation:bhg-pop .32s cubic-bezier(.2,.9,.3,1.15) both}
+#bhcGate .bhg-card-h{display:flex;align-items:center;gap:9px;padding:11px 16px;background:var(--tag);color:var(--tag-ink);border-bottom:3px solid var(--line);
+  font-family:var(--font-d);font-weight:900;font-size:15px;letter-spacing:.01em}
+#bhcGate .bhg-card-h .ico{flex:0 0 auto;width:24px;height:24px;display:block}
+#bhcGate .bhg-card-h span{flex:1 1 auto;min-width:0;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+#bhcGate .bhg-card-h em{flex:0 0 auto;font-style:normal;font-size:12px;font-weight:800;padding:3px 9px;border:2px solid var(--line);border-radius:99px;background:var(--paper);color:var(--ink)}
+#bhcGate .bhg-card-b{display:flex;flex-direction:column;gap:16px;padding:18px 16px 18px}
+#bhcGate .bhg-f{display:flex;flex-direction:column;gap:7px;margin:0}
+#bhcGate .bhg-f>span{display:flex;align-items:baseline;justify-content:space-between;gap:8px;font-weight:800;font-size:15px;color:var(--ink)}
+#bhcGate .bhg-f>span i{font-style:normal;font-weight:700;font-size:12px;color:var(--mut)}
+#bhcGate .bhg-f input{display:block;width:100%;min-height:52px;padding:12px 14px;margin:0;font-size:17px;font-weight:700;color:#10131a;background:#fff;
+  border:3px solid var(--line);border-radius:12px;outline:0;box-shadow:3px 3px 0 var(--sh);-webkit-appearance:none;appearance:none;
+  -webkit-user-select:text;user-select:text;transition:box-shadow .12s ease,border-color .12s ease,background-color .12s ease}
+#bhcGate .bhg-f input::placeholder{color:#8b93a1;font-weight:500;opacity:1}
+#bhcGate .bhg-f input:focus{border-color:var(--focus);box-shadow:0 0 0 4px rgba(47,107,255,.38),3px 3px 0 var(--focus)}
+#bhcGate .bhg-f input[aria-invalid="true"]{border-color:var(--err);background:#fff4f4;animation:bhg-shake .32s ease}
+#bhcGate .bhg-f input[aria-invalid="true"]:focus{border-color:var(--err);box-shadow:0 0 0 4px rgba(200,30,51,.28),3px 3px 0 var(--err)}
+#bhcGate .bhg-err{display:flex;gap:6px;align-items:flex-start;margin:-4px 0 0;font-size:14px;font-weight:800;line-height:1.4;color:var(--err)}
+#bhcGate .bhg-err::before{content:"!";flex:0 0 auto;width:18px;height:18px;margin-top:1px;border-radius:50%;background:var(--err);color:#fff;font-size:12px;font-weight:900;line-height:18px;text-align:center}
+#bhcGate .bhg-go{display:flex;align-items:center;justify-content:center;gap:10px;width:100%;min-height:58px;margin:2px 0 0;padding:12px 18px;
+  font-family:var(--font-d);font-size:20px;font-weight:900;letter-spacing:.01em;color:var(--acc-ink);background:var(--acc);
+  border:3px solid var(--line);border-radius:14px;box-shadow:5px 5px 0 var(--btn-sh);cursor:pointer;touch-action:manipulation;
+  transition:transform .08s ease,box-shadow .08s ease}
+#bhcGate .bhg-go i{font-style:normal;font-size:22px;line-height:1;transition:transform .12s ease}
+#bhcGate .bhg-go:hover i{transform:translateX(3px)}
+#bhcGate .bhg-go:active{transform:translate(4px,4px);box-shadow:1px 1px 0 var(--btn-sh)}
+#bhcGate .bhg-go:focus-visible,#bhcGate .bhg-back:focus-visible,#bhcGate .bhg-not:focus-visible{outline:4px solid var(--focus);outline-offset:3px}
+#bhcGate .bhg-not{align-self:center;margin:-4px 0 0;padding:6px 8px;font-size:14px;font-weight:700;color:var(--mut);background:none;border:0;text-decoration:underline;text-underline-offset:3px;cursor:pointer;touch-action:manipulation}
+#bhcGate .bhg-note{margin:0;font-size:13px;font-weight:600;line-height:1.45;text-align:center;color:var(--mut);word-break:keep-all}
+#bhcGate .bhg-back{align-self:center;margin:2px 0 0;padding:10px 14px;font-size:15px;font-weight:800;color:var(--back);background:none;border:0;
+  text-decoration:underline;text-decoration-thickness:2px;text-underline-offset:4px;cursor:pointer;touch-action:manipulation}
+
+/* 버거: 주문서 느낌 — 점선 구분 + 각진 모서리 */
+#bhcGate.t-burger .bhg-card{border-radius:8px}
+#bhcGate.t-burger .bhg-card-h{letter-spacing:.04em}
+#bhcGate.t-burger .bhg-card-b{gap:14px}
+#bhcGate.t-burger .bhg-f>span{font-size:16px;font-weight:800;letter-spacing:.02em}
+#bhcGate.t-burger .bhg-f input{border-radius:6px;box-shadow:none;background:#fffdf6}
+#bhcGate.t-burger .bhg-f input:focus{box-shadow:0 0 0 4px rgba(47,107,255,.45)}
+#bhcGate.t-burger .bhg-go{border-radius:8px}
+#bhcGate.t-burger .bhg-note{padding-top:12px;border-top:2px dashed rgba(23,20,18,.3)}
+#bhcGate.t-burger .bhg-bubble{border-radius:16px 16px 16px 4px}
+
+/* ----- 가로 폰 / 짧은 화면 / 큰 화면 ----- */
+@media (max-height:700px) and (orientation:portrait){
+  #bhcGate .bhg-wrap{align-items:flex-start;padding-top:calc(14px + env(safe-area-inset-top,0px))}
+  #bhcGate .bhg-in{gap:14px}
+  #bhcGate .bhg-mascot{width:84px;height:90px}
+  #bhcGate .bhg-bubble{margin-bottom:20px;padding:10px 12px 11px}
+  #bhcGate .bhg-bubble b{font-size:16px}
+  #bhcGate .bhg-bubble span{font-size:14px}
+  #bhcGate .bhg-card-b{gap:13px;padding:14px 14px 14px}
+}
+@media (orientation:landscape) and (max-height:560px){
+  #bhcGate .bhg-wrap{align-items:center;padding-top:calc(10px + env(safe-area-inset-top,0px));padding-bottom:calc(12px + env(safe-area-inset-bottom,0px))}
+  #bhcGate .bhg-in{width:min(900px,100%);display:grid;grid-template-columns:minmax(0,.82fr) minmax(0,1.18fr);column-gap:26px;row-gap:4px;align-items:center}
+  #bhcGate .bhg-hero{grid-column:1;grid-row:1;flex-direction:column;align-items:center;gap:12px;align-self:end}
+  #bhcGate .bhg-mascot{width:88px;height:94px}
+  #bhcGate .bhg-bubble{margin-bottom:0;width:100%;border-radius:18px;padding:10px 12px 11px}
+  #bhcGate .bhg-bubble b{font-size:16px}
+  #bhcGate .bhg-bubble span{font-size:14px}
+  #bhcGate .bhg-tail{display:none}
+  #bhcGate .bhg-card{grid-column:2;grid-row:1 / span 2;box-shadow:6px 6px 0 var(--sh)}
+  #bhcGate .bhg-card-h{padding:8px 14px}
+  #bhcGate .bhg-card-b{gap:9px;padding:12px 14px 12px}
+  #bhcGate .bhg-f{gap:4px}
+  #bhcGate .bhg-f input{min-height:44px;padding:8px 12px}
+  #bhcGate .bhg-go{min-height:46px;padding:8px 16px;font-size:18px}
+  #bhcGate .bhg-note{font-size:12px}
+  #bhcGate .bhg-back{grid-column:1;grid-row:2;align-self:start;margin:0;padding:8px 10px}
+}
+@media (min-width:720px) and (min-height:561px){
+  #bhcGate .bhg-in{width:min(520px,100%);gap:24px}
+  #bhcGate .bhg-mascot{width:132px;height:141px}
+  #bhcGate .bhg-bubble b{font-size:20px}
+  #bhcGate .bhg-bubble span{font-size:16px}
+  #bhcGate .bhg-card-b{padding:22px 22px 22px}
+}
+
+@keyframes bhg-fade{from{opacity:0}to{opacity:1}}
+@keyframes bhg-pop{from{opacity:0;transform:translateY(16px) scale(.97)}to{opacity:1;transform:none}}
+@keyframes bhg-bob{0%,100%{transform:translateY(0) rotate(-1.2deg)}50%{transform:translateY(-5px) rotate(1.2deg)}}
+@keyframes bhg-shake{0%,100%{transform:translateX(0)}25%{transform:translateX(-5px)}75%{transform:translateX(5px)}}
+@media (prefers-reduced-motion:reduce){
+  #bhcGate.on,#bhcGate .bhg-card,#bhcGate .bhg-mascot,#bhcGate .bhg-f input[aria-invalid="true"]{animation:none!important}
+  #bhcGate .bhg-go,#bhcGate .bhg-go i{transition:none}
+}
+</style>
 </head>
 <body class="intro">
 <div id="app">
@@ -2589,6 +2726,227 @@ bindInput();
 boot().catch(e => { console.error(e); const t = $('tLoadTxt'); if (t) t.textContent = '로딩 오류: ' + e.message; });
 window.__bhc = { S, SX, Pins, STEP_FNS, LOOK, setLook, camS, SHOTS, flyTo, snapTo, startGame, restartGame, debugPrepFryer, fullSet, clearCard, showResult, P, get scene() { return scene; }, get camera() { return camera; }, get renderer() { return renderer; } };
 
+</script>
+<script id="bhc-gate">window.__BHC_GATE={"game": "알싹킹", "theme": "t-alssa", "tag": "알싹킹 마스터 키친", "em": "교육 입장", "t1": "알싹킹 주방 입장 전에!", "t2": "이름과 점포를 알려 주세요.", "r1": "다시 오셨네요!", "r2": "정보가 맞는지 확인해 주세요.", "trigger": "#startBtn", "key": {"title": "#title.show", "btn": "#startBtn", "block": "#a2hs.show"}, "mascot": "<svg viewBox=\"0 0 120 128\" xmlns=\"http://www.w3.org/2000/svg\" aria-hidden=\"true\" focusable=\"false\"><rect x=\"51\" y=\"82\" width=\"18\" height=\"16\" rx=\"4\" fill=\"#ffd9b0\" stroke=\"#10213a\" stroke-width=\"3.5\"/><path d=\"M14 128 C14 106 28 95 47 93 L73 93 C92 95 106 106 106 128 Z\" fill=\"#fff\" stroke=\"#10213a\" stroke-width=\"3.5\" stroke-linejoin=\"round\"/><path d=\"M44 93.5 L60 113 L76 93.5 Q60 101 44 93.5 Z\" fill=\"#ff7a1a\" stroke=\"#10213a\" stroke-width=\"3\" stroke-linejoin=\"round\"/><path d=\"M28 106 C19 104 13 96 13 84\" fill=\"none\" stroke=\"#10213a\" stroke-width=\"17\" stroke-linecap=\"round\" stroke-linejoin=\"round\"/><path d=\"M28 106 C19 104 13 96 13 84\" fill=\"none\" stroke=\"#fff\" stroke-width=\"11\" stroke-linecap=\"round\" stroke-linejoin=\"round\"/><circle cx=\"12\" cy=\"80\" r=\"8.5\" fill=\"#ffd9b0\" stroke=\"#10213a\" stroke-width=\"3.5\"/><ellipse cx=\"31\" cy=\"64\" rx=\"5\" ry=\"6\" fill=\"#ffd9b0\" stroke=\"#10213a\" stroke-width=\"3.5\"/><ellipse cx=\"89\" cy=\"64\" rx=\"5\" ry=\"6\" fill=\"#ffd9b0\" stroke=\"#10213a\" stroke-width=\"3.5\"/><ellipse cx=\"60\" cy=\"62\" rx=\"29\" ry=\"27\" fill=\"#ffd9b0\" stroke=\"#10213a\" stroke-width=\"3.5\"/><ellipse cx=\"49\" cy=\"64\" rx=\"3.4\" ry=\"4.4\" fill=\"#10213a\"/><ellipse cx=\"71\" cy=\"64\" rx=\"3.4\" ry=\"4.4\" fill=\"#10213a\"/><circle cx=\"50.2\" cy=\"62.6\" r=\"1.2\" fill=\"#fff\"/><circle cx=\"72.2\" cy=\"62.6\" r=\"1.2\" fill=\"#fff\"/><path d=\"M42 55 q6 -4.5 12 -1.2 M66 53.8 q6 -3.3 12 1.2\" fill=\"none\" stroke=\"#10213a\" stroke-width=\"3\" stroke-linecap=\"round\"/><ellipse cx=\"40\" cy=\"73\" rx=\"5.2\" ry=\"3.6\" fill=\"#ff8f86\" opacity=\".8\"/><ellipse cx=\"80\" cy=\"73\" rx=\"5.2\" ry=\"3.6\" fill=\"#ff8f86\" opacity=\".8\"/><path d=\"M50 73 Q60 87 70 73 Z\" fill=\"#7d1b2b\" stroke=\"#10213a\" stroke-width=\"3\" stroke-linejoin=\"round\"/><path d=\"M54.5 79.5 Q60 76 65.5 79.5 Q60 84.5 54.5 79.5 Z\" fill=\"#ff8f9d\"/><g fill=\"#10213a\" stroke=\"#10213a\" stroke-width=\"7.0\" stroke-linejoin=\"round\" stroke-linecap=\"round\"><circle cx=\"43\" cy=\"31\" r=\"12\"/><circle cx=\"60\" cy=\"25\" r=\"14.5\"/><circle cx=\"77\" cy=\"31\" r=\"12\"/><rect x=\"36\" y=\"33\" width=\"48\" height=\"16\" rx=\"3\"/><\/g><g fill=\"#fff\"><circle cx=\"43\" cy=\"31\" r=\"12\"/><circle cx=\"60\" cy=\"25\" r=\"14.5\"/><circle cx=\"77\" cy=\"31\" r=\"12\"/><rect x=\"36\" y=\"33\" width=\"48\" height=\"16\" rx=\"3\"/><\/g><rect x=\"36\" y=\"41\" width=\"48\" height=\"9\" rx=\"2\" fill=\"#43a047\" stroke=\"#10213a\" stroke-width=\"3\"/><path d=\"M90 107 C100 105 106 98 106 88\" fill=\"none\" stroke=\"#10213a\" stroke-width=\"17\" stroke-linecap=\"round\" stroke-linejoin=\"round\"/><path d=\"M90 107 C100 105 106 98 106 88\" fill=\"none\" stroke=\"#fff\" stroke-width=\"11\" stroke-linecap=\"round\" stroke-linejoin=\"round\"/><path d=\"M104 38 C117 38 123 52 119 66 C116 78 109 88 100 93 C97 80 97 66 100 52 C101 46 102 41 104 38 Z\" fill=\"#43a047\" stroke=\"#10213a\" stroke-width=\"3.5\" stroke-linejoin=\"round\"/><path d=\"M104 38 C101 32 104 27 110 25\" fill=\"none\" stroke=\"#10213a\" stroke-width=\"9\" stroke-linecap=\"round\"/><path d=\"M104 38 C101 32 104 27 110 25\" fill=\"none\" stroke=\"#2e7d32\" stroke-width=\"4.5\" stroke-linecap=\"round\"/><path d=\"M108 50 C112 53 114 59 113 66\" fill=\"none\" stroke=\"#a5d6a7\" stroke-width=\"3\" stroke-linecap=\"round\" opacity=\".9\"/><circle cx=\"105\" cy=\"88\" r=\"8.5\" fill=\"#ffd9b0\" stroke=\"#10213a\" stroke-width=\"3.5\"/><path d=\"M112 8 l2.2 5.4 5.4 2.2 -5.4 2.2 -2.2 5.4 -2.2 -5.4 -5.4 -2.2 5.4 -2.2z\" fill=\"#ff7a1a\" stroke=\"#10213a\" stroke-width=\"2\" stroke-linejoin=\"round\"/><\/svg>", "icon": "<svg class=\"ico\" viewBox=\"0 0 24 24\" aria-hidden=\"true\"><circle cx=\"12\" cy=\"12\" r=\"9.4\" fill=\"#c9e8a2\" stroke=\"#10213a\" stroke-width=\"2\"/><circle cx=\"12\" cy=\"12\" r=\"5\" fill=\"#f6fbe6\" stroke=\"#10213a\" stroke-width=\"1.6\"/><g fill=\"#ffe98a\" stroke=\"#10213a\" stroke-width=\".9\"><ellipse cx=\"12\" cy=\"9.4\" rx=\"1.5\" ry=\"1\"/><ellipse cx=\"14.4\" cy=\"12.6\" rx=\"1.5\" ry=\"1\"/><ellipse cx=\"9.6\" cy=\"12.8\" rx=\"1.5\" ry=\"1\"/><\/g><\/svg>", "endpoint": "https://script.google.com/macros/s/AKfycbwDNpqLTVXDC6z49m7cO9KeVCFlawxGNNv_KBMA1kJD2Mhlqfpu4qOXdn1s3lN2PU4BUA/exec", "token": "bhc-edu-72c94b0f"};
+/* BHC 교육 게임 입장 양식 (gate.js)
+ * 게임 시작 버튼을 누르면 이름·점포명을 먼저 받고, 입력이 끝나면 원래 버튼을 다시 눌러 게임을 시작한다.
+ * 입력한 내용은 구글 시트(Apps Script 웹 앱)로 보낸다. 전송이 실패해도 게임은 막지 않고, 나중에 다시 보낸다.
+ * 설정: window.__BHC_GATE = { game, theme, endpoint, token, trigger, key, tag, t1, t2, r1, r2, mascot, icon }
+ * endpoint 가 비어 있으면 양식을 띄우지 않는다(기능 꺼짐). */
+(function () {
+  'use strict';
+  var C = window.__BHC_GATE;
+  if (!C || !C.endpoint || !C.game || !C.trigger) return;
+  var D = document, W = window;
+  var KP = 'bhc_gate_profile', KQ = 'bhc_gate_queue';
+  var PERMANENT = { 'bad token': 1, 'unknown game': 1, 'empty': 1, 'too large': 1 };   // 다시 보내도 소용없는 거절
+  var mem = {};
+  var passed = false, isOpen = false, busy = false, pending = null, lastFocus = null;
+  var root, form, inName, inStore, errEl, b1, b2, goBtn, notBtn, backBtn;
+
+  /* ---------- 저장소(막혀 있어도 이번 접속 동안은 동작) ---------- */
+  function lsGet(k) { try { var v = W.localStorage.getItem(k); if (v !== null) return v; } catch (e) {} return mem[k] == null ? null : mem[k]; }
+  function lsSet(k, v) { mem[k] = v; try { W.localStorage.setItem(k, v); } catch (e) {} }
+  function lsDel(k) { delete mem[k]; try { W.localStorage.removeItem(k); } catch (e) {} }
+  function readJSON(k, d) { try { var v = JSON.parse(lsGet(k)); return v == null ? d : v; } catch (e) { return d; } }
+
+  /* ---------- 입력값 정리(서버의 clean_ 과 같은 규칙) ---------- */
+  function norm(s) {
+    var t = String(s == null ? '' : s), o = '', i, c;
+    for (i = 0; i < t.length; i++) {
+      c = t.charCodeAt(i);
+      o += (c < 32 || c === 127 || (c >= 0x200b && c <= 0x200f) || c === 0x2028 || c === 0x2029 || c === 0xfeff) ? ' ' : t.charAt(i);
+    }
+    return o.replace(/\s+/g, ' ').replace(/^[=+\-@\s]+/, '').trim();
+  }
+  function check(n, s) {
+    if (n.length < 2) return { f: 'name', m: '이름을 2자 이상 입력해 주세요.' };
+    if (s.length < 2) return { f: 'store', m: '점포명을 2자 이상 입력해 주세요.' };
+    return null;
+  }
+  function newSid() { return Date.now().toString(36) + Math.random().toString(36).slice(2, 8); }
+
+  /* ---------- 전송 대기열 ---------- */
+  var flushing = false, fails = 0, timer = 0;
+  function loadQ() { var q = readJSON(KQ, []); return Array.isArray(q) ? q : []; }
+  function saveQ(q) { lsSet(KQ, JSON.stringify(q.slice(-50))); }
+  function post(rec, mode) {
+    return W.fetch(C.endpoint, {
+      method: 'POST', mode: mode, redirect: 'follow', credentials: 'omit', cache: 'no-store',
+      headers: { 'Content-Type': 'text/plain;charset=utf-8' }, body: JSON.stringify(rec)
+    });
+  }
+  // 결과: 'done'(기록됨 또는 보낼 필요 없음) | 'retry'(나중에 다시)
+  function send(rec) {
+    return post(rec, 'cors').then(function (r) { return r.text(); }).then(function (t) {
+      var j; try { j = JSON.parse(t); } catch (e) { return 'retry'; }
+      if (j && j.ok) return 'done';
+      return j && PERMANENT[j.error] ? 'done' : 'retry';
+    }, function () {
+      // 응답을 읽을 수 없는 경우(CORS 등)에도 요청은 갔을 수 있다 → 응답 없이 한 번 더 보낸다(서버가 접수ID로 중복을 막는다).
+      return post(rec, 'no-cors').then(function () { return 'done'; }, function () { return 'retry'; });
+    });
+  }
+  function flush() {
+    if (flushing || !W.fetch) return;
+    clearTimeout(timer);
+    var q = loadQ(); if (!q.length) return;
+    if (W.navigator && W.navigator.onLine === false) { later(); return; }
+    flushing = true;
+    var rec = q[0];
+    send(rec).then(function (res) {
+      flushing = false;
+      var cur = loadQ();
+      if (res === 'done') {
+        fails = 0;
+        saveQ(cur.filter(function (x) { return x.sid !== rec.sid; }));
+        if (loadQ().length) timer = setTimeout(flush, 250);
+      } else {
+        rec.n = (rec.n || 0) + 1;
+        var old = Date.now() - (rec.ts || 0) > 7 * 864e5;
+        saveQ(cur.map(function (x) { return x.sid === rec.sid ? rec : x; }).filter(function (x) { return !(x.sid === rec.sid && (x.n > 40 || old)); }));
+        fails++; later();
+      }
+    });
+  }
+  function later() { clearTimeout(timer); timer = setTimeout(flush, Math.min(300000, 5000 * Math.pow(2, Math.min(fails, 6)))); }
+
+  /* ---------- 화면 ---------- */
+  function build() {
+    if (root) return;
+    root = D.createElement('div');
+    root.id = 'bhcGate'; root.className = 'bhg ' + C.theme;
+    root.setAttribute('role', 'dialog'); root.setAttribute('aria-modal', 'true'); root.setAttribute('aria-labelledby', 'bhgB1');
+    root.innerHTML =
+      '<div class="bhg-wrap"><div class="bhg-in">' +
+        '<div class="bhg-hero">' +
+          '<div class="bhg-mascot">' + (C.mascot || '') + '</div>' +
+          '<div class="bhg-bubble"><svg class="bhg-tail" viewBox="0 0 20 22" aria-hidden="true"><path d="M20 2 L2 13 L20 20"/><rect x="17" y="3" width="6" height="16"/></svg>' +
+            '<b id="bhgB1"></b><span id="bhgB2"></span></div>' +
+        '</div>' +
+        '<form class="bhg-card" id="bhgForm" novalidate>' +
+          '<div class="bhg-card-h">' + (C.icon || '') + '<span id="bhgTag"></span><em id="bhgEm"></em></div>' +
+          '<div class="bhg-card-b">' +
+            '<label class="bhg-f"><span>이름<i>필수</i></span><input id="bhgName" name="name" type="text" maxlength="20" autocomplete="name" enterkeyhint="next" autocapitalize="words" spellcheck="false" placeholder="예) 홍길동"></label>' +
+            '<label class="bhg-f"><span>점포명<i>필수</i></span><input id="bhgStore" name="store" type="text" maxlength="30" autocomplete="off" enterkeyhint="go" spellcheck="false" placeholder="예) 하남미사점"></label>' +
+            '<p class="bhg-err" id="bhgErr" role="alert" hidden></p>' +
+            '<button type="submit" class="bhg-go" id="bhgGo"><span>입장하기</span><i aria-hidden="true">→</i></button>' +
+            '<button type="button" class="bhg-not" id="bhgNot" hidden>내 정보가 아니에요 · 지우기</button>' +
+            '<p class="bhg-note">입력한 정보는 교육 참여 인원 집계에만 사용돼요.</p>' +
+          '</div>' +
+        '</form>' +
+        '<button type="button" class="bhg-back" id="bhgBack">← 처음 화면으로</button>' +
+      '</div></div>';
+    D.body.appendChild(root);
+    var $ = function (id) { return root.querySelector('#' + id); };
+    form = $('bhgForm'); inName = $('bhgName'); inStore = $('bhgStore'); errEl = $('bhgErr');
+    b1 = $('bhgB1'); b2 = $('bhgB2'); goBtn = $('bhgGo'); notBtn = $('bhgNot'); backBtn = $('bhgBack');
+    $('bhgTag').textContent = C.tag || C.game; $('bhgEm').textContent = C.em || '교육 입장';
+
+    form.addEventListener('submit', function (e) { e.preventDefault(); submit(); });
+    backBtn.addEventListener('click', back);
+    notBtn.addEventListener('click', function () { inName.value = ''; inStore.value = ''; notBtn.hidden = true; setBubble(false); setErr(null); inName.focus(); });
+    inName.addEventListener('input', function () { setErr(null); });
+    inStore.addEventListener('input', function () { setErr(null); });
+    root.addEventListener('keydown', onKey);
+    root.addEventListener('keyup', stop); root.addEventListener('keypress', stop);
+  }
+  function stop(e) { e.stopPropagation(); }      // 입력한 글자가 게임의 단축키로 새지 않게 한다
+  function focusables() {
+    return Array.prototype.filter.call(root.querySelectorAll('input,button'), function (el) { return !el.disabled && !el.hidden && el.offsetParent !== null; });
+  }
+  function onKey(e) {
+    e.stopPropagation();
+    if (e.key === 'Escape') { e.preventDefault(); back(); return; }
+    if (e.key === 'Tab') {
+      var f = focusables(); if (!f.length) return;
+      var i = f.indexOf(D.activeElement);
+      if (e.shiftKey && i <= 0) { e.preventDefault(); f[f.length - 1].focus(); }
+      else if (!e.shiftKey && i === f.length - 1) { e.preventDefault(); f[0].focus(); }
+      return;
+    }
+    if (e.key === 'Enter' && e.target === inName && !e.isComposing && e.keyCode !== 229) {
+      e.preventDefault();
+      if (norm(inName.value).length >= 2) inStore.focus(); else submit();
+    }
+  }
+  function setErr(c) {
+    inName.removeAttribute('aria-invalid'); inStore.removeAttribute('aria-invalid');
+    if (!c) { errEl.hidden = true; errEl.textContent = ''; return; }
+    errEl.textContent = c.m; errEl.hidden = false;
+    var el = c.f === 'name' ? inName : inStore;
+    el.setAttribute('aria-invalid', 'true'); el.focus();
+  }
+  function setBubble(again) {
+    b1.textContent = again ? C.r1 : C.t1; b2.textContent = again ? C.r2 : C.t2;
+  }
+  function show(el) {
+    build();
+    pending = el; lastFocus = D.activeElement; isOpen = true;
+    var p = readJSON(KP, null), again = !!(p && norm(p.name).length >= 2 && norm(p.store).length >= 2);
+    inName.value = again ? norm(p.name) : ''; inStore.value = again ? norm(p.store) : '';
+    notBtn.hidden = !again; setBubble(again); setErr(null);
+    root.classList.add('on'); root.scrollTop = 0;
+    try { (again ? goBtn : inName).focus({ preventScroll: true }); } catch (e) {}
+  }
+  function hide() { isOpen = false; if (root) root.classList.remove('on'); }
+  function back() {
+    hide(); pending = null;
+    try { if (lastFocus && lastFocus.focus) lastFocus.focus({ preventScroll: true }); } catch (e) {}
+  }
+  function submit() {
+    if (busy || !isOpen) return;        // 이미 열린 양식에서만, 한 번만
+    var n = norm(inName.value), s = norm(inStore.value), bad = check(n, s);
+    if (bad) { setErr(bad); return; }
+    busy = true;
+    lsSet(KP, JSON.stringify({ name: n, store: s }));
+    var q = loadQ(); q.push({ k: C.token, game: C.game, name: n, store: s, sid: newSid(), ts: Date.now() }); saveQ(q);
+    passed = true; hide();
+    var el = pending; pending = null;
+    try { if (el) el.click(); } catch (e) {}     // 같은 터치 안에서 원래 버튼을 다시 눌러 게임을 시작한다(소리 잠금 해제 포함)
+    busy = false;
+    setTimeout(flush, 0);
+  }
+
+  /* ---------- 게임 시작 가로채기 ---------- */
+  D.addEventListener('click', function (e) {
+    var t = e.target;
+    if (isOpen) { if (root && root.contains(t)) return; e.preventDefault(); e.stopImmediatePropagation(); return; }
+    if (passed) return;
+    var b = t && t.closest ? t.closest(C.trigger) : null;
+    if (!b || b.disabled) return;
+    e.preventDefault(); e.stopImmediatePropagation();
+    show(b);
+  }, true);
+  // 키보드(Space/Enter)로 게임이 바로 시작되는 길도 같은 양식으로 돌린다
+  W.addEventListener('keydown', function (e) {
+    if (passed) return;
+    var k = e.key;
+    if (isOpen) {
+      if (root && !root.contains(e.target) && (k === ' ' || k === 'Enter')) { e.preventDefault(); e.stopImmediatePropagation(); }
+      return;
+    }
+    var K = C.key;
+    if (!K || (k !== ' ' && k !== 'Enter')) return;
+    var ae = D.activeElement;
+    if (!ae || ae.tagName !== 'BODY') return;
+    if (!D.querySelector(K.title) || D.querySelector(K.block)) return;
+    var b = D.querySelector(K.btn);
+    if (!b || b.disabled) return;
+    e.preventDefault(); e.stopImmediatePropagation(); show(b);
+  }, true);
+
+  /* ---------- 전송 재시도 시점 ---------- */
+  W.addEventListener('online', function () { fails = 0; flush(); });
+  D.addEventListener('visibilitychange', function () { if (!D.hidden) flush(); });
+  setTimeout(flush, 1500);
+
+  W.__bhcGate = {
+    cfg: C, queue: loadQ, flush: flush,
+    get passed() { return passed; }, get open() { return isOpen; },
+    reset: function () { lsDel(KP); lsDel(KQ); passed = false; }
+  };
+})();
 </script>
 </body>
 </html>
