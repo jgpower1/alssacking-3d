@@ -1450,6 +1450,23 @@ function lump(geo, amp, freq, seed) {
 function blobGeo(sx, sy, sz, amp, seed, seg = 22) {
   const g = new THREE.SphereGeometry(1, seg, Math.round(seg * .75)); g.scale(sx, sy, sz); g.computeVertexNormals(); return lump(g, amp, 7, seed);
 }
+/* 위에서 본 윤곽(30° 간격 반지름 12개, +x 에서 +z 방향으로)을 따라 부풀린 덩어리 — 실제 부위 사진의 모양을 따른다 */
+function outlineGeo(radii, sy, amp, seed, seg = 26) {
+  const g = new THREE.SphereGeometry(1, seg, Math.round(seg * .75)), p = g.attributes.position, n = radii.length;
+  for (let i = 0; i < p.count; i++) {
+    const x = p.getX(i), y = p.getY(i), z = p.getZ(i); let t = Math.atan2(z, x) / TAU; if (t < 0) t += 1; t *= n;
+    const a = Math.floor(t) % n, b = (a + 1) % n, f = t - Math.floor(t), k = f * f * (3 - 2 * f), r = radii[a] + (radii[b] - radii[a]) * k;
+    p.setXYZ(i, x * r, y * sy * (y < 0 ? .55 : 1), z * r);                 // 바닥은 납작하게, 위는 도톰하게
+  }
+  g.computeVertexNormals(); return lump(g, amp, 7, seed);
+}
+const OUT = {
+  breast: [.25, .17, .13, .135, .18, .17, .14, .17, .18, .135, .13, .17],          // 앞가슴: 한쪽이 뾰족한 삼각형
+  shoulder: [.155, .15, .14, .135, .15, .14, .112, .14, .15, .135, .14, .15],      // 어깨살: 통통하고 둥근 삼각형
+  back: [.25, .15, .1, .095, .12, .15, .15, .15, .12, .095, .1, .15],              // 등가슴: 길쭉한 삼각형(갈비뼈가 보인다)
+  thigh: [.17, .178, .16, .14, .16, .178, .165, .178, .16, .14, .16, .178],        // 넙적다리: 넓적한 둥근 네모
+  rump: [.165, .11, .085, .08, .09, .11, .13, .11, .09, .08, .085, .11]            // 엉치: 좁고 길쭉한 조각
+};
 function legMeatGeo(seed) {
   const prof = [[.032, 0], [.044, .02], [.066, .07], [.088, .14], [.1, .21], [.097, .27], [.08, .315], [.046, .34], [0.001, .352]];
   const g = new THREE.LatheGeometry(prof.map(p => new THREE.Vector2(p[0], p[1])), 22);
@@ -1460,15 +1477,16 @@ function buildPieceGeos() {
   GEO.leg = [legMeatGeo(1.3), legMeatGeo(7.1)];
   GEO.boneCyl = new THREE.CylinderGeometry(.021, .024, .17, 12); GEO.boneCyl.userData.shared = true;
   GEO.knob = new THREE.SphereGeometry(.03, 12, 10); GEO.knob.userData.shared = true;
-  GEO.breast = [blobGeo(.2, .075, .15, .014, 2.2), blobGeo(.19, .07, .14, .014, 5.7)];
-  GEO.shoulder = [blobGeo(.13, .068, .11, .012, 3.3), blobGeo(.125, .065, .105, .012, 8.8)];
+  GEO.breast = [outlineGeo(OUT.breast, .085, .012, 2.2), outlineGeo(OUT.breast.map(r => r * .96), .08, .012, 5.7)];
+  GEO.shoulder = [outlineGeo(OUT.shoulder, .1, .011, 3.3), outlineGeo(OUT.shoulder.map(r => r * .96), .096, .011, 8.8)];
   GEO.half = { breast: [blobGeo(.15, .07, .15, .012, 12.2, 20), blobGeo(.15, .068, .14, .012, 15.7, 20)], shoulder: [blobGeo(.1, .066, .11, .011, 13.3, 18), blobGeo(.1, .064, .105, .011, 18.8, 18)] };
-  GEO.wingA = blobGeo(.105, .05, .06, .01, 4.4, 18);
-  GEO.wingB = blobGeo(.1, .034, .07, .01, 6.6, 18);
-  GEO.wingTip = new THREE.ConeGeometry(.04, .13, 10); GEO.wingTip.rotateZ(-Math.PI / 2); GEO.wingTip.userData.shared = true;
-  GEO.thigh = [blobGeo(.165, .068, .118, .013, 21.1, 22), blobGeo(.158, .064, .112, .013, 25.4, 22)];
-  GEO.rump = [blobGeo(.112, .06, .098, .013, 31.2, 18), blobGeo(.106, .058, .094, .013, 35.9, 18)];
-  GEO.back = [blobGeo(.19, .042, .1, .012, 41.3, 22), blobGeo(.18, .04, .095, .012, 45.8, 22)];
+  GEO.wingA = blobGeo(.11, .055, .062, .01, 4.4, 18);
+  GEO.wingB = blobGeo(.125, .032, .06, .01, 6.6, 18);
+  GEO.wingTip = new THREE.ConeGeometry(.034, .2, 10); GEO.wingTip.rotateZ(-Math.PI / 2); GEO.wingTip.userData.shared = true;
+  GEO.thigh = [outlineGeo(OUT.thigh, .085, .012, 21.1), outlineGeo(OUT.thigh.map(r => r * .96), .08, .012, 25.4)];
+  GEO.rump = [outlineGeo(OUT.rump, .07, .012, 31.2), outlineGeo(OUT.rump.map(r => r * .96), .066, .012, 35.9)];
+  GEO.back = [outlineGeo(OUT.back, .055, .011, 41.3), outlineGeo(OUT.back.map(r => r * .96), .052, .011, 45.8)];
+  GEO.ribTop = new THREE.CylinderGeometry(.007, .007, .13, 6); GEO.ribTop.rotateX(Math.PI / 2); GEO.ribTop.userData.shared = true;
   GEO.boneS = new THREE.CylinderGeometry(.019, .022, .1, 10); GEO.boneS.userData.shared = true;
   GEO.rib = new THREE.CylinderGeometry(.008, .011, .052, 7); GEO.rib.rotateX(Math.PI / 2); GEO.rib.userData.shared = true;
   GEO.tail = new THREE.ConeGeometry(.04, .1, 10); GEO.tail.rotateZ(-Math.PI / 2); GEO.tail.userData.shared = true;
@@ -1489,16 +1507,16 @@ function makePiece(type, v = 0) {
     add(GEO.shoulder[v % 2], m, 0, 0, 0).rotation.y = v * .6;
     add(GEO.knob, M.bone, .13, .0, .02).scale.setScalar(.7);
   } else if (type === 'wing') {
-    add(GEO.wingA, m, -.07, 0, 0); const j = new THREE.Group(); j.position.set(.02, 0, 0); j.rotation.y = .6; g.add(j);
-    const b = mk(GEO.wingB, m, .1, 0, 0); j.add(b); j.add(mk(GEO.wingTip, m, .22, 0, 0)); g.userData.joint = j;
+    add(GEO.wingA, m, -.07, 0, 0); const j = new THREE.Group(); j.position.set(.03, 0, 0); j.rotation.y = .95; g.add(j);          // 봉 · 윙 · 날개끝이 ㄱ자로 꺾인다
+    const b = mk(GEO.wingB, m, .11, 0, 0); j.add(b); const tip = mk(GEO.wingTip, m, .29, 0, -.05); tip.rotation.y = .6; j.add(tip); g.userData.joint = j;
   } else if (type === 'thigh') {
     add(GEO.thigh[v % 2], m, 0, 0, 0).rotation.y = v * .4;
-    add(GEO.boneS, M.bone, -.205, .004, .01).rotation.z = Math.PI / 2; add(GEO.knob, M.bone, -.255, .004, .0).scale.setScalar(.78);
+    add(GEO.boneS, M.bone, -.19, .004, .01).rotation.z = Math.PI / 2; add(GEO.knob, M.bone, -.24, .004, .0).scale.setScalar(.78);
   } else if (type === 'rump') {
-    add(GEO.rump[v % 2], m, 0, 0, 0).rotation.y = v * .5; add(GEO.tail, m, .125, .002, 0);
+    add(GEO.rump[v % 2], m, 0, 0, 0).rotation.y = v * .5; add(GEO.tail, m, .17, .002, 0);
   } else if (type === 'back') {
     add(GEO.back[v % 2], m, 0, 0, 0).rotation.y = v * .3;
-    [-.11, -.035, .04, .115].forEach((x, i) => { const rb = add(GEO.rib, M.bone, x, -.004, .1 + (i % 2) * .008); rb.rotation.y = (i - 1.5) * .14; });
+    [-.1, -.045, .01, .065, .12].forEach((x, i) => { const rb = add(GEO.ribTop, M.bone, x, .044 - i * .003, 0); rb.rotation.y = (i - 2) * .1; rb.scale.z = 1 - i * .13; });   // 등쪽에 드러난 갈비뼈
   }
   g.traverse(o => { if (o.isMesh) { o.castShadow = true; o.receiveShadow = true; } });
   return g;
