@@ -2354,6 +2354,7 @@ function showResult() {
   S.finished = true; Coach.disarm();
   const fin = 1000, q = qualityOf(); S.score += fin + q * 10; bumpScore(); hudUpdate();
   const gr = gradeOf(S.mistakes), newBest = q > (BEST.pt === undefined ? -1 : BEST.pt);
+  try { if (window.__bhcGate && window.__bhcGate.score) window.__bhcGate.score(q, gr.g); } catch (e) {}
   if (newBest) BEST.pt = q; BEST.combo = Math.max(BEST.combo || 0, S.bestCombo); BEST.grade = (BEST.grade && 'SABC'.indexOf(BEST.grade) < 'SABC'.indexOf(gr.g)) ? BEST.grade : gr.g; saveBest();
   const rows = STEPS.map((s, i) => '<div class="e-row ' + (S.stepMis[i] === 0 ? 'perfect' : '') + '"><div class="n">' + (i + 1) + '</div><div class="t">' + s.ico + ' ' + s.nm + '</div><div class="m">' + (S.stepMis[i] === 0 ? '실수 없음' : '실수 ' + S.stepMis[i] + '회') + '</div><div class="s">' + (S.stepMis[i] === 0 ? '⭐⭐⭐' : S.stepMis[i] === 1 ? '⭐⭐' : '⭐') + '</div></div>').join('');
   const wrong = STEPS.map((s, i) => S.stepMis[i] ? '<li><b>' + s.nm + '</b> — ' + s.why + '</li>' : '').join('');
@@ -3506,7 +3507,8 @@ window.__bhc = { S, SX, Pins, Coach, STEP_FNS, LOOK, setLook, camS, SHOTS, flyTo
     if (bad) { setErr(bad); return; }
     busy = true;
     lsSet(KP, JSON.stringify({ name: n, store: s }));
-    var q = loadQ(); q.push({ k: C.token, game: C.game, name: n, store: s, sid: newSid(), ts: Date.now() }); saveQ(q);
+    curSid = newSid(); scoreN = 0;
+    var q = loadQ(); q.push({ k: C.token, game: C.game, name: n, store: s, sid: curSid, ts: Date.now() }); saveQ(q);
     passed = true; hide();
     var el = pending; pending = null;
     try { if (el) el.click(); } catch (e) {}     // 같은 터치 안에서 원래 버튼을 다시 눌러 게임을 시작한다(소리 잠금 해제 포함)
@@ -3547,8 +3549,20 @@ window.__bhc = { S, SX, Pins, Coach, STEP_FNS, LOOK, setLook, camS, SHOTS, flyTo
   D.addEventListener('visibilitychange', function () { if (!D.hidden) flush(); });
   setTimeout(flush, 1500);
 
+  /* ---------- 게임 종료 점수 ---------- */
+  // 입장 기록(접수ID)에 점수를 붙인다. 이름·점포는 nm/st 로 보낸다(점수를 모르는 예전 수집기는 이 기록을 버린다).
+  var curSid = '', scoreN = 0;
+  function sendScore(pt, grade) {
+    pt = Math.round(Number(pt)); if (!curSid || !isFinite(pt)) return false;
+    pt = Math.max(0, Math.min(100, pt));
+    var p = readJSON(KP, {}) || {};
+    var q = loadQ();
+    q.push({ k: C.token, type: 'score', game: C.game, nm: norm(p.name || ''), st: norm(p.store || ''), sid: curSid + '-s' + (++scoreN), ref: curSid, score: pt, grade: String(grade || '').slice(0, 2), ts: Date.now() });
+    saveQ(q); setTimeout(flush, 0); return true;
+  }
+
   W.__bhcGate = {
-    cfg: C, queue: loadQ, flush: flush,
+    cfg: C, queue: loadQ, flush: flush, score: sendScore,
     get passed() { return passed; }, get open() { return isOpen; },
     reset: function () { lsDel(KP); lsDel(KQ); passed = false; }
   };
