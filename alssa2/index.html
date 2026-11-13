@@ -2,6 +2,7 @@
 <html lang="ko">
 <head>
 <meta charset="utf-8">
+<meta name="color-scheme" content="light only">
 <meta name="viewport" content="width=device-width,initial-scale=1,maximum-scale=1,user-scalable=no,viewport-fit=cover">
 <meta name="theme-color" content="#10213a">
 <meta name="apple-mobile-web-app-capable" content="yes">
@@ -774,6 +775,19 @@ body.intro #hud,body.intro #hudb,body.intro #react{opacity:0;pointer-events:none
 @media (prefers-reduced-motion:reduce){
   #bhcGate.on,#bhcGate .bhg-card,#bhcGate .bhg-mascot,#bhcGate .bhg-f input[aria-invalid="true"]{animation:none!important}
   #bhcGate .bhg-go,#bhcGate .bhg-go i{transition:none}
+}
+
+/* ===== 폰: 작은 핀 · 강제 다크모드 방지 ===== */
+:root{color-scheme:light only}
+@media (max-width:880px){
+  .pin{gap:2px}
+  .pin .dot{width:38px;height:38px;font-size:17px;border-width:2.5px;box-shadow:0 0 0 2.5px var(--ink),0 4px 0 2.5px var(--ink)}
+  .pin .ring{top:19px;width:38px;height:38px;margin:-19px 0 0 -19px}
+  .pin.sm .dot{width:34px;height:34px;font-size:15px}.pin.sm .ring{width:34px;height:34px;top:17px;margin:-17px 0 0 -17px}
+  .pin .lab{font-size:11px;padding:1px 7px 2px;border-width:2px}
+  .pin.hot::before{top:19px;width:70px;height:70px;margin:-35px 0 0 -35px}
+  .pin.txt .lab{font-size:13px;padding:5px 10px 6px}
+  .pin .hand.down{width:40px;height:47px;top:-46px;margin-left:-20px}
 }
 </style>
 </head>
@@ -2050,13 +2064,15 @@ function updateCamera(dt, time) {
     if (CAMR.t >= 1) { const r = CAMR.res; CAMR.res = null; if (r) r(); }
   }
   const vf = (36 + fovAdd) * Math.PI / 180, asp = camera.aspect, hf = 2 * Math.atan(Math.tan(vf / 2) * asp);
-  const dW = (camS.span / 2) / Math.tan(hf / 2), dH = (camS.vspan / 2) / Math.tan(vf / 2), dist = Math.max(dW, dH);
-  const p = camS.pitch * Math.PI / 180, yw = camS.yaw * Math.PI / 180;
+  const dW = (camS.span / 2) / Math.tan(hf / 2), dH = (camS.vspan / 2) / Math.tan(vf / 2), dist = Math.max(dW, dH) * (asp < 1.05 && S.cur >= 0 && !S.finished ? (window.__port || { zoom: .95 }).zoom : 1);
+  const PT = window.__port || { pitch: 60, zoom: .95, dz: -.6, dy: -.1 }, port = asp < 1.05 && S.cur >= 0 && !S.finished;   // 폰 세로 화면 전용 구도
+  const p = (port ? Math.max(camS.pitch, PT.pitch) : camS.pitch) * Math.PI / 180, yw = camS.yaw * Math.PI / 180;
   let ox = Math.sin(time * .41) * .02, oy = Math.sin(time * .57) * .012;
   if (CAMR.shake > .001) { ox += (Math.random() - .5) * .09 * CAMR.shake; oy += (Math.random() - .5) * .07 * CAMR.shake; CAMR.shake *= Math.pow(.02, dt); }
   camera.fov = 36 + fovAdd; camera.updateProjectionMatrix();
-  camera.position.set(camS.x + Math.sin(yw) * Math.cos(p) * dist + ox, camS.y + Math.sin(p) * dist + oy + arc, camS.z + Math.cos(yw) * Math.cos(p) * dist);
-  camera.lookAt(camS.x, camS.y, camS.z);
+  const tz = camS.z + (port ? PT.dz : 0), ty = camS.y + (port ? PT.dy : 0);
+  camera.position.set(camS.x + Math.sin(yw) * Math.cos(p) * dist + ox, ty + Math.sin(p) * dist + oy + arc, tz + Math.cos(yw) * Math.cos(p) * dist);
+  camera.lookAt(camS.x, ty, tz);
   camera.rotateZ(Math.sin(Math.PI * (CAMR.t < 1 ? CAMR.t : 0)) * .012);
   // sun & fill follow the focus so shadows keep resolution
   sun.position.set(camS.x - 2.2, 5.0, 4.3); sun.target.position.set(camS.x, CY, .0); sun.target.updateMatrixWorld();
@@ -2104,7 +2120,7 @@ const Pins = {
       const gap = a.el.classList.contains('txt') || b.el.classList.contains('txt') ? 124 : 100; if (Math.abs(dx) < gap && Math.abs(dy) < 92) { const push = (gap - Math.abs(dx)) / 2 + 1, sg = dx >= 0 ? 1 : -1; a._x -= push * sg; b._x += push * sg; }
     }
     for (const s of vs) { const mx = s.el.classList.contains('txt') ? 66 : 48; s._x = Math.max(mx, Math.min(W - mx, s._x)); }
-    for (const s of this.list) s.el.style.transform = 'translate(' + s._x.toFixed(1) + 'px,' + s._y.toFixed(1) + 'px) translate(-50%,-27px)';
+    for (const s of this.list) s.el.style.transform = 'translate(' + s._x.toFixed(1) + 'px,' + s._y.toFixed(1) + 'px) translate(-50%,' + (matchMedia('(max-width:880px)').matches ? '-64px' : '-27px') + ')';
   },
   pickAt(cx, cy) {
     const r = glCanvas.getBoundingClientRect(); this.ndc.set(((cx - r.left) / r.width) * 2 - 1, -((cy - r.top) / r.height) * 2 + 1); this.ray.setFromCamera(this.ndc, camera);
