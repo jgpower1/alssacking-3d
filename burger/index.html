@@ -1252,6 +1252,7 @@ function gradeOf(avg,lost){if(avg>=2.7&&lost===0)return'S';if(avg>=2.2&&lost<=1)
 const GRADE_RANK={S:4,A:3,B:2,C:1};
 function endDay(){if(!G.running)return;G.running=false;G.build=null;resetStationForBuild();renderRail();const D=G.day,log=G.dayLog,served=log.length,lost=G.lost.length;
   const avg=served?log.reduce((s,r)=>s+r.stars,0)/(served+lost):0;const gr=gradeOf(avg,lost);
+  try{if(window.__bhcGate&&window.__bhcGate.score)window.__bhcGate.score(avg/3*100,gr);}catch(e){}
   const allRes=log.flatMap(r=>r.results).filter(r=>r.grams!=null&&ING[r.id].kind!=='count');const pRate=allRes.length?Math.round(allRes.filter(r=>r.grade==='P').length/allRes.length*100):0;
   const counts={};log.forEach(r=>{r.mistakes.forEach(m=>{counts[m.text]=(counts[m.text]||0)+1;});r.results.forEach(x=>{if(x.grade==='O'){const k=`${ING[x.id].name} 과다 (기준 ${ING[x.id].target}g)`;counts[k]=(counts[k]||0)+1;}});});
   const top=Object.entries(counts).sort((a,b)=>b[1]-a[1]).slice(0,4);
@@ -1284,7 +1285,7 @@ function customerLeaves(c){const idx=G.queue.indexOf(c);if(idx<0)return;G.queue.
   if(idx===0){G.build=null;G.holding=false;hideHand();G.disp=null;G.phase='idle';advance();if(G.running)say(`${c.face} 손님이 기다리다 떠났어요… 만들던 ${BURGERS[c.key].short} 버거는 폐기 (-30점)`,'err');}
   else{renderRail();say(`${c.face} 대기하던 손님이 떠났어요 (-30점)`,'err');}}
 function serve(){if(G.phase!=='wrapped')return;ac();const b=G.build;
-  if(G.mode==='practice'){G.phase='done';SFX.cash();showPracticeResult(scoreBuild(b,null));return;}
+  if(G.mode==='practice'){G.phase='done';SFX.cash();const psc=scoreBuild(b,null);try{if(window.__bhcGate&&window.__bhcGate.score)window.__bhcGate.score(psc.stars/3*100,'');}catch(e){}showPracticeResult(psc);return;}
   const c=G.queue[0];const sc=scoreBuild(b,clamp(c.pat/c.max,0,1));G.queue.shift();G.score+=sc.pts;G.dayLog.push({key:b.key,stars:sc.stars,pts:sc.pts,results:b.results,mistakes:b.mistakes});
   G.phase='done';SFX.cash();updateHud();renderRail();showOrderResult(c,sc);}
 function tick(dt){const D=G.day;G.arrT+=dt;
@@ -1579,7 +1580,8 @@ window.__G=G;window.__BGM=BGM;
     if (bad) { setErr(bad); return; }
     busy = true;
     lsSet(KP, JSON.stringify({ name: n, store: s }));
-    var q = loadQ(); q.push({ k: C.token, game: C.game, name: n, store: s, sid: newSid(), ts: Date.now() }); saveQ(q);
+    curSid = newSid(); scoreN = 0;
+    var q = loadQ(); q.push({ k: C.token, game: C.game, name: n, store: s, sid: curSid, ts: Date.now() }); saveQ(q);
     passed = true; hide();
     var el = pending; pending = null;
     try { if (el) el.click(); } catch (e) {}     // 같은 터치 안에서 원래 버튼을 다시 눌러 게임을 시작한다(소리 잠금 해제 포함)
@@ -1620,8 +1622,20 @@ window.__G=G;window.__BGM=BGM;
   D.addEventListener('visibilitychange', function () { if (!D.hidden) flush(); });
   setTimeout(flush, 1500);
 
+  /* ---------- 게임 종료 점수 ---------- */
+  // 입장 기록(접수ID)에 점수를 붙인다. 이름·점포는 nm/st 로 보낸다(점수를 모르는 예전 수집기는 이 기록을 버린다).
+  var curSid = '', scoreN = 0;
+  function sendScore(pt, grade) {
+    pt = Math.round(Number(pt)); if (!curSid || !isFinite(pt)) return false;
+    pt = Math.max(0, Math.min(100, pt));
+    var p = readJSON(KP, {}) || {};
+    var q = loadQ();
+    q.push({ k: C.token, type: 'score', game: C.game, nm: norm(p.name || ''), st: norm(p.store || ''), sid: curSid + '-s' + (++scoreN), ref: curSid, score: pt, grade: String(grade || '').slice(0, 2), ts: Date.now() });
+    saveQ(q); setTimeout(flush, 0); return true;
+  }
+
   W.__bhcGate = {
-    cfg: C, queue: loadQ, flush: flush,
+    cfg: C, queue: loadQ, flush: flush, score: sendScore,
     get passed() { return passed; }, get open() { return isOpen; },
     reset: function () { lsDel(KP); lsDel(KQ); passed = false; }
   };
