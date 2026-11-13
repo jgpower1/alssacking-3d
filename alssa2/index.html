@@ -1419,7 +1419,7 @@ function buildKitchen() {
     lamp.add(mk(new THREE.ConeGeometry(.34, .26, 28, 1, true), new THREE.MeshStandardMaterial({ color: 0x1f5a66, roughness: .4, side: THREE.DoubleSide }), 0, 0, 0, { cast: false }));
     lamp.add(mk(new THREE.SphereGeometry(.09, 16, 12), new THREE.MeshBasicMaterial({ color: 0xfff1c9, toneMapped: false }), 0, -.07, 0, { cast: false }));
     const gl = new THREE.Mesh(new THREE.PlaneGeometry(1.2, 1.2), new THREE.MeshBasicMaterial({ map: TX.glow, color: 0xffd9a0, transparent: true, opacity: .55, depthWrite: false, blending: THREE.AdditiveBlending, toneMapped: false }));
-    gl.position.set(0, -.12, .1); lamp.add(gl); lamp.userData.glow = gl; KIT.lamps.push(lamp); K.add(lamp);
+    gl.position.set(0, -.12, .1); lamp.add(gl); lamp.userData.glow = gl; KIT.lamps.push(lamp); K.add(lamp); lamp.visible = false;   // 전등갓이 시야를 가려서 숨긴다(조명 밝기는 그대로)
   });
   // wall clock (between S0 & S1)
   const clock = grp(); clock.position.set((ST[0] + ST[1]) / 2, CY + 1.55, -0.74);
@@ -1715,7 +1715,7 @@ const FRY_Y = CY + .41;            // oil surface height (station-local)
 /* ---- a gloved hand (drops the pieces in) and a pair of tongs (lifts them out) ---- */
 function buildHand() {
   const g = new THREE.Group(), fingers = [];
-  const sk = new THREE.MeshStandardMaterial({ color: 0xf0c3a0, roughness: .62 }), nail = new THREE.MeshStandardMaterial({ color: 0xfbe3d6, roughness: .35 });
+  const skin = new THREE.MeshStandardMaterial({ color: 0xf0c3a0, roughness: .62 }), sk = M.glove, nail = M.glove;   // 손 · 손목: 다른 화면과 같은 검은 위생장갑, 팔뚝: 살색
   const cap = (r, len, m) => { const c = mk(new THREE.CapsuleGeometry(r, len, 5, 10), m || sk, 0, 0, -len / 2, { rx: Math.PI / 2 }); return c; };
   // palm: a rounded pad that narrows toward the wrist, with knuckles
   const palm = mk(rbox(.15, .046, .15, .022), sk, 0, 0, 0); g.add(palm);
@@ -1735,7 +1735,8 @@ function buildHand() {
   // wrist -> tapered forearm -> rolled-up white sleeve (the arm reaches in from off screen)
   const fa = new THREE.Group(); fa.position.set(0, 0, .07); fa.rotation.x = -.14; g.add(fa);
   const wr = mk(new THREE.CylinderGeometry(.04, .046, .09, 16), sk, 0, -.002, .04, { rx: Math.PI / 2 }); wr.scale.set(1.25, 1, .8); fa.add(wr);
-  const arm = mk(new THREE.CylinderGeometry(.043, .074, 1.1, 18), sk, 0, 0, .63, { rx: Math.PI / 2 }); arm.scale.set(1.2, 1, .88); fa.add(arm);
+  fa.add(mk(new THREE.TorusGeometry(.05, .008, 6, 18), sk, 0, -.002, .1)).scale.set(1.25, .82, 1);   // 장갑 끝단
+  const arm = mk(new THREE.CylinderGeometry(.043, .074, 1.1, 18), skin, 0, 0, .63, { rx: Math.PI / 2 }); arm.scale.set(1.2, 1, .88); fa.add(arm);
   fa.add(mk(new THREE.TorusGeometry(.078, .022, 8, 20), M.sleeve, 0, 0, 1.18)).scale.set(1.15, .9, 1);                 // rolled cuff
   const sl = mk(new THREE.CylinderGeometry(.088, .14, 2.4, 18), M.sleeve, 0, 0, 2.38, { rx: Math.PI / 2 }); sl.scale.set(1.15, 1, .9); fa.add(sl);
   const holder = new THREE.Group(); holder.position.set(0, -.07, -.09); g.add(holder);
