@@ -2084,7 +2084,7 @@ function updateCamera(dt, time) {
   }
   const vf = (36 + fovAdd) * Math.PI / 180, asp = camera.aspect, hf = 2 * Math.atan(Math.tan(vf / 2) * asp);
   const dW = (camS.span / 2) / Math.tan(hf / 2), dH = (camS.vspan / 2) / Math.tan(vf / 2), dist0 = Math.max(dW, dH);
-  const PT = window.__port || { pitch: 60, zoom: .95, dz: -.6, dy: -.1 }, port = asp < 1.05 && S.cur >= 0 && !S.finished && CAMR.shot !== 's5ride';   // 폰 세로 화면 전용 구도 (라이더 배달 장면은 예전 구도 그대로)
+  const PT = window.__port || { pitch: 50, zoom: .975, dz: -.3, dy: -.05 }, port = asp < 1.05 && S.cur >= 0 && !S.finished && CAMR.shot !== 's5ride';   // 폰 세로 화면 전용 구도 (라이더 배달 장면은 예전 구도 그대로)
   const pb = CAMR.pb = lerp(CAMR.pb || 0, port ? 1 : 0, Math.min(1, dt * 3.5)), dist = dist0 * lerp(1, PT.zoom, pb);
   const p = lerp(camS.pitch, Math.max(camS.pitch, PT.pitch), pb) * Math.PI / 180, yw = camS.yaw * Math.PI / 180;
   let ox = Math.sin(time * .41) * .02, oy = Math.sin(time * .57) * .012;
